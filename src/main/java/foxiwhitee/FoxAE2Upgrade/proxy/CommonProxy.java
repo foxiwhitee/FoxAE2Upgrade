@@ -14,7 +14,11 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import foxiwhitee.FoxAE2Upgrade.ModBlocks;
 import foxiwhitee.FoxAE2Upgrade.ModItems;
+import foxiwhitee.FoxAE2Upgrade.api.fluid.IFluidStorageGrid;
 import foxiwhitee.FoxAE2Upgrade.config.ConfigHandler;
+import foxiwhitee.FoxAE2Upgrade.config.ContentConfig;
+import foxiwhitee.FoxAE2Upgrade.me.fluid.FluidCellHandler;
+import foxiwhitee.FoxAE2Upgrade.me.fluid.FluidStorageGrid;
 import foxiwhitee.FoxAE2Upgrade.utils.handler.GuiHandlerRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.EnumHelper;
@@ -30,7 +34,10 @@ public class CommonProxy {
     }
 
     public void init(FMLInitializationEvent event) {
-
+        if (ContentConfig.enableMEFluid) {
+            AEApi.instance().registries().cell().addCellHandler(new FluidCellHandler());
+            AEApi.instance().registries().gridCache().registerGridCache(IFluidStorageGrid.class, FluidStorageGrid.class);
+        }
     }
 
     public void postInit(FMLPostInitializationEvent event) {

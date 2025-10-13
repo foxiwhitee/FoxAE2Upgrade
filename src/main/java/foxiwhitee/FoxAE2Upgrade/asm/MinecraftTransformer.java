@@ -63,36 +63,36 @@ public class MinecraftTransformer {
                     list.add(new InsnNode(IADD));
                     list.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/String", "substring", "(II)Ljava/lang/String;", false));
                     list.add(new VarInsnNode(ILOAD, 2));
-                    list.add(new MethodInsnNode(INVOKESTATIC, "foxiwhitee/HellIntegrations/asm/MinecraftHook", "hexToInt", "(Ljava/lang/String;Z)I", false));
+                    list.add(new MethodInsnNode(INVOKESTATIC, "foxiwhitee/FoxAE2Upgrade/asm/MinecraftHook", "hexToInt", "(Ljava/lang/String;Z)I", false));
                     list.add(new VarInsnNode(ALOAD, 0));
                     list.add(new InsnNode(SWAP));
                     list.add(new FieldInsnNode(PUTFIELD, "net/minecraft/client/gui/FontRenderer", "textColor", "I"));
-                    
-                    list.add(new VarInsnNode(ALOAD, 0)); 
-                    list.add(new VarInsnNode(ALOAD, 0)); 
+
+                    list.add(new VarInsnNode(ALOAD, 0));
+                    list.add(new VarInsnNode(ALOAD, 0));
                     list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/gui/FontRenderer", "textColor", "I"));
-                    list.add(new IntInsnNode(BIPUSH, 16)); 
-                    list.add(new InsnNode(ISHR)); 
-                    list.add(new InsnNode(I2F)); 
-                    list.add(new LdcInsnNode(255.0F)); 
+                    list.add(new IntInsnNode(BIPUSH, 16));
+                    list.add(new InsnNode(ISHR));
+                    list.add(new InsnNode(I2F));
+                    list.add(new LdcInsnNode(255.0F));
                     list.add(new InsnNode(FDIV));
                     list.add(new VarInsnNode(ALOAD, 0));
                     list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/gui/FontRenderer", "textColor", "I"));
-                    list.add(new IntInsnNode(BIPUSH, 8)); 
-                    list.add(new InsnNode(ISHR)); 
-                    list.add(new IntInsnNode(SIPUSH, 255)); 
-                    list.add(new InsnNode(IAND)); 
-                    list.add(new InsnNode(I2F)); 
-                    list.add(new LdcInsnNode(255.0F)); 
-                    list.add(new InsnNode(FDIV)); 
-                    list.add(new VarInsnNode(ALOAD, 0)); 
-                    list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/gui/FontRenderer", "textColor", "I"));
-                    list.add(new IntInsnNode(SIPUSH, 255)); 
+                    list.add(new IntInsnNode(BIPUSH, 8));
+                    list.add(new InsnNode(ISHR));
+                    list.add(new IntInsnNode(SIPUSH, 255));
                     list.add(new InsnNode(IAND));
-                    list.add(new InsnNode(I2F)); 
-                    list.add(new LdcInsnNode(255.0F)); 
+                    list.add(new InsnNode(I2F));
+                    list.add(new LdcInsnNode(255.0F));
                     list.add(new InsnNode(FDIV));
-                    list.add(new VarInsnNode(ALOAD, 0)); 
+                    list.add(new VarInsnNode(ALOAD, 0));
+                    list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/gui/FontRenderer", "textColor", "I"));
+                    list.add(new IntInsnNode(SIPUSH, 255));
+                    list.add(new InsnNode(IAND));
+                    list.add(new InsnNode(I2F));
+                    list.add(new LdcInsnNode(255.0F));
+                    list.add(new InsnNode(FDIV));
+                    list.add(new VarInsnNode(ALOAD, 0));
                     list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/gui/FontRenderer", "alpha", "F"));
                     list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/client/gui/FontRenderer", "setColor", "(FFFF)V", false));
                     list.add(new IincInsnNode(3, 6));
@@ -110,7 +110,7 @@ public class MinecraftTransformer {
                         }
                     }
                     if (cycleEndLabel != null) {
-                        list.add(new JumpInsnNode(GOTO, cycleEndLabel)); 
+                        list.add(new JumpInsnNode(GOTO, cycleEndLabel));
                     }
 
                     list.add(elseLabel);
@@ -132,7 +132,7 @@ public class MinecraftTransformer {
                 newInstructions.add(start);
                 newInstructions.add(new VarInsnNode(0x19, 1));
                 newInstructions.add(new VarInsnNode(0x19, 0));
-                newInstructions.add(new MethodInsnNode(0xb8, "foxiwhitee/HellIntegrations/asm/MinecraftHook", "getStringWidth", "(Ljava/lang/String;Lnet/minecraft/client/gui/FontRenderer;)I", false));
+                newInstructions.add(new MethodInsnNode(0xb8, "foxiwhitee/FoxAE2Upgrade/asm/MinecraftHook", "getStringWidth", "(Ljava/lang/String;Lnet/minecraft/client/gui/FontRenderer;)I", false));
                 newInstructions.add(new InsnNode(0xac));
                 newInstructions.add(end);
 

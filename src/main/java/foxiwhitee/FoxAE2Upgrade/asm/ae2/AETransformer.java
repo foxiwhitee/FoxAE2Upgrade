@@ -14,7 +14,7 @@ import static foxiwhitee.FoxAE2Upgrade.utils.asm.ASMUtils.*;
 import static org.objectweb.asm.Opcodes.*;
 
 public class AETransformer {
-    public static final String HOOKS = "foxiwhitee/HellIntegrations/asm/ae2/AEHooks";
+    public static final String HOOKS = "foxiwhitee/FoxAE2Upgrade/asm/ae2/AEHooks";
     public static final boolean IS_DEV = (boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
 //        byte[] modifiedClass = writeClass(classNode);
 //        try {
@@ -91,7 +91,7 @@ public class AETransformer {
                 InsnList list = new InsnList();
                 LabelNode label = new LabelNode();
                 list.add(new VarInsnNode(ALOAD, 9));
-                list.add(new TypeInsnNode(INSTANCEOF, "foxiwhitee/HellIntegrations/tile/cpu/TileMEServer"));
+                list.add(new TypeInsnNode(INSTANCEOF, "foxiwhitee/FoxAE2Upgrade/tile/cpu/TileMEServer"));
                 list.add(new JumpInsnNode(IFEQ, label));
                 list.add(new InsnNode(RETURN));
                 list.add(label);
@@ -103,7 +103,7 @@ public class AETransformer {
 
     public static byte[] transformCraftingGridCache(byte[] basicClass) {
         ClassNode classNode = readClass(basicClass);
-        classNode.interfaces.add("foxiwhitee/HellIntegrations/utils/craft/ICraftingGridCacheAddition");
+        classNode.interfaces.add("foxiwhitee/FoxAE2Upgrade/utils/craft/ICraftingGridCacheAddition");
         MethodNode targetMethod = findMethod(classNode, "updateCPUClusters");
         if (targetMethod != null) {
             AbstractInsnNode insertionPoint = locateOpcodeSequence(targetMethod.instructions, RETURN);
@@ -112,7 +112,7 @@ public class AETransformer {
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new FieldInsnNode(GETFIELD, "appeng/me/cache/CraftingGridCache", "grid", "Lappeng/api/networking/IGrid;"));
                 list.add(new VarInsnNode(ALOAD, 0));
-                list.add(new MethodInsnNode(INVOKESTATIC, HOOKS, "updateCPUClusters", "(Lappeng/api/networking/IGrid;Lfoxiwhitee/HellIntegrations/utils/craft/ICraftingGridCacheAddition;)V", false));
+                list.add(new MethodInsnNode(INVOKESTATIC, HOOKS, "updateCPUClusters", "(Lappeng/api/networking/IGrid;Lfoxiwhitee/FoxAE2Upgrade/utils/craft/ICraftingGridCacheAddition;)V", false));
 
                 targetMethod.instructions.insertBefore(insertionPoint, list);
             }
@@ -128,13 +128,13 @@ public class AETransformer {
 
     public static byte[] transformICraftingMedium(byte[] basicClass) {
         ClassNode classNode = readClass(basicClass);
-        classNode.interfaces.add("foxiwhitee/HellIntegrations/utils/craft/IPreCraftingMedium");
+        classNode.interfaces.add("foxiwhitee/FoxAE2Upgrade/utils/craft/IPreCraftingMedium");
         return writeClass(classNode);
     }
 
     public static byte[] transformGuiMEMonitorable(byte[] basicClass) {
         ClassNode classNode = readClass(basicClass);
-        classNode.interfaces.add("foxiwhitee/HellIntegrations/utils/craft/IGuiMEMonitorableAccessor");
+        classNode.interfaces.add("foxiwhitee/FoxAE2Upgrade/utils/craft/IGuiMEMonitorableAccessor");
         MethodNode generated = new MethodNode(ACC_PUBLIC, "callSetReservedSpace", "(I)V", (String)null, (String[])null);
         InsnList list = generated.instructions;
         list.add(new VarInsnNode(ALOAD, 0));
@@ -189,7 +189,7 @@ public class AETransformer {
                 insertionPoint.forEach(p -> targetMethod.instructions.insertBefore(p, copy(list)));
             }
         }
-        
+
         MethodNode newMethod = new MethodNode(ACC_PUBLIC, "getMachinesSafe", "(Ljava/lang/Class;)Lappeng/api/networking/IMachineSet;", null, null);
         InsnList instructions = newMethod.instructions;
         LabelNode label = new LabelNode();
@@ -216,7 +216,7 @@ public class AETransformer {
 
     public static byte[] transformCraftingCPUCluster(byte[] basicClass) {
         ClassNode classNode = readClass(basicClass);
-        classNode.interfaces.add("foxiwhitee/HellIntegrations/utils/craft/ICraftingCPUClusterAccessor");
+        classNode.interfaces.add("foxiwhitee/FoxAE2Upgrade/utils/craft/ICraftingCPUClusterAccessor");
 
         MethodNode targetMethod = findMethod(classNode, "executeCrafting");
         if (targetMethod != null) {
@@ -292,11 +292,11 @@ public class AETransformer {
                 list = new InsnList();
                 LabelNode label = new LabelNode();
                 list.add(new VarInsnNode(ALOAD, 1));
-                list.add(new TypeInsnNode(INSTANCEOF, "foxiwhitee/HellIntegrations/utils/craft/ICustomAccelerator"));
+                list.add(new TypeInsnNode(INSTANCEOF, "foxiwhitee/FoxAE2Upgrade/utils/craft/ICustomAccelerator"));
                 list.add(new JumpInsnNode(IFEQ, label));
                 list.add(new VarInsnNode(ALOAD, 1));
-                list.add(new TypeInsnNode(CHECKCAST, "foxiwhitee/HellIntegrations/utils/craft/ICustomAccelerator"));
-                list.add(new MethodInsnNode(INVOKEINTERFACE, "foxiwhitee/HellIntegrations/utils/craft/ICustomAccelerator", "getAcceleratorCount", "()I", true));
+                list.add(new TypeInsnNode(CHECKCAST, "foxiwhitee/FoxAE2Upgrade/utils/craft/ICustomAccelerator"));
+                list.add(new MethodInsnNode(INVOKEINTERFACE, "foxiwhitee/FoxAE2Upgrade/utils/craft/ICustomAccelerator", "getAcceleratorCount", "()I", true));
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new FieldInsnNode(GETFIELD, "appeng/me/cluster/implementations/CraftingCPUCluster", "accelerator", "I"));
                 list.add(new InsnNode(IADD));
@@ -319,21 +319,21 @@ public class AETransformer {
                 LabelNode labelEnd = new LabelNode();
                 list = new InsnList();
                 list.add(new VarInsnNode(ALOAD, 1));
-                list.add(new TypeInsnNode(INSTANCEOF, "foxiwhitee/HellIntegrations/tile/cpu/TileMEServer"));
+                list.add(new TypeInsnNode(INSTANCEOF, "foxiwhitee/FoxAE2Upgrade/tile/cpu/TileMEServer"));
                 list.add(new JumpInsnNode(IFEQ, labelEnd));
                 list.add(new VarInsnNode(ALOAD, 1));
-                list.add(new TypeInsnNode(CHECKCAST, "foxiwhitee/HellIntegrations/tile/cpu/TileMEServer"));
+                list.add(new TypeInsnNode(CHECKCAST, "foxiwhitee/FoxAE2Upgrade/tile/cpu/TileMEServer"));
                 list.add(new VarInsnNode(ASTORE, 10));
                 list.add(new VarInsnNode(ALOAD, 10));
                 list.add(new VarInsnNode(ALOAD, 0));
-                list.add(new MethodInsnNode(INVOKEVIRTUAL, "foxiwhitee/HellIntegrations/tile/cpu/TileMEServer", "getClusterIndex", "(Lappeng/me/cluster/implementations/CraftingCPUCluster;)I", false));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, "foxiwhitee/FoxAE2Upgrade/tile/cpu/TileMEServer", "getClusterIndex", "(Lappeng/me/cluster/implementations/CraftingCPUCluster;)I", false));
                 list.add(new VarInsnNode(ISTORE, 11));
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new FieldInsnNode(GETFIELD, "appeng/me/cluster/implementations/CraftingCPUCluster", "availableStorage", "J"));
                 list.add(new VarInsnNode(ALOAD, 10));
                 list.add(new VarInsnNode(ILOAD, 11));
-                list.add(new MethodInsnNode(INVOKEVIRTUAL, "foxiwhitee/HellIntegrations/tile/cpu/TileMEServer", "getClusterStorageBytes", "(I)J", false));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, "foxiwhitee/FoxAE2Upgrade/tile/cpu/TileMEServer", "getClusterStorageBytes", "(I)J", false));
                 list.add(new InsnNode(LADD));
                 list.add(new FieldInsnNode(PUTFIELD, "appeng/me/cluster/implementations/CraftingCPUCluster", "availableStorage", "J"));
                 list.add(new VarInsnNode(ALOAD, 0));
@@ -341,7 +341,7 @@ public class AETransformer {
                 list.add(new FieldInsnNode(GETFIELD, "appeng/me/cluster/implementations/CraftingCPUCluster", "accelerator", "I"));
                 list.add(new VarInsnNode(ALOAD, 10));
                 list.add(new VarInsnNode(ILOAD, 11));
-                list.add(new MethodInsnNode(INVOKEVIRTUAL, "foxiwhitee/HellIntegrations/tile/cpu/TileMEServer", "getClusterAccelerator", "(I)I", false));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, "foxiwhitee/FoxAE2Upgrade/tile/cpu/TileMEServer", "getClusterAccelerator", "(I)I", false));
                 list.add(new InsnNode(IADD));
                 list.add(new FieldInsnNode(PUTFIELD, "appeng/me/cluster/implementations/CraftingCPUCluster", "accelerator", "I"));
                 list.add(new VarInsnNode(ALOAD, 0));
@@ -371,17 +371,17 @@ public class AETransformer {
         MethodNode methodNode = findMethod(classNode, "updateCraftingList");
         if (methodNode != null) {
 
-            classNode.interfaces.add("foxiwhitee/HellIntegrations/utils/interfaces/ICustomDualityInterface");
+            classNode.interfaces.add("foxiwhitee/FoxAE2Upgrade/utils/interfaces/ICustomDualityInterface");
 
             InsnList list = new InsnList();
             LabelNode label = new LabelNode();
             list.add(new VarInsnNode(ALOAD, 0));
-            list.add(new TypeInsnNode(CHECKCAST, "foxiwhitee/HellIntegrations/utils/interfaces/ICustomDualityInterface"));
-            list.add(new MethodInsnNode(INVOKEINTERFACE, "foxiwhitee/HellIntegrations/utils/interfaces/ICustomDualityInterface", "isOverrideDefault", "()Z", true));
+            list.add(new TypeInsnNode(CHECKCAST, "foxiwhitee/FoxAE2Upgrade/utils/interfaces/ICustomDualityInterface"));
+            list.add(new MethodInsnNode(INVOKEINTERFACE, "foxiwhitee/FoxAE2Upgrade/utils/interfaces/ICustomDualityInterface", "isOverrideDefault", "()Z", true));
             list.add(new JumpInsnNode(IFEQ, label));
             list.add(new VarInsnNode(ALOAD, 0));
-            list.add(new TypeInsnNode(CHECKCAST, "foxiwhitee/HellIntegrations/utils/interfaces/ICustomDualityInterface"));
-            list.add(new MethodInsnNode(INVOKEINTERFACE, "foxiwhitee/HellIntegrations/utils/interfaces/ICustomDualityInterface", "updateCraftingListProxy", "()V", true));
+            list.add(new TypeInsnNode(CHECKCAST, "foxiwhitee/FoxAE2Upgrade/utils/interfaces/ICustomDualityInterface"));
+            list.add(new MethodInsnNode(INVOKEINTERFACE, "foxiwhitee/FoxAE2Upgrade/utils/interfaces/ICustomDualityInterface", "updateCraftingListProxy", "()V", true));
             list.add(new InsnNode(RETURN));
             list.add(label);
 
@@ -435,7 +435,7 @@ public class AETransformer {
 
     public static byte[] transformTileInterface(byte[] basicClass) {
         ClassNode classNode = readClass(basicClass);
-        classNode.interfaces.add("foxiwhitee/HellIntegrations/utils/interfaces/ICustomTileInterface");
+        classNode.interfaces.add("foxiwhitee/FoxAE2Upgrade/utils/interfaces/ICustomTileInterface");
         MethodNode generated = new MethodNode(ASM5, ACC_PUBLIC, "setDuality", "(Lappeng/helpers/DualityInterface;)V", null, null);
         InsnList list = generated.instructions;
         list.add(new VarInsnNode(ALOAD, 0));
@@ -445,18 +445,18 @@ public class AETransformer {
         classNode.methods.add(generated);
 
         if (findMethod(classNode, "getPatternsConfigurations") == null) {
-            MethodNode methodNode = new MethodNode(ACC_PUBLIC, "getPatternsConfigurations", "()[Lfoxiwhitee/HellIntegrations/helpers/IInterfaceTerminalSupport$PatternsConfiguration;", null, null);
+            MethodNode methodNode = new MethodNode(ACC_PUBLIC, "getPatternsConfigurations", "()[Lfoxiwhitee/FoxAE2Upgrade/helpers/IInterfaceTerminalSupport$PatternsConfiguration;", null, null);
             InsnList instructions = methodNode.instructions;
             instructions.add(new InsnNode(ICONST_1));
-            instructions.add(new TypeInsnNode(ANEWARRAY, "foxiwhitee/HellIntegrations/helpers/IInterfaceTerminalSupport$PatternsConfiguration"));
+            instructions.add(new TypeInsnNode(ANEWARRAY, "foxiwhitee/FoxAE2Upgrade/helpers/IInterfaceTerminalSupport$PatternsConfiguration"));
             instructions.add(new VarInsnNode(ASTORE, 1));
             instructions.add(new VarInsnNode(ALOAD, 1));
             instructions.add(new InsnNode(ICONST_0));
-            instructions.add(new TypeInsnNode(NEW, "foxiwhitee/HellIntegrations/helpers/IInterfaceTerminalSupport$PatternsConfiguration"));
+            instructions.add(new TypeInsnNode(NEW, "foxiwhitee/FoxAE2Upgrade/helpers/IInterfaceTerminalSupport$PatternsConfiguration"));
             instructions.add(new InsnNode(DUP));
             instructions.add(new InsnNode(ICONST_0));
             instructions.add(new IntInsnNode(BIPUSH, 9));
-            instructions.add(new MethodInsnNode(INVOKESPECIAL, "foxiwhitee/HellIntegrations/helpers/IInterfaceTerminalSupport$PatternsConfiguration", "<init>", "(II)V", false));
+            instructions.add(new MethodInsnNode(INVOKESPECIAL, "foxiwhitee/FoxAE2Upgrade/helpers/IInterfaceTerminalSupport$PatternsConfiguration", "<init>", "(II)V", false));
             instructions.add(new InsnNode(AASTORE));
             instructions.add(new VarInsnNode(ALOAD, 1));
             instructions.add(new InsnNode(ARETURN));
@@ -516,18 +516,18 @@ public class AETransformer {
     public static byte[] transformPartInterface(byte[] basicClass) {
         ClassNode classNode = readClass(basicClass);
         if (findMethod(classNode, "getPatternsConfigurations") == null) {
-            MethodNode methodNode = new MethodNode(ACC_PUBLIC, "getPatternsConfigurations", "()[Lfoxiwhitee/HellIntegrations/helpers/IInterfaceTerminalSupport$PatternsConfiguration;", null, null);
+            MethodNode methodNode = new MethodNode(ACC_PUBLIC, "getPatternsConfigurations", "()[Lfoxiwhitee/FoxAE2Upgrade/helpers/IInterfaceTerminalSupport$PatternsConfiguration;", null, null);
             InsnList instructions = methodNode.instructions;
             instructions.add(new InsnNode(ICONST_1));
-            instructions.add(new TypeInsnNode(ANEWARRAY, "foxiwhitee/HellIntegrations/helpers/IInterfaceTerminalSupport$PatternsConfiguration"));
+            instructions.add(new TypeInsnNode(ANEWARRAY, "foxiwhitee/FoxAE2Upgrade/helpers/IInterfaceTerminalSupport$PatternsConfiguration"));
             instructions.add(new VarInsnNode(ASTORE, 1));
             instructions.add(new VarInsnNode(ALOAD, 1));
             instructions.add(new InsnNode(ICONST_0));
-            instructions.add(new TypeInsnNode(NEW, "foxiwhitee/HellIntegrations/helpers/IInterfaceTerminalSupport$PatternsConfiguration"));
+            instructions.add(new TypeInsnNode(NEW, "foxiwhitee/FoxAE2Upgrade/helpers/IInterfaceTerminalSupport$PatternsConfiguration"));
             instructions.add(new InsnNode(DUP));
             instructions.add(new InsnNode(ICONST_0));
             instructions.add(new IntInsnNode(BIPUSH, 9));
-            instructions.add(new MethodInsnNode(INVOKESPECIAL, "foxiwhitee/HellIntegrations/helpers/IInterfaceTerminalSupport$PatternsConfiguration", "<init>", "(II)V", false));
+            instructions.add(new MethodInsnNode(INVOKESPECIAL, "foxiwhitee/FoxAE2Upgrade/helpers/IInterfaceTerminalSupport$PatternsConfiguration", "<init>", "(II)V", false));
             instructions.add(new InsnNode(AASTORE));
             instructions.add(new VarInsnNode(ALOAD, 1));
             instructions.add(new InsnNode(ARETURN));
@@ -610,7 +610,7 @@ public class AETransformer {
 
     public static byte[] transformMachineSet(byte[] basicClass) {
         ClassNode classNode = readClass(basicClass);
-        classNode.interfaces.add("foxiwhitee/HellIntegrations/utils/craft/IMachineSetAccessor");
+        classNode.interfaces.add("foxiwhitee/FoxAE2Upgrade/utils/craft/IMachineSetAccessor");
         MethodNode generated = new MethodNode(ACC_PUBLIC, "create", "(Ljava/lang/Class;)Lappeng/me/MachineSet;", null, null);
         InsnList list = generated.instructions;
         list.add(new TypeInsnNode(NEW, "appeng/me/MachineSet"));
@@ -670,14 +670,14 @@ public class AETransformer {
                 InsnList list = new InsnList();
                 LabelNode label = new LabelNode();
                 list.add(new VarInsnNode(ALOAD, 4));
-                list.add(new TypeInsnNode(INSTANCEOF, "foxiwhitee/HellIntegrations/client/gui/terminals/GuiTerminal"));
+                list.add(new TypeInsnNode(INSTANCEOF, "foxiwhitee/FoxAE2Upgrade/client/gui/terminals/GuiTerminal"));
                 list.add(new JumpInsnNode(IFEQ, label));
 
                 list.add(new VarInsnNode(ALOAD, 4));
-                list.add(new TypeInsnNode(CHECKCAST, "foxiwhitee/HellIntegrations/client/gui/terminals/GuiTerminal"));
+                list.add(new TypeInsnNode(CHECKCAST, "foxiwhitee/FoxAE2Upgrade/client/gui/terminals/GuiTerminal"));
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new FieldInsnNode(GETFIELD, "appeng/core/sync/packets/PacketMEInventoryUpdate", "list", "Ljava/util/List;"));
-                list.add(new MethodInsnNode(INVOKEVIRTUAL, "foxiwhitee/HellIntegrations/client/gui/terminals/GuiTerminal", "postUpdate", "(Ljava/util/List;)V", false));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, "foxiwhitee/FoxAE2Upgrade/client/gui/terminals/GuiTerminal", "postUpdate", "(Ljava/util/List;)V", false));
 
                 list.add(label);
                 methodNode.instructions.insertBefore(point, list);
@@ -689,7 +689,7 @@ public class AETransformer {
 
     public static byte[] transformIInterfaceHost(byte[] classBytes) {
         ClassNode classNode = readClass(classBytes);
-        classNode.interfaces.add("foxiwhitee/HellIntegrations/helpers/IInterfaceTerminalSupport");
+        classNode.interfaces.add("foxiwhitee/FoxAE2Upgrade/helpers/IInterfaceTerminalSupport");
         return writeClass(classNode);
     }
 
