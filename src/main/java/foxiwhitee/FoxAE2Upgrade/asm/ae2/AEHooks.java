@@ -20,7 +20,7 @@ import foxiwhitee.FoxAE2Upgrade.items.fluid.ItemFluidDrop;
 
 import foxiwhitee.FoxAE2Upgrade.proxy.CommonProxy;
 
-import foxiwhitee.FoxAE2Upgrade.utils.craft.ICraftingGridCacheAddition;
+
 import net.minecraft.item.ItemStack;
 
 public class AEHooks {
@@ -89,7 +89,7 @@ public class AEHooks {
         return old;
     }
 
-    public static void updateCPUClusters(IGrid grid, ICraftingGridCacheAddition cache) {
+//    public static void updateCPUClusters(IGrid grid, ICraftingGridCacheAddition cache) {
 //        for(IGridNode cst : grid.getMachines(TileMEServer.class)) {
 //            TileMEServer tile = (TileMEServer)cst.getMachine();
 //            for (int i = 0; i < tile.getVirtualClusters().size(); i++) {
@@ -102,7 +102,7 @@ public class AEHooks {
 //                }
 //            }
 //        }
-    }
+//    }
 
     public static IMachineSet getMachines(MachineSet old, Grid grid) {
 //        if (old.getMachineClass() == TileCraftingStorageTile.class) {

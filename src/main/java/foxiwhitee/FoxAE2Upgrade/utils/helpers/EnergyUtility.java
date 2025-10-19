@@ -1,6 +1,5 @@
 package foxiwhitee.FoxAE2Upgrade.utils.helpers;
 
-import cofh.api.energy.IEnergyContainerItem;
 import foxiwhitee.FoxAE2Upgrade.utils.localization.LocalizationUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
@@ -88,7 +87,7 @@ public class EnergyUtility {
         if (!isShiftKeyDown()) {
             list.add(LocalizationUtils.localize("tooltip.info.hold") + " " + EnumChatFormatting.AQUA + "" + EnumChatFormatting.ITALIC + LocalizationUtils.localize("tooltip.info.shift") + EnumChatFormatting.RESET + " " + EnumChatFormatting.GRAY + LocalizationUtils.localize("tooltip.info.forDetails"));
         } else {
-            addEnergyInfo(stack, list);
+            //addEnergyInfo(stack, list);
             addLore(stack, list);
         }
     }
@@ -123,26 +122,26 @@ public class EnergyUtility {
         return loreLines;
     }
 
-    public static void addEnergyInfo(ItemStack stack, List<String> list) {
-        IEnergyContainerItem item = (IEnergyContainerItem)stack.getItem();
-        int energy = item.getEnergyStored(stack);
-        int maxEnergy = item.getMaxEnergyStored(stack);
-        String eS = "";
-        String eM = "";
-        if (energy < 1000) {
-            eS = String.valueOf(energy);
-        } else if (energy < 1000000) {
-            eS = String.valueOf(energy);
-        } else {
-            eS = String.valueOf(Math.round(energy / 1000.0F) / 1000.0F) + "m";
-        }
-        if (maxEnergy < 1000) {
-            eM = String.valueOf(maxEnergy);
-        } else if (maxEnergy < 1000000) {
-            eM = String.valueOf(Math.round(maxEnergy / 100.0F) / 10.0F) + "k";
-        } else {
-            eM = String.valueOf(Math.round(maxEnergy / 10000.0F) / 100.0F) + "m";
-        }
-        list.add(LocalizationUtils.localize("tooltip.info.charge") + ": " + eS + " / " + eM + " RF");
-    }
+//    public static void addEnergyInfo(ItemStack stack, List<String> list) {
+//        IEnergyContainerItem item = (IEnergyContainerItem)stack.getItem();
+//        int energy = item.getEnergyStored(stack);
+//        int maxEnergy = item.getMaxEnergyStored(stack);
+//        String eS = "";
+//        String eM = "";
+//        if (energy < 1000) {
+//            eS = String.valueOf(energy);
+//        } else if (energy < 1000000) {
+//            eS = String.valueOf(energy);
+//        } else {
+//            eS = String.valueOf(Math.round(energy / 1000.0F) / 1000.0F) + "m";
+//        }
+//        if (maxEnergy < 1000) {
+//            eM = String.valueOf(maxEnergy);
+//        } else if (maxEnergy < 1000000) {
+//            eM = String.valueOf(Math.round(maxEnergy / 100.0F) / 10.0F) + "k";
+//        } else {
+//            eM = String.valueOf(Math.round(maxEnergy / 10000.0F) / 100.0F) + "m";
+//        }
+//        list.add(LocalizationUtils.localize("tooltip.info.charge") + ": " + eS + " / " + eM + " RF");
+//    }
 }

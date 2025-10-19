@@ -17,13 +17,21 @@ import foxiwhitee.FoxAE2Upgrade.ModItems;
 import foxiwhitee.FoxAE2Upgrade.api.fluid.IFluidStorageGrid;
 import foxiwhitee.FoxAE2Upgrade.config.ConfigHandler;
 import foxiwhitee.FoxAE2Upgrade.config.ContentConfig;
+import foxiwhitee.FoxAE2Upgrade.container.ContainerAdvancedDrive;
 import foxiwhitee.FoxAE2Upgrade.me.fluid.FluidCellHandler;
 import foxiwhitee.FoxAE2Upgrade.me.fluid.FluidStorageGrid;
+import foxiwhitee.FoxAE2Upgrade.tile.TileAdvancedDrive;
 import foxiwhitee.FoxAE2Upgrade.utils.handler.GuiHandlerRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.EnumHelper;
 
 public class CommonProxy {
+    private static GuiBridge GUI_ADV_ME_DRIVE = null;
+
+    public static GuiBridge getGuiAdvMeDrive() {
+        return GUI_ADV_ME_DRIVE;
+    }
+
     public void preInit(FMLPreInitializationEvent event) {
         ConfigHandler.loadConfigs(event);
         GuiHandlerRegistry.registerGuiHandlers(event);
@@ -42,5 +50,8 @@ public class CommonProxy {
 
     public void postInit(FMLPostInitializationEvent event) {
         //MinecraftForge.EVENT_BUS.register(ServerEventHandler.INSTANCE);
+        if (ContentConfig.enableAdvancedDriver) {
+            GUI_ADV_ME_DRIVE = (GuiBridge) EnumHelper.addEnum(GuiBridge.class, "AdvMEDrive", new Class[]{Class.class, Class.class, GuiHostType.class, SecurityPermissions.class}, new Object[]{ContainerAdvancedDrive.class, TileAdvancedDrive.class, GuiHostType.WORLD, SecurityPermissions.BUILD});
+        }
     }
 }

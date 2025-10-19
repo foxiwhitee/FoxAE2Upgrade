@@ -6,7 +6,7 @@ import net.minecraft.item.Item;
 public final class ItemEmptyFluidCell extends Item {
     public ItemEmptyFluidCell(String name) {
         setUnlocalizedName(name);
-        setTextureName(FoxCore.MODID + ":cells/" + name);
+        setTextureName(FoxCore.MODID.toLowerCase() + ":cells/" + name);
     }
 }
 

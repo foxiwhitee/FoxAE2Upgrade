@@ -109,7 +109,7 @@ public class RegisterUtils {
 
     public static void registerItem(Item item) {
         item.setCreativeTab(tab);
-        GameRegistry.registerItem(item, item.getUnlocalizedName());
+        GameRegistry.registerItem(item, item.getUnlocalizedName().replace("item.", ""));
         items.add(item);
     }
 

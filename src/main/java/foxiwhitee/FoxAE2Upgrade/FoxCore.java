@@ -19,7 +19,7 @@ import static foxiwhitee.FoxAE2Upgrade.FoxCore.*;
 @Mod(modid = MODID, name = MODNAME, version = VERSION, dependencies = DEPEND)
 public class FoxCore {
     public static final String
-            MODID = "FoxAE2Upgrade",
+            MODID = "foxae2upgrade",
             MODNAME = "FoxAE2Upgrade",
             VERSION = "0.1.0",
             DEPEND = "required-after:appliedenergistics2;";
