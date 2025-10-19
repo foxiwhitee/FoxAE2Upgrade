@@ -128,10 +128,10 @@ public class ItemFluidStorageCells extends Item implements IFluidStorageCell {
     public void registerIcons(IIconRegister iconRegister) {
         this.icons = new IIcon[suffixes.length];
 
-        for(int i = 0; i < suffixes.length; ++i) {
-            this.icons[i] = iconRegister.registerIcon(FoxCore.MODID.toLowerCase() + ":сells/fluidCell" + suffixes[i]);
+        for (int i = 0; i < suffixes.length; ++i) {
+            // Use 'cells' com 'c' LATINO normal
+            this.icons[i] = iconRegister.registerIcon(FoxCore.MODID.toLowerCase() + ":cells/fluidCell" + suffixes[i]);
         }
-
     }
 
 }
