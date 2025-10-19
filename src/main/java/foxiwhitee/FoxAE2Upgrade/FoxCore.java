@@ -21,7 +21,7 @@ public class FoxCore {
     public static final String
             MODID = "FoxAE2Upgrade",
             MODNAME = "FoxAE2Upgrade",
-            VERSION = "1.0.0",
+            VERSION = "0.1.0",
             DEPEND = "required-after:appliedenergistics2;";
 
     public static final CreativeTabs FOX_TAB = new CreativeTabs("FOX_AE2_UPGRADE_TAB") {
@@ -54,7 +54,7 @@ public class FoxCore {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e) {
         proxy.postInit(e);
-        NetworkManager.instance = new NetworkManager("foxae2upgrade");
+        NetworkManager.instance = new NetworkManager("FoxAE2Upgrade");
         IntegrationLoader.postInit(e);
     }
 }
