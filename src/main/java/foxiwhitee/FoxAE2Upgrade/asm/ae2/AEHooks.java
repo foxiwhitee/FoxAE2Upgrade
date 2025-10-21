@@ -16,7 +16,6 @@ import appeng.tile.crafting.TileCraftingStorageTile;
 import appeng.tile.crafting.TileCraftingTile;
 import foxiwhitee.FoxAE2Upgrade.ModBlocks;
 
-import foxiwhitee.FoxAE2Upgrade.items.fluid.ItemFluidDrop;
 
 import foxiwhitee.FoxAE2Upgrade.proxy.CommonProxy;
 
@@ -24,12 +23,6 @@ import foxiwhitee.FoxAE2Upgrade.proxy.CommonProxy;
 import net.minecraft.item.ItemStack;
 
 public class AEHooks {
-
-    public static long skipBytes(long old, IAEItemStack what) {
-        if (what.getItem() == ItemFluidDrop.DROP)
-            return 0L;
-        return old;
-    }
 
     public static void onGridNotification(AENetworkProxy proxy) {
         //if (proxy.getMachine() instanceof PartBaseCable)

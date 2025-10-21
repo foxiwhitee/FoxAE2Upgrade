@@ -9,7 +9,8 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "MixinAENetworkProxy"
+    "AENetworkProxyMixin",
+    "ControllerValidatorMixin"
   ],
   "client": [],
   "server": []

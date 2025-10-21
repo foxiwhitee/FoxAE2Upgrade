@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = AENetworkProxy.class, remap = false)
-public class MixinAENetworkProxy {
+public abstract class AENetworkProxyMixin {
 
     @Inject(method = "onGridNotification", at = @At("HEAD"))
     private void injected(GridNotification notification, CallbackInfo ci) {
