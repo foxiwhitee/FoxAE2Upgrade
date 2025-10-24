@@ -13,7 +13,8 @@ public class LateMixinLoader implements ILateMixinLoader {
     @Override
     public List<String> getMixinConfigs() {
         return Arrays.asList(
-            "mixins.FoxAE2Upgrade_ae2.json"
+            "mixins.FoxAE2Upgrade_ae2.json",
+            "mixins.FoxAE2Upgrade_ae2stuff.json"
         );
     }
 
@@ -21,6 +22,9 @@ public class LateMixinLoader implements ILateMixinLoader {
     public boolean shouldMixinConfigQueue(String mixinConfig) {
         if (mixinConfig.equals("mixins.FoxAE2Upgrade_ae2.json")) {
             return Loader.isModLoaded("appliedenergistics2");
+        }
+        if (mixinConfig.equals("mixins.FoxAE2Upgrade_ae2stuff.json")) {
+            return Loader.isModLoaded("ae2stuff");
         }
         return true;
     }

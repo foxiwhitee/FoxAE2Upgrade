@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
 @Mixin(value = ControllerValidator.class, remap = false)
 public abstract class ControllerValidatorMixin {
+
     @ModifyConstant(method = "visitNode", constant = @Constant(intValue = 7))
     private int modifyMaxSize(int original) {
         return FoxConfig.controllerMaxSize;

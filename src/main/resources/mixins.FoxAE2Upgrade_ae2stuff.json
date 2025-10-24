@@ -3,15 +3,13 @@
   "compatibilityLevel": "JAVA_8",
   "required": true,
   "target": "@env(DEFAULT)",
-  "package": "foxiwhitee.FoxAE2Upgrade.mixins",
+  "package": "foxiwhitee.FoxAE2Upgrade.mixins.ae2stuff",
   "refmap": "mixins.FoxAE2Upgrade.refmap.json",
   "injectors": {
     "defaultRequire": 1
   },
   "mixins": [
-    "AENetworkProxyMixin",
-    "ControllerValidatorMixin",
-    "GridNodeMixin"
+    "TileWirelessMixin"
   ],
   "client": [],
   "server": []

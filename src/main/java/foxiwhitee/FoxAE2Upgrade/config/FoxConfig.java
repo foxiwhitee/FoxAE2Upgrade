@@ -8,6 +8,9 @@ public class FoxConfig {
     @ConfigValue(desc = "Changes the maximum size of the ME controller")
     public static int controllerMaxSize = 8;
 
+    @ConfigValue(desc = "Changes", category = "ae2stuff")
+    public static int maxWirelessChannels = 1024;
+
     @ConfigValue(category = "MolecularAssemblers", desc = "Number of items that the molecular assembler crafting per tick")
     public static long basic_molecular_assembler_speed = 200;
 

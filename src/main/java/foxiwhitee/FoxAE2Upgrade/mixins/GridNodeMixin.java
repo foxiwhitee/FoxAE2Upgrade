@@ -1,0 +1,30 @@
+package foxiwhitee.FoxAE2Upgrade.mixins;
+
+import appeng.me.GridNode;
+import foxiwhitee.FoxAE2Upgrade.api.channels.ICustomChannelCount;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+
+@Mixin(value = GridNode.class, remap = false)
+public abstract class GridNodeMixin {
+
+    @Shadow
+    private int compressedData;
+    @Final
+    @Shadow private static int[] CHANNEL_COUNT;
+
+
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public int getMaxChannels() {
+        int original = CHANNEL_COUNT[this.compressedData & 3];
+        if (((GridNode)(Object)this).getGridBlock().getMachine() instanceof ICustomChannelCount)
+            return ((ICustomChannelCount)((GridNode)(Object)this).getGridBlock().getMachine()).getMaxChannelSize();
+        return original;
+    }
+}
