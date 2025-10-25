@@ -10,10 +10,11 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(value = GridNode.class, remap = false)
 public abstract class GridNodeMixin {
 
-    @Shadow
+    @Shadow(remap = false)
     private int compressedData;
     @Final
-    @Shadow private static int[] CHANNEL_COUNT;
+    @Shadow(remap = false)
+    private static int[] CHANNEL_COUNT;
 
 
     /**

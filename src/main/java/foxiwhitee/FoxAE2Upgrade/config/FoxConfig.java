@@ -38,32 +38,22 @@ public class FoxConfig {
     public static long speedAutoPress = 1_000;
 
 
-    @ConfigValue(desc = "How much energy does the Advanced Energy Cell hold?", category = "Cells.Energy")
-    public static double advancedEnergyCellPower = 6_400_000;
-
-    @ConfigValue(desc = "How much energy does the Hybrid Energy Cell hold?", category = "Cells.Energy")
-    public static double hybridEnergyCellPower = 25_600_000;
-
-    @ConfigValue(desc = "How much energy does the Ultimate Energy Cell hold?", category = "Cells.Energy")
-    public static double ultimateEnergyCellPower = 102_400_000;
-
-
-    @ConfigValue(desc = "The maximum number of channels this cable can transmit", category = "AE2.Channels.Cables")
+    @ConfigValue(desc = "The maximum number of channels this cable can transmit", category = "Cables")
     public static int cableAliteMaxChannelSize = 64;
 
-    @ConfigValue(desc = "The maximum number of channels this cable can transmit", category = "AE2.Channels.Cables")
+    @ConfigValue(desc = "The maximum number of channels this cable can transmit", category = "Cables")
     public static int cableBimareMaxChannelSize = 128;
 
-    @ConfigValue(desc = "The maximum number of channels this cable can transmit", category = "AE2.Channels.Cables")
+    @ConfigValue(desc = "The maximum number of channels this cable can transmit", category = "Cables")
     public static int cableDefitMaxChannelSize = 256;
 
-    @ConfigValue(desc = "The maximum number of channels this cable can transmit", category = "AE2.Channels.Cables")
+    @ConfigValue(desc = "The maximum number of channels this cable can transmit", category = "Cables")
     public static int cableEfrimMaxChannelSize = 512;
 
-    @ConfigValue(desc = "The maximum number of channels this cable can transmit", category = "AE2.Channels.Cables")
+    @ConfigValue(desc = "The maximum number of channels this cable can transmit", category = "Cables")
     public static int cableNurMaxChannelSize = 1024;
 
-    @ConfigValue(desc = "The maximum number of channels this cable can transmit", category = "AE2.Channels.Cables")
+    @ConfigValue(desc = "The maximum number of channels this cable can transmit", category = "Cables")
     public static int cableXaurMaxChannelSize = 2048;
 
 }

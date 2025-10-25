@@ -1,0 +1,24 @@
+
+#Blocks
+tile.autoCrystallizer.name=Автоматичний кристалізатор
+tile.autoPress.name=Автоматичний прес
+tile.cobblestoneDuper.name=Дюпер кругляку
+tile.baseMolecularAssembler.name=Базовий молекулярний асемблер
+tile.hybridMolecularAssembler.name=Гібрідний молекулярний асемблер
+tile.ultimateMolecularAssembler.name=Ультимативеий молекулярний асемблер
+tile.advancedDriver.name=Розширений ME-Привід
+#Items
+item.alite_smart_cable_name=ME Alite Cable
+item.bimare_smart_cable_name=ME Bimare Cable
+item.defit_smart_cable_name=ME Defit Cable
+item.efrim_smart_cable_name=ME Efrim Cable
+item.nur_dense_cable_name=ME Nur Cable
+item.xaur_dense_cable_name=ME Xaur Cable
+
+#Tooltips
+tooltip.assembler.speed=§9Виробляє %s елементів за секунду
+tooltip.autoCrystallizer=§9Автоматизує заряджання кристалів, вирощування кристалів та створення зміних кристалів
+tooltip.autoPress=§9Автоматизує створення всіх процесорів
+tooltip.cobblestoneDuper=§9Заповнює будь-яку комірку зберігання кругляком
+tooltips.cables.channels=§9Кабель з максимальною кількістю каналів: %s
+

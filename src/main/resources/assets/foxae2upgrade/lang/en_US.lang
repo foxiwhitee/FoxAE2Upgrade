@@ -1,0 +1,25 @@
+itemGroup.FOX_AE2_UPGRADE_TAB=FoxAE2Upgrade
+
+#Blocks
+tile.autoCrystallizer.name=Auto Crystallizer
+tile.autoPress.name=Auto Press
+tile.cobblestoneDuper.name=Cobblestone Duper
+tile.advancedDriver.name=Advanced ME Driver
+tile.baseMolecularAssembler.name=Base Molecular Assembler
+tile.hybridMolecularAssembler.name=Hybrid Molecular Assembler
+tile.ultimateMolecularAssembler.name=Ultimate Molecular Assembler
+
+#Items
+item.alite_smart_cable_name=ME Alite Cable
+item.bimare_smart_cable_name=ME Bimare Cable
+item.defit_smart_cable_name=ME Defit Cable
+item.efrim_smart_cable_name=ME Efrim Cable
+item.nur_dense_cable_name=ME Nur Cable
+item.xaur_dense_cable_name=ME Xaur Cable
+
+#Tooltips
+tooltip.assembler.speed=§9Produces %s items per second
+tooltip.autoCrystallizer=§9Automates crystal charging, crystal growing, and crystal fluix creation
+tooltip.autoPress=§9Automates crafting of all processors
+tooltip.cobblestoneDuper=§9Fills any storage cell with a cobblestone
+tooltips.cables.channels=§9Cable with maximum number of channels: %s

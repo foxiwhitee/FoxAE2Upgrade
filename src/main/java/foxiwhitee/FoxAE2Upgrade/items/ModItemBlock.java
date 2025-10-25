@@ -2,7 +2,9 @@ package foxiwhitee.FoxAE2Upgrade.items;
 
 import appeng.block.AEBaseItemBlock;
 import appeng.me.helpers.IGridProxyable;
+import foxiwhitee.FoxAE2Upgrade.ModBlocks;
 import foxiwhitee.FoxAE2Upgrade.config.FoxConfig;
+import foxiwhitee.FoxAE2Upgrade.utils.localization.LocalizationUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -42,7 +44,20 @@ public class ModItemBlock extends AEBaseItemBlock {
     public void addCheckedInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean advancedToolTips) {
         super.addCheckedInformation(itemStack, player, list, advancedToolTips);
         if (FoxConfig.enable_tooltips) {
-
+//            if (this.blockType.equals(ModBlocks.AUTO_CRYSTALLIZER)){
+//                list.add(LocalizationUtils.localize("tooltip.autoCrystallizer"));
+//            } else if (this.blockType.equals(ModBlocks.AUTO_PRESS)){
+//                list.add(LocalizationUtils.localize("tooltip.autoPress"));
+//            } if (this.blockType.equals(ModBlocks.BASE_MOLECULAR_ASSEMBLER)) {
+//                list.add(LocalizationUtils.localize("tooltip.assembler.speed", HellConfig.basic_molecular_assembler_speed));
+//            } else if (this.blockType.equals(ModBlocks.HYBRID_MOLECULAR_ASSEMBLER)) {
+//                list.add(LocalizationUtils.localize("tooltip.assembler.speed", HellConfig.hybrid_molecular_assembler_speed));
+//            } else if (this.blockType.equals(ModBlocks.ULTIMATE_MOLECULAR_ASSEMBLER)) {
+//                list.add(LocalizationUtils.localize("tooltip.assembler.speed", HellConfig.ultimate_molecular_assembler_speed));
+//            } else
+            if (this.blockType.equals(ModBlocks.COBBLESTONE_DUPER)) {
+                list.add(LocalizationUtils.localize("tooltip.cobblestoneDuper"));
+            }
         }
     }
 }

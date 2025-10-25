@@ -125,6 +125,6 @@ public enum CableBusTextures {
     }
 
     public void registerIcon(TextureMap map) {
-        this.IIcon = map.registerIcon(FoxCore.MODID.toLowerCase() + ":ae2/cables/" + this.name);
+        this.IIcon = map.registerIcon(FoxCore.MODID.toLowerCase() + ":cables/" + this.name);
     }
 }
