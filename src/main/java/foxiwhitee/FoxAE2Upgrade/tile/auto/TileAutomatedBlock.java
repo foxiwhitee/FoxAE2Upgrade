@@ -18,6 +18,8 @@ import appeng.tile.events.TileEventType;
 import appeng.tile.grid.AENetworkTile;
 import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
+import foxiwhitee.FoxAE2Upgrade.api.crafting.ICraftingCPUClusterAccessor;
+import foxiwhitee.FoxAE2Upgrade.api.crafting.IPreCraftingMedium;
 import foxiwhitee.FoxAE2Upgrade.recipes.BaseAutoBlockRecipe;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -28,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class TileAutomatedBlock extends AENetworkTile /*implements IPreCraftingMedium*/ {
+public abstract class TileAutomatedBlock extends AENetworkTile implements IPreCraftingMedium {
     private List<ICraftingPatternDetails> patternList = new ArrayList<>();
     private ICraftingPatternDetails activePattern;
     private long craftCount;
@@ -58,47 +60,47 @@ public abstract class TileAutomatedBlock extends AENetworkTile /*implements IPre
         return false;
     }
 
-//    public boolean pushPattern(ICraftingPatternDetails details, InventoryCrafting ic, CraftingCPUCluster cluster) {
-//        if (!(details instanceof InternalPattern))
-//            return false;
-//        if (patternList == null || !patternList.contains(details) || details.isCraftable()) {
-//            return false;
-//        }
-//        ICraftingCPUClusterAccessor accessor = (ICraftingCPUClusterAccessor)((Object) cluster);
-//        long required = accessor.getWaitingFor(details) - 1;
-//        long actualRequired = required + 1;
-//        required = Math.min(required, getMaxCount());
-//        IMEInventory<IAEItemStack> inventory = cluster.getInventory();
-//        for (IAEItemStack input : details.getCondensedInputs()) {
-//            IAEItemStack copy = input.copy();
-//            copy.setStackSize(copy.getStackSize() * required);
-//            IAEItemStack extracted = inventory.extractItems(copy, Actionable.SIMULATE, cluster.getActionSource());
-//            long available = extracted == null ? 0 : extracted.getStackSize();
-//            if (copy.getStackSize() > available) {
-//                required = available / input.getStackSize();
-//            }
-//        }
-//        if (required < 0) return false;
-//        if (required >= 1) {
-//            for (IAEItemStack input : details.getCondensedInputs()) {
-//                IAEItemStack copy = input.copy();
-//                copy.setStackSize(copy.getStackSize() * required);
-//                inventory.extractItems(copy, Actionable.MODULATE, cluster.getActionSource());
-//            }
-//            for (IAEItemStack output : details.getCondensedOutputs()) {
-//                IAEItemStack copy = output.copy();
-//                copy.setStackSize(copy.getStackSize() * required);
-//                accessor.callPostChange(copy, cluster.getActionSource());
-//                accessor.getWaitingFor().add(copy.copy());
-//                accessor.callPostCraftingStatusChange(copy.copy());
-//            }
-//            accessor.setWaitingFor(details, actualRequired - required);
-//        }
-//        activePattern = details;
-//        craftCount = required + 1;
-//        craftingGrid = ic;
-//        return true;
-//    }
+    public boolean pushPattern(ICraftingPatternDetails details, InventoryCrafting ic, CraftingCPUCluster cluster) {
+        if (!(details instanceof InternalPattern))
+            return false;
+        if (patternList == null || !patternList.contains(details) || details.isCraftable()) {
+            return false;
+        }
+        ICraftingCPUClusterAccessor accessor = (ICraftingCPUClusterAccessor)((Object) cluster);
+        long required = accessor.getWaitingFor(details) - 1;
+        long actualRequired = required + 1;
+        required = Math.min(required, getMaxCount());
+        IMEInventory<IAEItemStack> inventory = cluster.getInventory();
+        for (IAEItemStack input : details.getCondensedInputs()) {
+            IAEItemStack copy = input.copy();
+            copy.setStackSize(copy.getStackSize() * required);
+            IAEItemStack extracted = inventory.extractItems(copy, Actionable.SIMULATE, cluster.getActionSource());
+            long available = extracted == null ? 0 : extracted.getStackSize();
+            if (copy.getStackSize() > available) {
+                required = available / input.getStackSize();
+            }
+        }
+        if (required < 0) return false;
+        if (required >= 1) {
+            for (IAEItemStack input : details.getCondensedInputs()) {
+                IAEItemStack copy = input.copy();
+                copy.setStackSize(copy.getStackSize() * required);
+                inventory.extractItems(copy, Actionable.MODULATE, cluster.getActionSource());
+            }
+            for (IAEItemStack output : details.getCondensedOutputs()) {
+                IAEItemStack copy = output.copy();
+                copy.setStackSize(copy.getStackSize() * required);
+                accessor.callPostChange(copy, cluster.getActionSource());
+                accessor.getWaitingFor().add(copy.copy());
+                accessor.callPostCraftingStatusChange(copy.copy());
+            }
+            accessor.setWaitingFor(details, actualRequired - required);
+        }
+        activePattern = details;
+        craftCount = required + 1;
+        craftingGrid = ic;
+        return true;
+    }
 
     public TickingRequest getTickingRequest(IGridNode iGridNode) {
         return new TickingRequest(1, 1, false, false);
