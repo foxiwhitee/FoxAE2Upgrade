@@ -3,6 +3,7 @@ package foxiwhitee.FoxAE2Upgrade.api.crafting;
 import appeng.api.networking.crafting.ICraftingPatternDetails;
 import appeng.api.networking.security.BaseActionSource;
 import appeng.api.storage.data.IAEItemStack;
+import appeng.api.storage.data.IAEStack;
 import appeng.api.storage.data.IItemList;
 
 public interface ICraftingCPUClusterAccessor {
@@ -12,7 +13,7 @@ public interface ICraftingCPUClusterAccessor {
 
     void callPostChange(IAEItemStack paramIAEItemStack, BaseActionSource paramBaseActionSource);
 
-    IItemList<IAEItemStack> getWaitingFor();
+    IItemList<IAEStack<?>> getWaitingFor();
 
     void callPostCraftingStatusChange(IAEItemStack paramIAEItemStack);
 }

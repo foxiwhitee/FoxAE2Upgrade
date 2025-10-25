@@ -11,16 +11,16 @@ import java.util.List;
 public class TileAutoPress extends TileAutomatedBlock{
     @Override
     protected ItemStack getItemFromTile(Object obj) {
-        return null;//new ItemStack(ModBlocks.AUTO_PRESS);
+        return new ItemStack(ModBlocks.AUTO_PRESS);
     }
 
     @Override
     protected List<BaseAutoBlockRecipe> getRecipes() {
-        return null;//ModRecipes.autoPressRecipes;
+        return ModRecipes.autoPressRecipes;
     }
 
     @Override
     protected long getMaxCount() {
-        return 0;//FoxConfig.speedAutoPress;
+        return FoxConfig.speedAutoPress;
     }
 }

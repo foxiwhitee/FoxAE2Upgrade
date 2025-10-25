@@ -12,16 +12,16 @@ import java.util.List;
 public class TileAutoCrystallizer extends TileAutomatedBlock{
     @Override
     protected ItemStack getItemFromTile(Object obj) {
-        return null;//new ItemStack(ModBlocks.AUTO_CRYSTALLIZER);
+        return new ItemStack(ModBlocks.AUTO_CRYSTALLIZER);
     }
 
     @Override
     protected List<BaseAutoBlockRecipe> getRecipes() {
-        return null;//ModRecipes.autoCrystallizerRecipes;
+        return ModRecipes.autoCrystallizerRecipes;
     }
 
     @Override
     protected long getMaxCount() {
-        return 0;//FoxConfig.speedAutoCrystallizer;
+        return FoxConfig.speedAutoCrystallizer;
     }
 }

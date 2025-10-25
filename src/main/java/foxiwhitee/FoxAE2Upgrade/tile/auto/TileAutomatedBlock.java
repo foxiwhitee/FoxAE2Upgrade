@@ -5,12 +5,16 @@ import appeng.api.networking.GridFlags;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.crafting.ICraftingMedium;
 import appeng.api.networking.crafting.ICraftingPatternDetails;
+import appeng.api.networking.crafting.ICraftingProvider;
 import appeng.api.networking.crafting.ICraftingProviderHelper;
 import appeng.api.networking.security.MachineSource;
+import appeng.api.networking.ticking.IGridTickable;
 import appeng.api.networking.ticking.TickRateModulation;
 import appeng.api.networking.ticking.TickingRequest;
 import appeng.api.storage.IMEInventory;
 import appeng.api.storage.data.IAEItemStack;
+import appeng.api.storage.data.IAEStack;
+import appeng.crafting.MECraftingInventory;
 import appeng.me.GridAccessException;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.tile.TileEvent;
@@ -30,11 +34,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class TileAutomatedBlock extends AENetworkTile implements IPreCraftingMedium {
+public abstract class TileAutomatedBlock extends AENetworkTile implements IPreCraftingMedium, IGridTickable, ICraftingProvider, ICraftingMedium {
     private List<ICraftingPatternDetails> patternList = new ArrayList<>();
     private ICraftingPatternDetails activePattern;
     private long craftCount;
     private InventoryCrafting craftingGrid;
+    protected boolean isBusy = false;
 
     public void provideCrafting(ICraftingProviderHelper iCraftingProviderHelper) {
         if (getRecipes() != null) {
@@ -70,11 +75,11 @@ public abstract class TileAutomatedBlock extends AENetworkTile implements IPreCr
         long required = accessor.getWaitingFor(details) - 1;
         long actualRequired = required + 1;
         required = Math.min(required, getMaxCount());
-        IMEInventory<IAEItemStack> inventory = cluster.getInventory();
-        for (IAEItemStack input : details.getCondensedInputs()) {
-            IAEItemStack copy = input.copy();
+        MECraftingInventory inventory = cluster.getInventory();
+        for (IAEStack<?> input : details.getCondensedAEInputs()) {
+            IAEItemStack copy = (IAEItemStack) input.copy();
             copy.setStackSize(copy.getStackSize() * required);
-            IAEItemStack extracted = inventory.extractItems(copy, Actionable.SIMULATE, cluster.getActionSource());
+            IAEItemStack extracted = (IAEItemStack) inventory.extractItems(copy, Actionable.SIMULATE, cluster.getActionSource());
             long available = extracted == null ? 0 : extracted.getStackSize();
             if (copy.getStackSize() > available) {
                 required = available / input.getStackSize();
@@ -82,13 +87,13 @@ public abstract class TileAutomatedBlock extends AENetworkTile implements IPreCr
         }
         if (required < 0) return false;
         if (required >= 1) {
-            for (IAEItemStack input : details.getCondensedInputs()) {
-                IAEItemStack copy = input.copy();
+            for (IAEStack<?> input : details.getCondensedAEInputs()) {
+                IAEItemStack copy = (IAEItemStack) input.copy();
                 copy.setStackSize(copy.getStackSize() * required);
                 inventory.extractItems(copy, Actionable.MODULATE, cluster.getActionSource());
             }
-            for (IAEItemStack output : details.getCondensedOutputs()) {
-                IAEItemStack copy = output.copy();
+            for (IAEStack<?> output : details.getCondensedAEOutputs()) {
+                IAEItemStack copy = (IAEItemStack) output.copy();
                 copy.setStackSize(copy.getStackSize() * required);
                 accessor.callPostChange(copy, cluster.getActionSource());
                 accessor.getWaitingFor().add(copy.copy());
@@ -109,9 +114,9 @@ public abstract class TileAutomatedBlock extends AENetworkTile implements IPreCr
     public TickRateModulation tickingRequest(IGridNode iGridNode, int ticksSinceLastCall) {
         if (activePattern == null) return TickRateModulation.IDLE;
         List<IAEItemStack> outputs = new ArrayList<>();
-        Arrays.stream(activePattern.getCondensedOutputs())
+        Arrays.stream(activePattern.getCondensedAEOutputs())
                 .map(stack -> {
-                    IAEItemStack copy = stack.copy();
+                    IAEItemStack copy = (IAEItemStack) stack.copy();
                     copy.setStackSize(copy.getStackSize() * craftCount);
                     return copy;
                 }).forEach(outputs::add);
@@ -148,16 +153,20 @@ public abstract class TileAutomatedBlock extends AENetworkTile implements IPreCr
         return TickRateModulation.IDLE;
     }
 
-//    @TileEvent(TileEventType.WORLD_NBT_WRITE)
-//    public void write(NBTTagCompound compound) {
-//        compound.setBoolean("isBusy", this.isBusy);
-//    }
+    @TileEvent(TileEventType.WORLD_NBT_WRITE)
+    public void write(NBTTagCompound compound) {
+        compound.setBoolean("isBusy", this.isBusy);
+    }
 
-//    @TileEvent(TileEventType.WORLD_NBT_READ)
-//    public void read(NBTTagCompound compound) {
-//        if (compound.hasKey("isBusy"))
-//            this.isBusy = compound.getBoolean("isBusy");
-//    }
+    @TileEvent(TileEventType.WORLD_NBT_READ)
+    public void read(NBTTagCompound compound) {
+        if (compound.hasKey("isBusy"))
+            this.isBusy = compound.getBoolean("isBusy");
+    }
+
+    public boolean isBusy() {
+        return this.isBusy;
+    }
 
     public static class InternalPattern implements ICraftingPatternDetails {
         private final AEItemStack output;

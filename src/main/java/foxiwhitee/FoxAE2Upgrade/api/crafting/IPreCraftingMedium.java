@@ -1,14 +1,11 @@
 package foxiwhitee.FoxAE2Upgrade.api.crafting;
 
+import appeng.api.networking.crafting.ICraftingMedium;
 import appeng.api.networking.crafting.ICraftingPatternDetails;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import net.minecraft.inventory.InventoryCrafting;
 
-public interface IPreCraftingMedium {
-    boolean pushPattern(ICraftingPatternDetails var1, InventoryCrafting var2);
-
-    boolean isBusy();
-
+public interface IPreCraftingMedium extends ICraftingMedium {
     default boolean pushPattern(ICraftingPatternDetails details, InventoryCrafting ic, CraftingCPUCluster cluster) {
         return this.pushPattern(details, ic);
     }
