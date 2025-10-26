@@ -15,6 +15,7 @@
     "ControllerValidatorMixin",
     "CraftingCPUCalculatorMixin",
     "CraftingCPUClusterMixin",
+    "CraftingGridCacheMixin",
     "GridNodeMixin"
   ],
   "client": [],

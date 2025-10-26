@@ -23,5 +23,5 @@ tooltip.assembler.speed=§9Produces %s items per second
 tooltip.autoCrystallizer=§9Automates crystal charging, crystal growing, and crystal fluix creation
 tooltip.autoPress=§9Automates crafting of all processors
 tooltip.cobblestoneDuper=§9Fills any storage cell with a cobblestone
-tooltips.cables.channels=§9Cable with maximum number of channels: %s
-tooltips.meServer=§9Holds up to 12 clusters from crafting storages
+tooltip.cables.channels=§9Cable with maximum number of channels: %s
+tooltip.meServer=§9Holds up to 12 clusters from crafting storages

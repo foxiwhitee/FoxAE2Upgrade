@@ -53,6 +53,9 @@ public abstract class CraftingCPUClusterMixin implements ICraftingCPUClusterAcce
     @Shadow
     abstract void addTile(TileCraftingTile te);
 
+    @Shadow
+    abstract void done();
+
     @Inject(method = "addTile", at = @At("TAIL"))
     private void onAddTileEnd(TileCraftingTile te, CallbackInfo ci) {
         if (te instanceof TileMEServer) {
@@ -120,5 +123,10 @@ public abstract class CraftingCPUClusterMixin implements ICraftingCPUClusterAcce
     @Override
     public void addTile$FoxAE2Upgrade(TileCraftingTile te) {
         addTile(te);
+    }
+
+    @Override
+    public void done$FoxAE2Upgrade() {
+        done();
     }
 }

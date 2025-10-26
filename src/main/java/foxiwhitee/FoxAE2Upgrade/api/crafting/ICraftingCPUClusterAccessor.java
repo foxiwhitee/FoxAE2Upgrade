@@ -19,4 +19,6 @@ public interface ICraftingCPUClusterAccessor {
     void callPostCraftingStatusChange(IAEItemStack paramIAEItemStack);
 
     void addTile$FoxAE2Upgrade(TileCraftingTile te);
+
+    void done$FoxAE2Upgrade();
 }
