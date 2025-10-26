@@ -7,6 +7,7 @@ tile.baseMolecularAssembler.name=Базовий молекулярний асе�
 tile.hybridMolecularAssembler.name=Гібрідний молекулярний асемблер
 tile.ultimateMolecularAssembler.name=Ультимативеий молекулярний асемблер
 tile.advancedDriver.name=Розширений ME-Привід
+tile.meServer.name=ME Сервер
 #Items
 item.alite_smart_cable.name=ME Alite Cable
 item.bimare_smart_cable.name=ME Bimare Cable
@@ -21,4 +22,5 @@ tooltip.autoCrystallizer=§9Автоматизує заряджання крис
 tooltip.autoPress=§9Автоматизує створення всіх процесорів
 tooltip.cobblestoneDuper=§9Заповнює будь-яку комірку зберігання кругляком
 tooltips.cables.channels=§9Кабель з максимальною кількістю каналів: %s
+tooltips.meServer=§9Вміщує в собі до 12 кластерів зі сховищ крафту
 

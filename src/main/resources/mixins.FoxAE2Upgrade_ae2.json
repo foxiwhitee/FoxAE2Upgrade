@@ -13,6 +13,7 @@
     "AENetworkProxyMixin",
     "ContainerUpgradeableMixin",
     "ControllerValidatorMixin",
+    "CraftingCPUCalculatorMixin",
     "CraftingCPUClusterMixin",
     "GridNodeMixin"
   ],

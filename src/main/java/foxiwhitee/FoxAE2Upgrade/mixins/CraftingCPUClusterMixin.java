@@ -7,16 +7,21 @@ import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IAEStack;
 import appeng.api.storage.data.IItemList;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
+import appeng.tile.crafting.TileCraftingTile;
 import foxiwhitee.FoxAE2Upgrade.api.crafting.ICraftingCPUClusterAccessor;
 import foxiwhitee.FoxAE2Upgrade.api.crafting.IPreCraftingMedium;
+import foxiwhitee.FoxAE2Upgrade.tile.TileMEServer;
 import net.minecraft.inventory.InventoryCrafting;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.lang.reflect.Field;
+import java.util.LinkedList;
 import java.util.Map;
 
 @Mixin(value = CraftingCPUCluster.class, remap = false)
@@ -34,6 +39,31 @@ public abstract class CraftingCPUClusterMixin implements ICraftingCPUClusterAcce
     @Final
     @Shadow(remap = false)
     private Map<ICraftingPatternDetails, ?> tasks;
+
+    @Shadow(remap = false)
+    private long availableStorage;
+
+    @Shadow(remap = false)
+    private int accelerator;
+
+    @Shadow(remap = false)
+    @Final
+    private LinkedList<TileCraftingTile> storage;
+
+    @Shadow
+    abstract void addTile(TileCraftingTile te);
+
+    @Inject(method = "addTile", at = @At("TAIL"))
+    private void onAddTileEnd(TileCraftingTile te, CallbackInfo ci) {
+        if (te instanceof TileMEServer) {
+            TileMEServer server = (TileMEServer) te;
+            int index = server.getClusterIndex((CraftingCPUCluster) (Object) this);
+
+            this.availableStorage += server.getClusterStorageBytes(index);
+            this.accelerator += server.getClusterAccelerator(index);
+            this.storage.add(te);
+        }
+    }
 
     @Redirect(method = "executeCrafting",
         at = @At(value = "INVOKE",
@@ -87,4 +117,8 @@ public abstract class CraftingCPUClusterMixin implements ICraftingCPUClusterAcce
         postCraftingStatusChange(paramIAEItemStack);
     }
 
+    @Override
+    public void addTile$FoxAE2Upgrade(TileCraftingTile te) {
+        addTile(te);
+    }
 }

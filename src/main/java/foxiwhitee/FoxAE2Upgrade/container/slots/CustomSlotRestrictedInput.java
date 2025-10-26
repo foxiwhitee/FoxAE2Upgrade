@@ -5,6 +5,9 @@ import appeng.api.definitions.IDefinitions;
 import appeng.api.definitions.IItems;
 import appeng.api.definitions.IMaterials;
 
+import appeng.block.crafting.BlockCraftingStorage;
+import appeng.block.crafting.BlockCraftingUnit;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
@@ -48,6 +51,10 @@ public class CustomSlotRestrictedInput extends CustomAppEngSlot {
             IMaterials materials = definitions.materials();
             IItems items = definitions.items();
             switch (this.which) {
+                case STORAGE:
+                    return Block.getBlockFromItem(i.getItem()) instanceof BlockCraftingStorage;
+                case ACCELERATOR:
+                    return (Block.getBlockFromItem(i.getItem()) instanceof BlockCraftingUnit && !(Block.getBlockFromItem(i.getItem()) instanceof BlockCraftingStorage));
                 default:
                     return false;
             }
@@ -68,6 +75,6 @@ public class CustomSlotRestrictedInput extends CustomAppEngSlot {
 
 
     public static enum PlacableItemType {
-
+        STORAGE, ACCELERATOR
     }
 }

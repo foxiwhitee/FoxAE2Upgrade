@@ -56,6 +56,8 @@ public class ModItemBlock extends AEBaseItemBlock {
                 list.add(LocalizationUtils.localize("tooltip.assembler.speed", FoxConfig.ultimate_molecular_assembler_speed));
             } else if (this.blockType.equals(ModBlocks.COBBLESTONE_DUPER)) {
                 list.add(LocalizationUtils.localize("tooltip.cobblestoneDuper"));
+            } else if (this.blockType.equals(ModBlocks.ME_SERVER)) {
+                list.add(LocalizationUtils.localize("tooltip.meServer"));
             }
         }
     }
