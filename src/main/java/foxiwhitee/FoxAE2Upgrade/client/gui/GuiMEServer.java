@@ -2,6 +2,7 @@ package foxiwhitee.FoxAE2Upgrade.client.gui;
 
 
 import foxiwhitee.FoxAE2Upgrade.container.ContainerMEServer;
+import foxiwhitee.FoxLib.client.gui.FoxBaseGui;
 
 public class GuiMEServer extends FoxBaseGui {
     public GuiMEServer(ContainerMEServer container) {

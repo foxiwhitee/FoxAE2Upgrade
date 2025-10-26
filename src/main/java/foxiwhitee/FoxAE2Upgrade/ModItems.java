@@ -2,7 +2,7 @@ package foxiwhitee.FoxAE2Upgrade;
 
 import appeng.api.AEApi;
 import foxiwhitee.FoxAE2Upgrade.items.part.ItemParts;
-import foxiwhitee.FoxAE2Upgrade.utils.helpers.RegisterUtils;
+import foxiwhitee.FoxLib.utils.helpers.RegisterUtils;
 import net.minecraft.item.Item;
 
 public class ModItems {

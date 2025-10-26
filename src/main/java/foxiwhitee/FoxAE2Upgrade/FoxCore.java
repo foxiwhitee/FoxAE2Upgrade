@@ -5,11 +5,9 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
 import foxiwhitee.FoxAE2Upgrade.integration.IntegrationLoader;
-import foxiwhitee.FoxAE2Upgrade.network.NetworkManager;
+import foxiwhitee.FoxLib.network.NetworkManager;
 import foxiwhitee.FoxAE2Upgrade.proxy.CommonProxy;
-import foxiwhitee.FoxAE2Upgrade.utils.helpers.GuiHandler;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -41,20 +39,15 @@ public class FoxCore {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent e) {
         proxy.preInit(e);
-        NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
-        IntegrationLoader.preInit(e);
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent e) {
         proxy.init(e);
-        IntegrationLoader.init(e);
     }
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e) {
         proxy.postInit(e);
-        NetworkManager.instance = new NetworkManager("FoxAE2Upgrade");
-        IntegrationLoader.postInit(e);
     }
 }

@@ -1,5 +1,8 @@
 package foxiwhitee.FoxAE2Upgrade.config;
 
+import foxiwhitee.FoxLib.config.Config;
+import foxiwhitee.FoxLib.config.ConfigValue;
+
 @Config(folder = "Fox-Mods", name = "FoxAE2Upgrade")
 public class FoxConfig {
     @ConfigValue(desc = "Enable tooltips?")

@@ -3,7 +3,7 @@ package foxiwhitee.FoxAE2Upgrade.block.assemblers;
 import appeng.util.Platform;
 import foxiwhitee.FoxAE2Upgrade.proxy.CommonProxy;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileUltimateMolecularAssembler;
-import foxiwhitee.FoxAE2Upgrade.utils.helpers.RenderIDs;
+import foxiwhitee.FoxLib.utils.helpers.RenderIDs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;

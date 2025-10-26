@@ -10,7 +10,7 @@ import appeng.core.sync.packets.PacketSwitchGuis;
 import foxiwhitee.FoxAE2Upgrade.FoxCore;
 import foxiwhitee.FoxAE2Upgrade.container.ContainerAdvancedDrive;
 import foxiwhitee.FoxAE2Upgrade.tile.TileAdvancedDrive;
-import foxiwhitee.FoxAE2Upgrade.utils.helpers.UtilGui;
+import foxiwhitee.FoxLib.utils.helpers.UtilGui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;

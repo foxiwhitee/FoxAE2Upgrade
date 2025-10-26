@@ -1,7 +1,7 @@
 package foxiwhitee.FoxAE2Upgrade.container;
 
 import appeng.container.AEBaseContainer;
-import foxiwhitee.FoxAE2Upgrade.container.slots.CustomSlotRestrictedInput;
+import foxiwhitee.FoxLib.container.slots.CustomSlotRestrictedInput;
 import foxiwhitee.FoxAE2Upgrade.tile.TileMEServer;
 import net.minecraft.entity.player.EntityPlayer;
 

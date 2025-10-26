@@ -4,7 +4,7 @@ import appeng.client.gui.AEBaseGui;
 import foxiwhitee.FoxAE2Upgrade.FoxCore;
 import foxiwhitee.FoxAE2Upgrade.container.ContainerCustomMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileCustomMolecularAssembler;
-import foxiwhitee.FoxAE2Upgrade.utils.helpers.UtilGui;
+import foxiwhitee.FoxLib.utils.helpers.UtilGui;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 

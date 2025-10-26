@@ -4,7 +4,7 @@ import appeng.block.AEBaseItemBlock;
 import appeng.me.helpers.IGridProxyable;
 import foxiwhitee.FoxAE2Upgrade.ModBlocks;
 import foxiwhitee.FoxAE2Upgrade.config.FoxConfig;
-import foxiwhitee.FoxAE2Upgrade.utils.localization.LocalizationUtils;
+import foxiwhitee.FoxLib.utils.helpers.LocalizationUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
