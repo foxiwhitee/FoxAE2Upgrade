@@ -9,7 +9,9 @@ import appeng.container.implementations.ContainerNetworkTool;
 import appeng.container.implementations.ContainerSecurity;
 import appeng.core.sync.network.INetworkInfo;
 import appeng.helpers.IMouseWheelItem;
+import foxiwhitee.FoxAE2Upgrade.container.ContainerMEServer;
 import foxiwhitee.FoxAE2Upgrade.network.BasePacket;
+import foxiwhitee.FoxAE2Upgrade.tile.TileMEServer;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
@@ -48,6 +50,10 @@ public class DefaultPacket extends BasePacket {
 
     @Override
     public void handleServerSide(INetworkInfo network, BasePacket packet, EntityPlayer player) {
+        Container container = player.openContainer;
+        if (container instanceof ContainerMEServer && packetName.equals("initializeClusters")) {
+            ((TileMEServer)((ContainerMEServer) container).getTileEntity()).initializeClusters();
+        }
 
     }
 

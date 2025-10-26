@@ -12,6 +12,7 @@ import foxiwhitee.FoxAE2Upgrade.api.crafting.ICraftingCPUClusterAccessor;
 import foxiwhitee.FoxAE2Upgrade.api.crafting.IPreCraftingMedium;
 import foxiwhitee.FoxAE2Upgrade.tile.TileMEServer;
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -55,6 +56,13 @@ public abstract class CraftingCPUClusterMixin implements ICraftingCPUClusterAcce
 
     @Shadow
     abstract void done();
+
+    @Redirect(method = "readFromNBT",
+        at = @At(value = "INVOKE",
+            target = "Lappeng/me/cluster/implementations/CraftingCPUCluster;getWorld()Lnet/minecraft/world/World;"))
+    private World replaceGetWorldWithNull(CraftingCPUCluster instance) {
+        return null;
+    }
 
     @Inject(method = "addTile", at = @At("TAIL"))
     private void onAddTileEnd(TileCraftingTile te, CallbackInfo ci) {
