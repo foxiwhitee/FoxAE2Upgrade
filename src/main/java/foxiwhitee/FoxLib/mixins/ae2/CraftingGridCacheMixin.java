@@ -1,10 +1,11 @@
-package foxiwhitee.FoxLib.mixins.ae2;
+package foxiwhitee.FoxAE2Upgrade.mixins;
 
 import appeng.api.networking.IGrid;
 import appeng.api.networking.IGridNode;
 import appeng.crafting.CraftingLink;
 import appeng.me.cache.CraftingGridCache;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
+import appeng.tile.crafting.TileCraftingTile;
 import foxiwhitee.FoxAE2Upgrade.api.crafting.ICraftingGridCacheAddition;
 import foxiwhitee.FoxAE2Upgrade.tile.TileMEServer;
 import org.spongepowered.asm.mixin.Final;
