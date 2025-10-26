@@ -9,7 +9,9 @@ import appeng.core.AELog;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.me.helpers.AENetworkProxy;
 import appeng.me.helpers.AENetworkProxyMultiblock;
+import appeng.tile.TileEvent;
 import appeng.tile.crafting.TileCraftingTile;
+import appeng.tile.events.TileEventType;
 import appeng.tile.inventory.AppEngInternalInventory;
 import appeng.tile.inventory.IAEAppEngInventory;
 import appeng.tile.inventory.InvOperation;
@@ -19,6 +21,7 @@ import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.lang.reflect.Method;
@@ -46,7 +49,6 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
     @Override
     public void onChangeInventory(IInventory iInventory, int i, InvOperation invOperation, ItemStack itemStack, ItemStack itemStack1) {
         if (this.getProxy().isReady() && (itemStack != null || itemStack1 != null)) {
-            System.out.println("S " + itemStack1);
             if (iInventory == storage) {
                 calculateCraftingStorage(i, itemStack1);
             }
@@ -131,6 +133,7 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
         if (Platform.isClient()) return;
 
         try {
+            virtualClusters.forEach(CraftingCPUCluster::cancel);
             virtualClusters.clear();
 
             WorldCoord loc = new WorldCoord(this);
@@ -181,7 +184,7 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
         return isFormed;
     }
 
-    @Override
+    @TileEvent(TileEventType.WORLD_NBT_WRITE)
     public void writeToNBT_TileCraftingTile(NBTTagCompound data) {
         storage.writeToNBT(data, "storage");
         accelerators.writeToNBT(data, "accelerators");
@@ -196,14 +199,24 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
     }
 
     @Override
+    public World getWorldObj() {
+        return super.getWorldObj();
+    }
+
+    @TileEvent(TileEventType.WORLD_NBT_READ)
     public void readFromNBT_TileCraftingTile(NBTTagCompound data) {
         storage.readFromNBT(data, "storage");
         accelerators.readFromNBT(data, "accelerators");
         setCoreBlock(data.getBoolean("core"));
         NBTTagCompound clusters = data.getCompoundTag("virtualClusters");
-        for (int i = 0; i < virtualClusters.size(); i++) {
-            NBTTagCompound clusterData = clusters.getCompoundTag("cluster_" + i);
-            virtualClusters.get(i).readFromNBT(clusterData);
+        initializeClusters();
+        try {
+            for (int i = 0; i < virtualClusters.size(); i++) {
+                NBTTagCompound clusterData = clusters.getCompoundTag("cluster_" + i);
+                virtualClusters.get(i).readFromNBT(clusterData);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
