@@ -6,6 +6,7 @@ import appeng.api.networking.IGridNode;
 import appeng.api.networking.events.MENetworkCraftingCpuChange;
 import appeng.api.util.WorldCoord;
 import appeng.core.AELog;
+import appeng.me.cluster.implementations.CraftingCPUCalculator;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.me.helpers.AENetworkProxy;
 import appeng.me.helpers.AENetworkProxyMultiblock;
@@ -17,6 +18,7 @@ import appeng.tile.inventory.IAEAppEngInventory;
 import appeng.tile.inventory.InvOperation;
 import appeng.util.Platform;
 import cpw.mods.fml.common.FMLCommonHandler;
+import foxiwhitee.FoxAE2Upgrade.api.crafting.ICraftingCPUClusterAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -34,9 +36,11 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
     private boolean isFormed = true;
     private AppEngInternalInventory storage = new AppEngInternalInventory(this, 12);
     private AppEngInternalInventory accelerators = new AppEngInternalInventory(this, 12);
+    private final CraftingCPUCalculator calc = new CraftingCPUCalculator(this);
 
     private long[] storage_bytes = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     private int[] accelerators_count = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    private NBTTagCompound[] previousStates = new NBTTagCompound[12];
 
     public TileMEServer() {
         this.getProxy().setFlags(GridFlags.REQUIRE_CHANNEL);
@@ -209,11 +213,20 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
         accelerators.readFromNBT(data, "accelerators");
         setCoreBlock(data.getBoolean("core"));
         NBTTagCompound clusters = data.getCompoundTag("virtualClusters");
+        for (int i = 0; i < storage.getSizeInventory(); i++) {
+            if (storage.getStackInSlot(i) != null) {
+                calculateCraftingStorage(i, storage.getStackInSlot(i));
+            }
+        }
+        for (int i = 0; i < accelerators.getSizeInventory(); i++) {
+            if (accelerators.getStackInSlot(i) != null) {
+                calculateCraftingAccelerators(i, accelerators.getStackInSlot(i));
+            }
+        }
         initializeClusters();
         try {
             for (int i = 0; i < virtualClusters.size(); i++) {
-                NBTTagCompound clusterData = clusters.getCompoundTag("cluster_" + i);
-                virtualClusters.get(i).readFromNBT(clusterData);
+                setPreviousState(i, clusters.getCompoundTag("cluster_" + i));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -240,6 +253,9 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
     public void onReady() {
         super.onReady();
         initializeClusters();
+        virtualClusters.forEach(craftingCPUCluster -> {
+            ((ICraftingCPUClusterAccessor)(Object)craftingCPUCluster).doneMEServer();
+        });
     }
 
     public List<CraftingCPUCluster> getVirtualClusters() {
@@ -252,5 +268,28 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
 
     public AppEngInternalInventory getAccelerators() {
         return accelerators;
+    }
+
+    public NBTTagCompound getPreviousState(int index) {
+        return this.previousStates[index];
+    }
+
+    public void setPreviousState(int index, NBTTagCompound previousState) {
+        this.previousStates[index] = previousState;
+    }
+
+    @Override
+    public void getDrops(World w, int x, int y, int z, List<ItemStack> drops) {
+        super.getDrops(w, x, y, z, drops);
+        storage.forEach(stack -> {
+            if (stack != null) {
+                drops.add(stack);
+            }
+        });
+        accelerators.forEach(stack -> {
+            if (stack != null) {
+                drops.add(stack);
+            }
+        });
     }
 }

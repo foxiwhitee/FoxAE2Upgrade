@@ -1,6 +1,7 @@
 package foxiwhitee.FoxAE2Upgrade.block.assemblers;
 
 import appeng.block.AEBaseTileBlock;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.IBlockAccess;
@@ -46,4 +47,5 @@ public abstract class BlockCustomMolecularAssembler extends AEBaseTileBlock {
         setBooleanAlphaPass((pass == 1));
         return (pass == 0 || pass == 1);
     }
+
 }

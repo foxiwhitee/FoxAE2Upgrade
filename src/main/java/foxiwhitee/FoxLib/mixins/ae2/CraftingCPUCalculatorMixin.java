@@ -34,6 +34,7 @@ public abstract class CraftingCPUCalculatorMixin {
                                     @Local(name = "c") CraftingCPUCluster c) {
 
         if (te instanceof TileMEServer) {
+            ((ICraftingCPUClusterAccessor)(Object)c).doneMEServer();
             ci.cancel();
         }
     }
