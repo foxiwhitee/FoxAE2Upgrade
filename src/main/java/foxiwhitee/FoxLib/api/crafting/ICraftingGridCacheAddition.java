@@ -1,4 +1,4 @@
-package foxiwhitee.FoxAE2Upgrade.api.crafting;
+package foxiwhitee.FoxLib.api.crafting;
 
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 
