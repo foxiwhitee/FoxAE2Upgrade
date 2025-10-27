@@ -12,6 +12,7 @@ import foxiwhitee.FoxAE2Upgrade.api.crafting.ICraftingCPUClusterAccessor;
 import foxiwhitee.FoxAE2Upgrade.api.crafting.IPreCraftingMedium;
 import foxiwhitee.FoxAE2Upgrade.tile.TileMEServer;
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -56,6 +57,18 @@ public abstract class CraftingCPUClusterMixin implements ICraftingCPUClusterAcce
 
     @Shadow
     abstract void done();
+
+    @Shadow
+    protected abstract TileCraftingTile getCore();
+
+    @Shadow
+    public abstract void readFromNBT(NBTTagCompound data);
+
+    @Shadow
+    protected abstract void updateCPU();
+
+    @Shadow
+    public abstract void updateName();
 
     @Redirect(method = "readFromNBT",
         at = @At(value = "INVOKE",
@@ -134,7 +147,19 @@ public abstract class CraftingCPUClusterMixin implements ICraftingCPUClusterAcce
     }
 
     @Override
-    public void done$FoxAE2Upgrade() {
-        done();
+    public void doneMEServer() {
+        TileCraftingTile core = getCore();
+        core.setCoreBlock(true);
+        if (core instanceof TileMEServer) {
+            TileMEServer server = (TileMEServer) core;
+            int index = server.getClusterIndex((CraftingCPUCluster) (Object) this);
+            if (server.getPreviousState(index) != null) {
+                readFromNBT(server.getPreviousState(index));
+                server.setPreviousState(index, null);
+            }
+        }
+
+        updateCPU();
+        updateName();
     }
 }

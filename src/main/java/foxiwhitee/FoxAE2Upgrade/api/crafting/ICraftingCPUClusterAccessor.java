@@ -20,5 +20,5 @@ public interface ICraftingCPUClusterAccessor {
 
     void addTile$FoxAE2Upgrade(TileCraftingTile te);
 
-    void done$FoxAE2Upgrade();
+    void doneMEServer();
 }
