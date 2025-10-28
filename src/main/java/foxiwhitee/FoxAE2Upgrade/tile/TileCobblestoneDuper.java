@@ -40,6 +40,9 @@ import appeng.util.IConfigManagerHost;
 import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
 import foxiwhitee.FoxAE2Upgrade.ModBlocks;
+import foxiwhitee.FoxAE2Upgrade.config.FoxConfig;
+import foxiwhitee.FoxAE2Upgrade.items.ItemProductivityCard;
+import foxiwhitee.FoxLib.utils.ProductivityUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -58,7 +61,7 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
     private static final int[] FRONT = {1};
     private static final int[] NO_SLOTS = {};
 
-    private final AppEngInternalInventory inventory = new AppEngInternalInventory(this, 2);
+    private final AppEngInternalInventory inventory = new AppEngInternalInventory(this, 3);
     private final MachineSource source = new MachineSource(this);
     private final IConfigManager settings = new ConfigManager(this);
     private ItemStack cellType;
@@ -71,6 +74,10 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
     private MEMonitorHandler<IAEItemStack> itemMonitor;
     private MEMonitorHandler<IAEFluidStack> fluidMonitor;
     private int priority;
+
+    private int productivity;
+    private int tick;
+    private double[] progressProductivity = {0};
 
     public TileCobblestoneDuper() {
         getProxy().setFlags(GridFlags.REQUIRE_CHANNEL);
@@ -115,12 +122,7 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
                     double power = 1.0;
                     IMEInventoryHandler<IAEItemStack> itemHandler = cellHandler.getCellInventory(cell, this, StorageChannel.ITEMS);
                     IMEInventoryHandler<IAEFluidStack> fluidHandler = cellHandler.getCellInventory(cell, this, StorageChannel.FLUIDS);
-                    if (itemHandler != null) {
-                        AEItemStack cobble = AEItemStack.create(new ItemStack(Blocks.cobblestone));
-                        cobble.setStackSize(2305843009213693951L);
-                        itemHandler.injectItems(cobble, Actionable.MODULATE, source);
-                        power += cellHandler.cellIdleDrain(cell, itemHandler);
-                    } else if (fluidHandler != null) {
+                    if (fluidHandler != null) {
                         power += cellHandler.cellIdleDrain(cell, fluidHandler);
                     }
                     getProxy().setIdlePowerUsage(power);
@@ -130,21 +132,8 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
             }
         }
         switch (channel) {
-            case ITEMS: {
-                if (itemMonitor != null) {
-                    return itemMonitor;
-                } else {
-                    throw new NoHandlerException();
-                }
-            }
-            case FLUIDS: {
-                if (fluidMonitor != null) {
-                    return fluidMonitor;
-                } else {
-                    throw new NoHandlerException();
-                }
-            }
-
+            case ITEMS: if (itemMonitor != null) return itemMonitor; else throw new NoHandlerException();
+            case FLUIDS: if (fluidMonitor != null) return fluidMonitor; else throw new NoHandlerException();
         }
         return null;
     }
@@ -238,28 +227,46 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
 
     @TileEvent(TileEventType.TICK)
     public void onTick() {
-        if (worldObj.isRemote) return;
-        double idlePower = getProxy().getIdlePowerUsage();
-        try {
-            if (!getProxy().getEnergy().isNetworkPowered()) {
+        if (Platform.isServer()) {
+            double idlePower = getProxy().getIdlePowerUsage();
+            try {
+                if (!getProxy().getEnergy().isNetworkPowered()) {
+                    double used = extractAEPower(idlePower, Actionable.MODULATE, PowerMultiplier.CONFIG);
+                    if ((used + 0.1 >= idlePower) != ((status & 0x40) > 0)) updateStatus();
+                }
+            } catch (GridAccessException e) {
                 double used = extractAEPower(idlePower, Actionable.MODULATE, PowerMultiplier.CONFIG);
-                if ((used + 0.1 >= idlePower) != ((status & 0x40) > 0)) {
-                    updateStatus();
+                if ((used + 0.1 >= idlePower) != ((status & 0x40) > 0)) updateStatus();
+            }
+            if (inventory.getStackInSlot(0) != null) storeContents();
+        }
+        if (tick++ >= 20 * FoxConfig.cobblestoneDuperSecondsNeed) {
+            tick = 0;
+            if (productivity > 0) {
+                progressProductivity[0]++;
+            }
+            if (Platform.isServer()) {
+                ItemStack cell = inventory.getStackInSlot(1);
+                if (cell != null && cellHandler != null) {
+                    try {
+                        IMEInventoryHandler<IAEItemStack> handler = (IMEInventoryHandler<IAEItemStack>) getInventoryHandler(StorageChannel.ITEMS);
+                        if (handler != null) {
+                            AEItemStack cobble = AEItemStack.create(new ItemStack(Blocks.cobblestone));
+                            cobble.setStackSize(FoxConfig.cobblestoneDuperItemsGenerated + FoxConfig.cobblestoneDuperItemsGenerated * ProductivityUtil.check(progressProductivity, productivity));
+                            handler.injectItems(cobble, Actionable.MODULATE, source);
+                        }
+                    } catch (NoHandlerException ignored) {
+                    }
                 }
             }
-        } catch (GridAccessException e) {
-            double used = extractAEPower(idlePower, Actionable.MODULATE, PowerMultiplier.CONFIG);
-            if ((used + 0.1 >= idlePower) != ((status & 0x40) > 0)) {
-                updateStatus();
-            }
-        }
-        if (inventory.getStackInSlot(0) != null) {
-            storeContents();
         }
     }
 
     @TileEvent(TileEventType.NETWORK_WRITE)
     public void writeToStream(ByteBuf data) {
+        data.writeInt(productivity);
+        data.writeInt(tick);
+        data.writeDouble(progressProductivity[0]);
         status = worldObj.getTotalWorldTime() - lastBlinkTime > 8 ? 0 : status & 0x24924924;
         status |= getCellStatus(0);
         status |= isPowered() ? 0x40 : 0;
@@ -271,6 +278,9 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
 
     @TileEvent(TileEventType.NETWORK_READ)
     public boolean readFromStream(ByteBuf data) {
+        productivity = data.readInt();
+        tick = data.readInt();
+        progressProductivity[0] = data.readDouble();
         int prevStatus = status;
         ItemStack prevCell = cellType;
         status = data.readByte();
@@ -285,17 +295,27 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
     @TileEvent(TileEventType.WORLD_NBT_READ)
     public void readFromNBTC(NBTTagCompound data) {
         settings.readFromNBT(data);
+        inventory.readFromNBT(data, "inv");
+        productivity = data.getInteger("productivity");
         priority = data.getInteger("priority");
         if (data.hasKey("paintedColor")) {
             color = AEColor.values()[data.getByte("paintedColor")];
         }
+
+        tick = data.getInteger("tick");
+        progressProductivity[0] = data.getDouble("progressProductivity");
     }
 
     @TileEvent(TileEventType.WORLD_NBT_WRITE)
     public void writeToNBTC(NBTTagCompound data) {
         settings.writeToNBT(data);
+        inventory.writeToNBT(data, "inv");
+        data.setInteger("productivity", productivity);
         data.setInteger("priority", priority);
         data.setByte("paintedColor", (byte) color.ordinal());
+
+        data.setInteger("tick", tick);
+        data.setDouble("progressProductivity", progressProductivity[0]);
     }
 
     @MENetworkEventSubscribe
@@ -331,11 +351,33 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
             fluidMonitor = null;
             isHandlerCached = false;
             try {
-                getProxy().getGrid().postEvent(new MENetworkCellArrayUpdate());
+                if (getProxy().getGrid() != null) {
+                    getProxy().getGrid().postEvent(new MENetworkCellArrayUpdate());
+                }
                 IStorageGrid storage = getProxy().getStorage();
                 Platform.postChanges(storage, removed, added, source);
             } catch (GridAccessException ignored) {}
-            //Platform.notifyBlocksOfNeighbors(worldObj, xCoord, yCoord, zCoord);
+            markForUpdate();
+        } else if (slot == 2) {
+            if (added == null) {
+                productivity = 0;
+            } else if (added.getItem() instanceof ItemProductivityCard){
+                productivity = switch (added.getItemDamage()) {
+                    case 0 -> FoxConfig.productivityLvl1;
+                    case 1 -> FoxConfig.productivityLvl2;
+                    case 2 -> FoxConfig.productivityLvl3;
+                    case 3 -> FoxConfig.productivityLvl4;
+                    case 4 -> FoxConfig.productivityLvl5;
+                    case 5 -> FoxConfig.productivityLvl6;
+                    case 6 -> FoxConfig.productivityLvl7;
+                    case 7 -> FoxConfig.productivityLvl8;
+                    case 8 -> FoxConfig.productivityLvl9;
+                    case 9 -> FoxConfig.productivityLvl10;
+                    case 10 -> FoxConfig.productivityLvl11;
+                    default -> 0;
+                };
+            }
+            progressProductivity[0] = 0;
             markForUpdate();
         }
     }
@@ -519,5 +561,17 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
             ISecurityGrid security = grid.getCache(ISecurityGrid.class);
             return security.hasPermission(player, permission);
         }
+    }
+
+    public int getTick() {
+        return tick;
+    }
+
+    public int getProductivity() {
+        return productivity;
+    }
+
+    public double[] getProgressProductivity() {
+        return progressProductivity;
     }
 }

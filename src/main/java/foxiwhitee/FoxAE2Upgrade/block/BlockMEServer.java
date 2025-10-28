@@ -7,6 +7,7 @@ import foxiwhitee.FoxAE2Upgrade.FoxCore;
 import foxiwhitee.FoxAE2Upgrade.client.gui.GuiMEServer;
 import foxiwhitee.FoxAE2Upgrade.container.ContainerMEServer;
 import foxiwhitee.FoxAE2Upgrade.tile.TileMEServer;
+import foxiwhitee.FoxLib.FoxLib;
 import foxiwhitee.FoxLib.utils.handler.GuiHandlers;
 import foxiwhitee.FoxLib.utils.handler.SimpleGuiHandler;
 import net.minecraft.block.material.Material;
@@ -27,7 +28,7 @@ public class BlockMEServer extends AEBaseTileBlock {
     public boolean onActivated(World world, int x, int y, int z, EntityPlayer player, int p_149727_6_, float p_149727_7_, float p_149727_8_, float p_149727_9_) {
         TileEntity tile = world.getTileEntity(x, y, z);
         if (tile instanceof TileMEServer)
-            FMLNetworkHandler.openGui(player, FoxCore.instance, GuiHandlers.meServer, world, x, y, z);
+            FMLNetworkHandler.openGui(player, FoxLib.instance, GuiHandlers.meServer, world, x, y, z);
         return true;
     }
 }

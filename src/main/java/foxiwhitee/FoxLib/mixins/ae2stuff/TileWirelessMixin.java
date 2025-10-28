@@ -1,6 +1,6 @@
 package foxiwhitee.FoxLib.mixins.ae2stuff;
 
-import foxiwhitee.FoxAE2Upgrade.api.channels.ICustomChannelCount;
+import foxiwhitee.FoxLib.api.channels.ICustomChannelCount;
 import foxiwhitee.FoxAE2Upgrade.config.FoxConfig;
 import net.bdew.ae2stuff.machines.wireless.TileWireless;
 import org.spongepowered.asm.mixin.Mixin;

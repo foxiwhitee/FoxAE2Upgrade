@@ -11,6 +11,7 @@ import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.tile.crafting.TileCraftingTile;
 import com.llamalad7.mixinextras.sugar.Local;
 import foxiwhitee.FoxAE2Upgrade.tile.TileMEServer;
+import foxiwhitee.FoxLib.api.crafting.ICraftingCPUClusterAccessor;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.spongepowered.asm.mixin.Mixin;

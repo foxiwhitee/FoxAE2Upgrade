@@ -6,6 +6,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import foxiwhitee.FoxLib.config.ConfigHandler;
+import foxiwhitee.FoxLib.integration.IntegrationLoader;
 import foxiwhitee.FoxLib.network.NetworkManager;
 import foxiwhitee.FoxLib.utils.handler.GuiHandlerRegistry;
 import foxiwhitee.FoxLib.utils.helpers.GuiHandler;
@@ -29,17 +30,17 @@ public class FoxLib {
         ConfigHandler.loadConfigs(e);
         GuiHandlerRegistry.registerGuiHandlers(e);
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
-        foxiwhitee.FoxAE2Upgrade.integration.IntegrationLoader.preInit(e);
+        IntegrationLoader.preInit(e);
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent e) {
-        foxiwhitee.FoxAE2Upgrade.integration.IntegrationLoader.init(e);
+        IntegrationLoader.init(e);
     }
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e) {
         NetworkManager.instance = new NetworkManager("FoxLib");
-        foxiwhitee.FoxAE2Upgrade.integration.IntegrationLoader.postInit(e);
+        IntegrationLoader.postInit(e);
     }
 }

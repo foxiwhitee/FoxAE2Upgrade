@@ -25,3 +25,4 @@ tooltip.autoPress=§9Automates crafting of all processors
 tooltip.cobblestoneDuper=§9Fills any storage cell with a cobblestone
 tooltip.cables.channels=§9Cable with maximum number of channels: %s
 tooltip.meServer=§9Holds up to 12 clusters from crafting storages
+tooltip.productivity.card=§9Adds %s%% productivity

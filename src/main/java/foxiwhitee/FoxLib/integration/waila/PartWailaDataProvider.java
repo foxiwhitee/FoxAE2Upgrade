@@ -1,4 +1,4 @@
-package foxiwhitee.FoxAE2Upgrade.integration.waila;
+package foxiwhitee.FoxLib.integration.waila;
 
 import appeng.api.parts.IPart;
 import appeng.integration.modules.waila.part.IPartWailaDataProvider;

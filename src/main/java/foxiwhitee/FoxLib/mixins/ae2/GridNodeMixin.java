@@ -1,7 +1,7 @@
 package foxiwhitee.FoxLib.mixins.ae2;
 
 import appeng.me.GridNode;
-import foxiwhitee.FoxAE2Upgrade.api.channels.ICustomChannelCount;
+import foxiwhitee.FoxLib.api.channels.ICustomChannelCount;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;

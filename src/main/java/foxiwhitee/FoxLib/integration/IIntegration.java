@@ -1,4 +1,4 @@
-package foxiwhitee.FoxAE2Upgrade.integration;
+package foxiwhitee.FoxLib.integration;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;

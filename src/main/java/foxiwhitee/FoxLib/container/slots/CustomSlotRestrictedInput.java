@@ -7,6 +7,7 @@ import appeng.api.definitions.IMaterials;
 
 import appeng.block.crafting.BlockCraftingStorage;
 import appeng.block.crafting.BlockCraftingUnit;
+import foxiwhitee.FoxAE2Upgrade.items.ItemProductivityCard;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -51,6 +52,8 @@ public class CustomSlotRestrictedInput extends CustomAppEngSlot {
             IMaterials materials = definitions.materials();
             IItems items = definitions.items();
             switch (this.which) {
+                case PRODUCTIVITY:
+                    return i.getItem() instanceof ItemProductivityCard;
                 case STORAGE:
                     return Block.getBlockFromItem(i.getItem()) instanceof BlockCraftingStorage;
                 case ACCELERATOR:
@@ -75,6 +78,6 @@ public class CustomSlotRestrictedInput extends CustomAppEngSlot {
 
 
     public static enum PlacableItemType {
-        STORAGE, ACCELERATOR
+        STORAGE, PRODUCTIVITY, ACCELERATOR
     }
 }

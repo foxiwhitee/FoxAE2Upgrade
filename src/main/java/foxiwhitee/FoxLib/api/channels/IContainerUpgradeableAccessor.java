@@ -1,4 +1,4 @@
-package foxiwhitee.FoxAE2Upgrade.api.channels;
+package foxiwhitee.FoxLib.api.channels;
 
 import appeng.api.config.RedstoneMode;
 import appeng.api.implementations.IUpgradeableHost;

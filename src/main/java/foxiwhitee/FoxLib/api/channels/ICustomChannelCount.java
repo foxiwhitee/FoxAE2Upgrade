@@ -1,4 +1,4 @@
-package foxiwhitee.FoxAE2Upgrade.api.channels;
+package foxiwhitee.FoxLib.api.channels;
 
 public interface ICustomChannelCount {
     int getMaxChannelSize();

@@ -21,7 +21,7 @@ import appeng.parts.AEBasePart;
 import appeng.util.Platform;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import foxiwhitee.FoxAE2Upgrade.api.channels.ICustomChannelCount;
+import foxiwhitee.FoxLib.api.channels.ICustomChannelCount;
 import foxiwhitee.FoxAE2Upgrade.items.part.ItemParts;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.renderer.RenderBlocks;

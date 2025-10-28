@@ -1,4 +1,4 @@
-package foxiwhitee.FoxAE2Upgrade.integration.waila;
+package foxiwhitee.FoxLib.integration.waila;
 
 import appeng.tile.AEBaseTile;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -6,8 +6,8 @@ import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import foxiwhitee.FoxAE2Upgrade.config.ContentConfig;
-import foxiwhitee.FoxAE2Upgrade.integration.IIntegration;
-import foxiwhitee.FoxAE2Upgrade.integration.Integration;
+import foxiwhitee.FoxLib.integration.IIntegration;
+import foxiwhitee.FoxLib.integration.Integration;
 import mcp.mobius.waila.api.IWailaDataProvider;
 import mcp.mobius.waila.api.IWailaRegistrar;
 

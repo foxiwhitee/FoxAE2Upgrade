@@ -18,7 +18,7 @@ import appeng.tile.inventory.IAEAppEngInventory;
 import appeng.tile.inventory.InvOperation;
 import appeng.util.Platform;
 import cpw.mods.fml.common.FMLCommonHandler;
-import foxiwhitee.FoxAE2Upgrade.api.crafting.ICraftingCPUClusterAccessor;
+import foxiwhitee.FoxLib.api.crafting.ICraftingCPUClusterAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;

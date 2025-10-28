@@ -1,4 +1,4 @@
-package foxiwhitee.FoxAE2Upgrade.integration;
+package foxiwhitee.FoxLib.integration;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

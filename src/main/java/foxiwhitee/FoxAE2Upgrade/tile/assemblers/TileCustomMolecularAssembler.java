@@ -35,8 +35,8 @@ import appeng.tile.inventory.AppEngInternalInventory;
 import appeng.tile.inventory.InvOperation;
 import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
-import foxiwhitee.FoxAE2Upgrade.api.crafting.ICraftingCPUClusterAccessor;
-import foxiwhitee.FoxAE2Upgrade.api.crafting.IPreCraftingMedium;
+import foxiwhitee.FoxLib.api.crafting.ICraftingCPUClusterAccessor;
+import foxiwhitee.FoxLib.api.crafting.IPreCraftingMedium;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
@@ -64,6 +64,7 @@ public abstract class TileCustomMolecularAssembler extends AENetworkInvTile impl
 
     public TileCustomMolecularAssembler() {
         getProxy().setFlags(GridFlags.REQUIRE_CHANNEL);
+        patternInventory.setMaxStackSize(1);
     }
 
     @Override

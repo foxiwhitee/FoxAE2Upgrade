@@ -1,9 +1,9 @@
-package foxiwhitee.FoxAE2Upgrade.integration.waila;
+package foxiwhitee.FoxLib.integration.waila;
 
 import appeng.api.parts.IPart;
 import appeng.core.localization.WailaText;
 import appeng.integration.modules.waila.part.BasePartWailaDataProvider;
-import foxiwhitee.FoxAE2Upgrade.api.channels.ICustomChannelCount;
+import foxiwhitee.FoxLib.api.channels.ICustomChannelCount;
 import gnu.trove.map.TObjectShortMap;
 import gnu.trove.map.hash.TObjectShortHashMap;
 import mcp.mobius.waila.api.IWailaConfigHandler;

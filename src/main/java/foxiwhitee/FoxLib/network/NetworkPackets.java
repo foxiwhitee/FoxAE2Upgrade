@@ -1,6 +1,6 @@
 package foxiwhitee.FoxLib.network;
 
-import foxiwhitee.FoxAE2Upgrade.network.packets.*;
+
 import foxiwhitee.FoxLib.network.packets.DefaultPacket;
 import io.netty.buffer.ByteBuf;
 
