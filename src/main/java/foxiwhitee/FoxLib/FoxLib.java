@@ -8,8 +8,12 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import foxiwhitee.FoxLib.config.ConfigHandler;
 import foxiwhitee.FoxLib.integration.IntegrationLoader;
 import foxiwhitee.FoxLib.network.NetworkManager;
+import foxiwhitee.FoxLib.recipes.RecipesHandler;
 import foxiwhitee.FoxLib.utils.handler.GuiHandlerRegistry;
 import foxiwhitee.FoxLib.utils.helpers.GuiHandler;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 import static foxiwhitee.FoxLib.FoxLib.*;
 
@@ -23,11 +27,10 @@ public class FoxLib {
     @Mod.Instance(MODID)
     public static FoxLib instance;
 
-
-
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent e) {
         ConfigHandler.loadConfigs(e);
+        RecipesHandler.loadRecipesLocations(e);
         GuiHandlerRegistry.registerGuiHandlers(e);
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
         IntegrationLoader.preInit(e);
@@ -42,5 +45,6 @@ public class FoxLib {
     public void postInit(FMLPostInitializationEvent e) {
         NetworkManager.instance = new NetworkManager("FoxLib");
         IntegrationLoader.postInit(e);
+        RecipesHandler.init();
     }
 }

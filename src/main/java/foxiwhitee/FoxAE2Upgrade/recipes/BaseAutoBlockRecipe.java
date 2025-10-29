@@ -1,5 +1,6 @@
 package foxiwhitee.FoxAE2Upgrade.recipes;
 
+import foxiwhitee.FoxLib.recipes.IFoxRecipe;
 import net.minecraft.item.ItemStack;
 
 import java.util.List;

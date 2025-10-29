@@ -1,4 +1,4 @@
-package foxiwhitee.FoxAE2Upgrade.recipes;
+package foxiwhitee.FoxLib.recipes;
 
 import net.minecraft.item.ItemStack;
 
