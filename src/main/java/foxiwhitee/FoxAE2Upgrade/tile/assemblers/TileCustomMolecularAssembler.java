@@ -18,7 +18,6 @@ import appeng.api.networking.security.MachineSource;
 import appeng.api.networking.ticking.IGridTickable;
 import appeng.api.networking.ticking.TickRateModulation;
 import appeng.api.networking.ticking.TickingRequest;
-import appeng.api.storage.IMEInventory;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IAEStack;
 import appeng.api.util.AECableType;
@@ -43,7 +42,6 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
@@ -53,18 +51,17 @@ import java.util.List;
 
 public abstract class TileCustomMolecularAssembler extends AENetworkInvTile implements IPowerChannelState, ICraftingMachine, ICraftingProvider, IGridTickable, IInterfaceViewable, IPreCraftingMedium {
     private static final int[] SIDES = {0};
-    private final AppEngInternalInventory patternInventory = new AppEngInternalInventory(this, 36);
-    private ICraftingPatternDetails activePattern;
-    private long craftCount;
-    private InventoryCrafting craftingGrid;
-    private List<ICraftingPatternDetails> patternList;
+    protected AppEngInternalInventory patternInventory = new AppEngInternalInventory(this, 36);
+    ICraftingPatternDetails activePattern;
+    long craftCount;
+    InventoryCrafting craftingGrid;
+    List<ICraftingPatternDetails> patternList;
     private boolean isPowered;
 
     protected abstract ItemStack getItemFromTile(Object obj);
 
     public TileCustomMolecularAssembler() {
         getProxy().setFlags(GridFlags.REQUIRE_CHANNEL);
-        patternInventory.setMaxStackSize(1);
     }
 
     @Override
@@ -131,7 +128,7 @@ public abstract class TileCustomMolecularAssembler extends AENetworkInvTile impl
         long actualRequired = required + 1;
         required = Math.min(required, getMaxCount());
         MECraftingInventory inventory = cluster.getInventory();
-        for (IAEStack<?> input : pattern.getCondensedAEOutputs()) {
+        for (IAEStack<?> input : pattern.getCondensedAEInputs()) {
             IAEItemStack copy = (IAEItemStack) input.copy();
             copy.setStackSize(copy.getStackSize() * required);
             IAEItemStack extracted = (IAEItemStack) inventory.extractItems(copy, Actionable.SIMULATE, cluster.getActionSource());
@@ -209,14 +206,14 @@ public abstract class TileCustomMolecularAssembler extends AENetworkInvTile impl
         }
     }
 
-    private void updatePatternList() {
+    void updatePatternList() {
         if (!getProxy().isReady()) return;
         Boolean[] tracked = new Boolean[36];
         Arrays.fill(tracked, false);
         if (patternList != null) {
             patternList.removeIf(pattern -> {
-                for (int i = 0; i < patternInventory.getSizeInventory(); i++) {
-                    if (pattern.getPattern() == patternInventory.getStackInSlot(i)) {
+                for (int i = 0; i < getPatterns().getSizeInventory(); i++) {
+                    if (pattern.getPattern() == getPatterns().getStackInSlot(i)) {
                         tracked[i] = true;
                         return false;
                     }
@@ -226,7 +223,7 @@ public abstract class TileCustomMolecularAssembler extends AENetworkInvTile impl
         }
         for (int i = 0; i < tracked.length; i++) {
             if (!tracked[i]) {
-                addPattern(patternInventory.getStackInSlot(i));
+                addPattern(getPatterns().getStackInSlot(i));
             }
         }
         try {
@@ -251,12 +248,12 @@ public abstract class TileCustomMolecularAssembler extends AENetworkInvTile impl
 
     @Override
     public IInventory getInternalInventory() {
-        return patternInventory;
+        return getPatterns();
     }
 
     @Override
     public void onChangeInventory(IInventory inv, int slot, InvOperation op, ItemStack removed, ItemStack added) {
-        if (inv == patternInventory) {
+        if (inv == getPatterns()) {
             updatePatternList();
         }
     }
@@ -312,7 +309,7 @@ public abstract class TileCustomMolecularAssembler extends AENetworkInvTile impl
         return false;
     }
 
-    public IInventory getPatterns() {
+    public AppEngInternalInventory getPatterns() {
         return this.patternInventory;
     }
 

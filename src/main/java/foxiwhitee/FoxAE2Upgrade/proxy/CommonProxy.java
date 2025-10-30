@@ -12,33 +12,35 @@ import foxiwhitee.FoxAE2Upgrade.ModItems;
 import foxiwhitee.FoxAE2Upgrade.ModRecipes;
 import foxiwhitee.FoxAE2Upgrade.config.ContentConfig;
 import foxiwhitee.FoxAE2Upgrade.container.ContainerAdvancedDrive;
-import foxiwhitee.FoxAE2Upgrade.container.ContainerCustomMolecularAssembler;
+import foxiwhitee.FoxAE2Upgrade.container.assemblers.ContainerAdvancedMolecularAssembler;
+import foxiwhitee.FoxAE2Upgrade.container.assemblers.ContainerQuantumMolecularAssembler;
+import foxiwhitee.FoxAE2Upgrade.container.assemblers.ContainerUltimateMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.tile.TileAdvancedDrive;
-import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileBaseMolecularAssembler;
-import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileHybridMolecularAssembler;
+import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileAdvancedMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileUltimateMolecularAssembler;
+import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileQuantumMolecularAssembler;
 import net.minecraftforge.common.util.EnumHelper;
 
 public class CommonProxy {
     private static GuiBridge GUI_ADV_ME_DRIVE = null;
-    private static GuiBridge GUI_BASE_MOLECULAR_ASSEMBLER = null;
-    private static GuiBridge GUI_HYBRID_MOLECULAR_ASSEMBLER = null;
+    private static GuiBridge GUI_ADVANCED_MOLECULAR_ASSEMBLER = null;
     private static GuiBridge GUI_ULTIMATE_MOLECULAR_ASSEMBLER = null;
+    private static GuiBridge GUI_QUANTUM_MOLECULAR_ASSEMBLER = null;
 
     public static GuiBridge getGuiAdvMeDrive() {
         return GUI_ADV_ME_DRIVE;
     }
 
-    public static GuiBridge getGuiBaseMolecularAssembler() {
-        return GUI_BASE_MOLECULAR_ASSEMBLER;
-    }
-
-    public static GuiBridge getGuiHybridMolecularAssembler() {
-        return GUI_HYBRID_MOLECULAR_ASSEMBLER;
+    public static GuiBridge getGuiAdvancedMolecularAssembler() {
+        return GUI_ADVANCED_MOLECULAR_ASSEMBLER;
     }
 
     public static GuiBridge getGuiUltimateMolecularAssembler() {
         return GUI_ULTIMATE_MOLECULAR_ASSEMBLER;
+    }
+
+    public static GuiBridge getGuiQuantumMolecularAssembler() {
+        return GUI_QUANTUM_MOLECULAR_ASSEMBLER;
     }
 
     public void preInit(FMLPreInitializationEvent event) {
@@ -50,9 +52,9 @@ public class CommonProxy {
 
     public void init(FMLInitializationEvent event) {
         if (ContentConfig.enableMolecularAssemblers) {
-            Api.INSTANCE.registries().interfaceTerminal().register(TileBaseMolecularAssembler.class);
-            Api.INSTANCE.registries().interfaceTerminal().register(TileHybridMolecularAssembler.class);
+            Api.INSTANCE.registries().interfaceTerminal().register(TileAdvancedMolecularAssembler.class);
             Api.INSTANCE.registries().interfaceTerminal().register(TileUltimateMolecularAssembler.class);
+            Api.INSTANCE.registries().interfaceTerminal().register(TileQuantumMolecularAssembler.class);
         }
     }
 
@@ -62,9 +64,9 @@ public class CommonProxy {
             GUI_ADV_ME_DRIVE = (GuiBridge) EnumHelper.addEnum(GuiBridge.class, "AdvMEDrive", new Class[]{Class.class, Class.class, GuiHostType.class, SecurityPermissions.class}, new Object[]{ContainerAdvancedDrive.class, TileAdvancedDrive.class, GuiHostType.WORLD, SecurityPermissions.BUILD});
         }
         if (ContentConfig.enableMolecularAssemblers) {
-            GUI_BASE_MOLECULAR_ASSEMBLER = (GuiBridge) EnumHelper.addEnum(GuiBridge.class, "BaseModularAssembler", new Class[]{Class.class, Class.class, GuiHostType.class, SecurityPermissions.class}, new Object[]{ContainerCustomMolecularAssembler.class, TileBaseMolecularAssembler.class, GuiHostType.WORLD, SecurityPermissions.BUILD});
-            GUI_HYBRID_MOLECULAR_ASSEMBLER = (GuiBridge) EnumHelper.addEnum(GuiBridge.class, "HybridModularAssembler", new Class[]{Class.class, Class.class, GuiHostType.class, SecurityPermissions.class}, new Object[]{ContainerCustomMolecularAssembler.class, TileHybridMolecularAssembler.class, GuiHostType.WORLD, SecurityPermissions.BUILD});
-            GUI_ULTIMATE_MOLECULAR_ASSEMBLER = (GuiBridge) EnumHelper.addEnum(GuiBridge.class, "UltimateModularAssembler", new Class[]{Class.class, Class.class, GuiHostType.class, SecurityPermissions.class}, new Object[]{ContainerCustomMolecularAssembler.class, TileUltimateMolecularAssembler.class, GuiHostType.WORLD, SecurityPermissions.BUILD});
+            GUI_ADVANCED_MOLECULAR_ASSEMBLER = (GuiBridge) EnumHelper.addEnum(GuiBridge.class, "AdvancedModularAssembler", new Class[]{Class.class, Class.class, GuiHostType.class, SecurityPermissions.class}, new Object[]{ContainerAdvancedMolecularAssembler.class, TileAdvancedMolecularAssembler.class, GuiHostType.WORLD, SecurityPermissions.BUILD});
+            GUI_ULTIMATE_MOLECULAR_ASSEMBLER = (GuiBridge) EnumHelper.addEnum(GuiBridge.class, "UltimateModularAssembler", new Class[]{Class.class, Class.class, GuiHostType.class, SecurityPermissions.class}, new Object[]{ContainerUltimateMolecularAssembler.class, TileUltimateMolecularAssembler.class, GuiHostType.WORLD, SecurityPermissions.BUILD});
+            GUI_QUANTUM_MOLECULAR_ASSEMBLER = (GuiBridge) EnumHelper.addEnum(GuiBridge.class, "QuantumModularAssembler", new Class[]{Class.class, Class.class, GuiHostType.class, SecurityPermissions.class}, new Object[]{ContainerQuantumMolecularAssembler.class, TileQuantumMolecularAssembler.class, GuiHostType.WORLD, SecurityPermissions.BUILD});
         }
     }
 }

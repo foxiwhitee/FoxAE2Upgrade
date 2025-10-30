@@ -46,4 +46,8 @@ public abstract class BlockCustomMolecularAssembler extends AEBaseTileBlock {
         return (pass == 0 || pass == 1);
     }
 
+    @Override
+    public int getRenderType() {
+        return -1;
+    }
 }
