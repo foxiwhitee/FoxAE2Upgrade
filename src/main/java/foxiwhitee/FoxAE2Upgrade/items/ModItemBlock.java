@@ -48,14 +48,17 @@ public class ModItemBlock extends AEBaseItemBlock {
                 list.add(LocalizationUtils.localize("tooltip.autoCrystallizer"));
             } else if (this.blockType.equals(ModBlocks.AUTO_PRESS)){
                 list.add(LocalizationUtils.localize("tooltip.autoPress"));
-            } if (this.blockType.equals(ModBlocks.BASE_MOLECULAR_ASSEMBLER)) {
-                list.add(LocalizationUtils.localize("tooltip.assembler.speed", FoxConfig.basic_molecular_assembler_speed));
-            } else if (this.blockType.equals(ModBlocks.HYBRID_MOLECULAR_ASSEMBLER)) {
-                list.add(LocalizationUtils.localize("tooltip.assembler.speed", FoxConfig.hybrid_molecular_assembler_speed));
+            } if (this.blockType.equals(ModBlocks.ADVANCED_MOLECULAR_ASSEMBLER)) {
+                list.add(LocalizationUtils.localize("tooltip.assembler.speed", FoxConfig.advanced_molecular_assembler_speed));
             } else if (this.blockType.equals(ModBlocks.ULTIMATE_MOLECULAR_ASSEMBLER)) {
                 list.add(LocalizationUtils.localize("tooltip.assembler.speed", FoxConfig.ultimate_molecular_assembler_speed));
+                list.add(LocalizationUtils.localize("tooltip.productivity.base", FoxConfig.ultimate_molecular_assembler_productivity));
+            } else if (this.blockType.equals(ModBlocks.QUANTUM_MOLECULAR_ASSEMBLER)) {
+                list.add(LocalizationUtils.localize("tooltip.assembler.speed", FoxConfig.quantum_molecular_assembler_speed));
+                list.add(LocalizationUtils.localize("tooltip.productivity.base", FoxConfig.quantum_molecular_assembler_productivity));
             } else if (this.blockType.equals(ModBlocks.COBBLESTONE_DUPER)) {
                 list.add(LocalizationUtils.localize("tooltip.cobblestoneDuper"));
+                list.add(LocalizationUtils.localize("tooltip.productivity.base", 0));
             } else if (this.blockType.equals(ModBlocks.ME_SERVER)) {
                 list.add(LocalizationUtils.localize("tooltip.meServer"));
             }

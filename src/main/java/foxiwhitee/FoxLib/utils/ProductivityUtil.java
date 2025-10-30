@@ -2,6 +2,8 @@ package foxiwhitee.FoxLib.utils;
 
 import foxiwhitee.FoxAE2Upgrade.config.FoxConfig;
 
+import java.util.Map;
+
 public class ProductivityUtil {
     private static double findNumberOfCycles(int percent) {
         return Math.pow((double) percent / 100, -1);
@@ -13,6 +15,20 @@ public class ProductivityUtil {
             int out = 0;
             while (progress[0] >= n) {
                 progress[0] -= n;
+                out++;
+            }
+            return out;
+        } else {
+            return 0;
+        }
+    }
+
+    public static <T> int check(Map<T, Double> progress, T key, int percent) {
+        double n = findNumberOfCycles(percent);
+        if (progress.get(key) >= n) {
+            int out = 0;
+            while (progress.get(key) >= n) {
+                progress.merge(key, -n, Double::sum);
                 out++;
             }
             return out;
