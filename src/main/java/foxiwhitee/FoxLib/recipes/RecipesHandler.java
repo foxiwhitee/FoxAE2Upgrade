@@ -93,7 +93,7 @@ public class RecipesHandler {
 
             if (protocol.equals("jar")) {
                 String jarPath = dirURL.getPath().substring(5, dirURL.getPath().indexOf('!'));
-                try (JarFile jar = new JarFile(URLDecoder.decode(jarPath))) {
+                try (JarFile jar = new JarFile(jarPath)) {
                     Enumeration<JarEntry> entries = jar.entries();
                     while (entries.hasMoreElements()) {
                         JarEntry entry = entries.nextElement();
