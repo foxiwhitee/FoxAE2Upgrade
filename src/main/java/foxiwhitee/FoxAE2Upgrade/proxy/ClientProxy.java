@@ -1,10 +1,8 @@
 package foxiwhitee.FoxAE2Upgrade.proxy;
 
-import appeng.client.texture.CableBusTextures;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import foxiwhitee.FoxAE2Upgrade.FoxCore;
 import foxiwhitee.FoxAE2Upgrade.ModBlocks;
 import foxiwhitee.FoxAE2Upgrade.client.ClientEventHandler;
 import foxiwhitee.FoxAE2Upgrade.client.render.assemblers.RenderAdvancedMolecularAssembler;
@@ -14,18 +12,9 @@ import foxiwhitee.FoxAE2Upgrade.config.ContentConfig;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileAdvancedMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileQuantumMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileUltimateMolecularAssembler;
-import foxiwhitee.FoxLib.utils.helpers.RegisterUtils;
-import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import foxiwhitee.FoxLib.register.RegisterUtils;
 import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.IItemRenderer;
-import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.EnumHelper;
-import org.lwjgl.opengl.GL11;
-
-import java.util.HashMap;
 
 public class ClientProxy extends CommonProxy {
 

@@ -1,4 +1,4 @@
-package foxiwhitee.FoxLib.utils.helpers;
+package foxiwhitee.FoxLib.register;
 
 import com.google.common.reflect.ClassPath;
 import cpw.mods.fml.client.registry.ClientRegistry;
