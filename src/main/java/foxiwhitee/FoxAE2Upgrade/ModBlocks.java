@@ -12,11 +12,17 @@ import foxiwhitee.FoxAE2Upgrade.config.ContentConfig;
 import foxiwhitee.FoxAE2Upgrade.tile.TileAdvancedDrive;
 import foxiwhitee.FoxAE2Upgrade.tile.TileCobblestoneDuper;
 import foxiwhitee.FoxAE2Upgrade.tile.TileMEServer;
+import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileAdvancedMolecularAssembler;
+import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileQuantumMolecularAssembler;
+import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileUltimateMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.tile.auto.TileAutoCrystallizer;
 import foxiwhitee.FoxAE2Upgrade.tile.auto.TileAutoPress;
+import foxiwhitee.FoxLib.client.render.StaticRender;
 import foxiwhitee.FoxLib.registries.RegisterUtils;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
+
+import java.util.Locale;
 
 
 public class ModBlocks {
@@ -29,8 +35,16 @@ public class ModBlocks {
     public static final Block AUTO_CRYSTALLIZER = new BlockAENetwork("autoCrystallizer", TileAutoCrystallizer.class);
     public static final Block AUTO_PRESS = new BlockAENetwork("autoPress", TileAutoPress.class);
 
+    @StaticRender(modID = "foxae2upgrade", tile = TileAdvancedMolecularAssembler.class,
+        model = "models/molecularAssembler.obj", texture = "textures/blocks/assemblers/advancedMolecularAssembler.png")
     public static final Block ADVANCED_MOLECULAR_ASSEMBLER = new BlockAdvancedMolecularAssembler("advancedMolecularAssembler");
+
+    @StaticRender(modID = "foxae2upgrade", tile = TileUltimateMolecularAssembler.class,
+        model = "models/molecularAssembler.obj", texture = "textures/blocks/assemblers/ultimateMolecularAssembler.png")
     public static final Block ULTIMATE_MOLECULAR_ASSEMBLER = new BlockUltimateMolecularAssembler("ultimateMolecularAssembler");
+
+    @StaticRender(modID = "foxae2upgrade", tile = TileQuantumMolecularAssembler.class,
+        model = "models/molecularAssembler.obj", texture = "textures/blocks/assemblers/quantumMolecularAssembler.png")
     public static final Block QUANTUM_MOLECULAR_ASSEMBLER = new BlockQuantumMolecularAssembler("quantumMolecularAssembler");
 
     public static void registerBlocks() {
