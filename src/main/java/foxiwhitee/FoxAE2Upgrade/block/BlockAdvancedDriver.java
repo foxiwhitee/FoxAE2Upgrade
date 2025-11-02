@@ -21,6 +21,7 @@ public class BlockAdvancedDriver extends AEBaseTileBlock {
         super(Material.iron);
         setHardness(1.0F);
         setBlockName(name);
+        setCreativeTab(FoxCore.FOX_TAB);
         setBlockTextureName(FoxCore.MODID + ":driver/" + name);
         setTileEntity(TileAdvancedDrive.class);
         this.isOpaque = false;

@@ -14,7 +14,7 @@ import foxiwhitee.FoxAE2Upgrade.tile.TileCobblestoneDuper;
 import foxiwhitee.FoxAE2Upgrade.tile.TileMEServer;
 import foxiwhitee.FoxAE2Upgrade.tile.auto.TileAutoCrystallizer;
 import foxiwhitee.FoxAE2Upgrade.tile.auto.TileAutoPress;
-import foxiwhitee.FoxLib.register.RegisterUtils;
+import foxiwhitee.FoxLib.registries.RegisterUtils;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 

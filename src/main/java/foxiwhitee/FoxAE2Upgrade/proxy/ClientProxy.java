@@ -12,7 +12,7 @@ import foxiwhitee.FoxAE2Upgrade.config.ContentConfig;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileAdvancedMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileQuantumMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileUltimateMolecularAssembler;
-import foxiwhitee.FoxLib.register.RegisterUtils;
+import foxiwhitee.FoxLib.registries.RegisterUtils;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
 

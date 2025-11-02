@@ -1,4 +1,4 @@
-package foxiwhitee.FoxLib.register;
+package foxiwhitee.FoxLib.registries;
 
 import com.google.common.reflect.ClassPath;
 import cpw.mods.fml.client.registry.ClientRegistry;
@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class RegisterUtils {
-    public static CreativeTabs tab = FoxCore.FOX_TAB;
     public static final List<Block> blocks = new ArrayList<>();
     public static final List<Item> items = new ArrayList<>();
 
@@ -87,14 +86,12 @@ public class RegisterUtils {
     }
 
     public static void registerBlock(Block block) {
-        block.setCreativeTab(tab);
         GameRegistry.registerBlock(block, ModItemBlock.class, block.getUnlocalizedName().replace("tile.", ""));
         blocks.add(block);
 
     }
 
     public static void registerBlock(Block block, Class<? extends ItemBlock> itemBlock) {
-        block.setCreativeTab(tab);
         GameRegistry.registerBlock(block, itemBlock, block.getUnlocalizedName().replace("tile.", ""));
         blocks.add(block);
     }
@@ -108,13 +105,11 @@ public class RegisterUtils {
     }
 
     public static void registerItem(Item item) {
-        item.setCreativeTab(tab);
         GameRegistry.registerItem(item, item.getUnlocalizedName().replace("item.", ""));
         items.add(item);
     }
 
     public static void registerItem(Item item, String name) {
-        item.setCreativeTab(tab);
         GameRegistry.registerItem(item, name);
         items.add(item);
     }

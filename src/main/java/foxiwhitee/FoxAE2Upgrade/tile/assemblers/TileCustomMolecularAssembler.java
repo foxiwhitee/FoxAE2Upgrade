@@ -51,7 +51,7 @@ import java.util.List;
 
 public abstract class TileCustomMolecularAssembler extends AENetworkInvTile implements IPowerChannelState, ICraftingMachine, ICraftingProvider, IGridTickable, IInterfaceViewable, IPreCraftingMedium {
     private static final int[] SIDES = {0};
-    protected AppEngInternalInventory patternInventory = new AppEngInternalInventory(this, 36);
+    protected AppEngInternalInventory patternInventory = new AppEngInternalInventory(this, 36, 1);
     ICraftingPatternDetails activePattern;
     long craftCount;
     InventoryCrafting craftingGrid;

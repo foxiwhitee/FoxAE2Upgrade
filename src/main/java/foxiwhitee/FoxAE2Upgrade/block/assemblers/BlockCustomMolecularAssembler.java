@@ -1,6 +1,7 @@
 package foxiwhitee.FoxAE2Upgrade.block.assemblers;
 
 import appeng.block.AEBaseTileBlock;
+import foxiwhitee.FoxAE2Upgrade.FoxCore;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,6 +13,7 @@ public abstract class BlockCustomMolecularAssembler extends AEBaseTileBlock {
         super(Material.iron);
         setHardness(1.0F);
         setBlockName(name);
+        setCreativeTab(FoxCore.FOX_TAB);
         this.isOpaque = false;
         this.lightOpacity = 1;
 

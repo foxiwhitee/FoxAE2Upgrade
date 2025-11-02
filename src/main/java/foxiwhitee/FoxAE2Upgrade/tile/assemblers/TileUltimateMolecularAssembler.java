@@ -26,7 +26,7 @@ import net.minecraft.tileentity.TileEntity;
 import java.util.*;
 
 public class TileUltimateMolecularAssembler extends TileCustomMolecularAssembler {
-    protected AppEngInternalInventory patternInventory = new AppEngInternalInventory(this, 72);
+    protected AppEngInternalInventory patternInventory = new AppEngInternalInventory(this, 72, 1);
     private Map<ICraftingPatternDetails, Double> productivityHistory = new HashMap<>();
 
     @Override
@@ -57,7 +57,6 @@ public class TileUltimateMolecularAssembler extends TileCustomMolecularAssembler
 
     public TileUltimateMolecularAssembler() {
         getProxy().setIdlePowerUsage(FoxConfig.ultimate_molecular_assembler_power);
-        getPatterns().setMaxStackSize(1);
     }
 
     @Override

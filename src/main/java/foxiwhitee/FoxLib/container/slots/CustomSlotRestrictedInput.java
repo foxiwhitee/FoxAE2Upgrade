@@ -7,7 +7,7 @@ import appeng.api.definitions.IMaterials;
 
 import appeng.block.crafting.BlockCraftingStorage;
 import appeng.block.crafting.BlockCraftingUnit;
-import foxiwhitee.FoxAE2Upgrade.items.ItemProductivityCard;
+import foxiwhitee.FoxLib.items.ItemProductivityCard;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;

@@ -1,0 +1,95 @@
+{
+  "crafts": [
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.33:4>",
+      "inputs": ["<ore:cableAlite>", "<ore:cableAlite>", "<ore:cableAlite>", "<ore:cableAlite>",
+        "<appliedenergistics2:item.ItemMultiMaterial.44>", "<appliedenergistics2:item.ItemMultiMaterial.43>", "<ore:dustEnderPearl>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.33>",
+      "inputs": ["<ore:cableBimare>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.17>",
+      "inputs": ["<ore:cableBimare>", "<ore:dyeWhite>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.18>",
+      "inputs": ["<ore:cableBimare>", "<ore:dyeOrange>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.19>",
+      "inputs": ["<ore:cableBimare>", "<ore:dyeMagenta>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.20>",
+      "inputs": ["<ore:cableBimare>", "<ore:dyeLightBlue>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.21>",
+      "inputs": ["<ore:cableBimare>", "<ore:dyeYellow>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.22>",
+      "inputs": ["<ore:cableBimare>", "<ore:dyeLime>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.23>",
+      "inputs": ["<ore:cableBimare>", "<ore:dyePink>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.24>",
+      "inputs": ["<ore:cableBimare>", "<ore:dyeGray>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.25>",
+      "inputs": ["<ore:cableBimare>", "<ore:dyeLightGray>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.26>",
+      "inputs": ["<ore:cableBimare>", "<ore:dyeCyan>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.27>",
+      "inputs": ["<ore:cableBimare>", "<ore:dyePurple>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.28>",
+      "inputs": ["<ore:cableBimare>", "<ore:dyeBlue>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.29>",
+      "inputs": ["<ore:cableBimare>", "<ore:dyeBrown>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.30>",
+      "inputs": ["<ore:cableBimare>", "<ore:dyeGreen>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.31>",
+      "inputs": ["<ore:cableBimare>", "<ore:dyeRed>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.32>",
+      "inputs": ["<ore:cableBimare>", "<ore:dyeBlack>"]
+    }
+  ]
+}

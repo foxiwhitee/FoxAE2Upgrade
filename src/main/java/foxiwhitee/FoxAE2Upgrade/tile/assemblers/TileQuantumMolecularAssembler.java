@@ -7,11 +7,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
 public class TileQuantumMolecularAssembler extends TileUltimateMolecularAssembler {
-    protected AppEngInternalInventory patternInventory = new AppEngInternalInventory(this, 108);
+    protected AppEngInternalInventory patternInventory = new AppEngInternalInventory(this, 108, 1);
 
     public TileQuantumMolecularAssembler() {
         getProxy().setIdlePowerUsage(FoxConfig.quantum_molecular_assembler_power);
-        getPatterns().setMaxStackSize(1);
     }
 
     @Override

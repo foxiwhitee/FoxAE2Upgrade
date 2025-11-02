@@ -41,7 +41,7 @@ import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
 import foxiwhitee.FoxAE2Upgrade.ModBlocks;
 import foxiwhitee.FoxAE2Upgrade.config.FoxConfig;
-import foxiwhitee.FoxAE2Upgrade.items.ItemProductivityCard;
+import foxiwhitee.FoxLib.items.ItemProductivityCard;
 import foxiwhitee.FoxLib.utils.ProductivityUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;

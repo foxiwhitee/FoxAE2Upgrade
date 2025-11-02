@@ -1,7 +1,7 @@
-package foxiwhitee.FoxAE2Upgrade.items;
+package foxiwhitee.FoxLib.items;
 
-import foxiwhitee.FoxAE2Upgrade.FoxCore;
 import foxiwhitee.FoxAE2Upgrade.config.FoxConfig;
+import foxiwhitee.FoxLib.FoxLib;
 import foxiwhitee.FoxLib.utils.helpers.LocalizationUtils;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -20,7 +20,7 @@ public class ItemProductivityCard extends Item {
 
     public ItemProductivityCard(String name) {
         this.name = name;
-        setCreativeTab(FoxCore.FOX_TAB);
+        setCreativeTab(FoxLib.FOX_TAB);
         setUnlocalizedName(name);
         hasSubtypes = true;
     }
@@ -55,7 +55,7 @@ public class ItemProductivityCard extends Item {
     @Override
     public void registerIcons(IIconRegister register) {
         for (int i = 0; i < prefixes.length; i++) {
-            icons[i] = register.registerIcon(FoxCore.MODID.toLowerCase() + ":productivityCards/" + name + prefixes[i]);
+            icons[i] = register.registerIcon(FoxLib.MODID.toLowerCase() + ":productivityCards/" + name + prefixes[i]);
         }
     }
 

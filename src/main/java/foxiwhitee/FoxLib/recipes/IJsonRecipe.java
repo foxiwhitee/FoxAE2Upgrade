@@ -1,5 +1,7 @@
 package foxiwhitee.FoxLib.recipes;
 
+import com.google.gson.JsonObject;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,6 +12,8 @@ public interface IJsonRecipe<I, O> {
     boolean hasOreDict();
     boolean hasMineTweakerIntegration();
     String getType();
+    IJsonRecipe create(JsonObject data);
+    void register();
 
     default String addCraftByMineTweaker() {
         return "";

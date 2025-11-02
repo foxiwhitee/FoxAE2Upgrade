@@ -25,7 +25,7 @@ public class FoxCore {
     public static final CreativeTabs FOX_TAB = new CreativeTabs("FOX_AE2_UPGRADE_TAB") {
         @Override
         public Item getTabIconItem() {
-            return Item.getItemFromBlock(Blocks.bedrock);
+            return Item.getItemFromBlock(ModBlocks.QUANTUM_MOLECULAR_ASSEMBLER);
         }
     };
 

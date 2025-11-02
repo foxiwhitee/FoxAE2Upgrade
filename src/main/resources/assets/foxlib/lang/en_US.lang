@@ -1,0 +1,6 @@
+itemGroup.FOX_LIB_TAB=FOX_LIB
+
+#Items
+item.productivityCard.name=Productivity Card %s
+#Tooltips
+tooltip.productivity.card=§9Adds %s%% productivity

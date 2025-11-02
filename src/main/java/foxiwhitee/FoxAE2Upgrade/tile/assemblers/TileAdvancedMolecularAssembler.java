@@ -10,7 +10,6 @@ public class TileAdvancedMolecularAssembler extends TileCustomMolecularAssembler
 
     public TileAdvancedMolecularAssembler() {
         getProxy().setIdlePowerUsage(FoxConfig.advanced_molecular_assembler_power);
-        getPatterns().setMaxStackSize(1);
     }
 
     @Override

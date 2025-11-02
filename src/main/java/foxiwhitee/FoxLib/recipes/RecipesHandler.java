@@ -2,12 +2,16 @@ package foxiwhitee.FoxLib.recipes;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import cpw.mods.fml.common.discovery.ASMDataTable;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import foxiwhitee.FoxLib.api.FoxLibApi;
 
 import java.io.*;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -59,7 +63,43 @@ public class RecipesHandler {
 
             });
         });
-        recipes.forEach(System.out::println);
+        recipes.forEach(jsonObject -> {
+            if (jsonObject.has("crafts")) {
+                JsonArray array = jsonObject.getAsJsonArray("crafts");
+                for (int i = 0; i < array.size(); i++) {
+                    JsonObject object = array.get(i).getAsJsonObject();
+                    createCraft(object);
+                }
+            } else {
+                createCraft(jsonObject);
+            }
+        });
+    }
+
+    private static void createCraft(JsonObject jsonObject) {
+        if (jsonObject.has("type")) {
+            String type = jsonObject.get("type").getAsString();
+            for (int i = 0; i < FoxLibApi.instance.registries().registerJsonRecipe().size(); i++) {
+                Map.Entry<String, Class<? extends IJsonRecipe>> entry = FoxLibApi.instance.registries().registerJsonRecipe().getEntry(i);
+                if (type.equals(entry.getKey())) {
+                    Constructor<? extends IJsonRecipe> constructor = null;
+                    try {
+                        constructor = entry.getValue().getDeclaredConstructor();
+                    } catch (NoSuchMethodException e) {
+                        throw new RuntimeException(e);
+                    }
+                    constructor.setAccessible(true);
+                    try {
+                        IJsonRecipe recipe = constructor.newInstance();
+                        recipe.create(jsonObject);
+                        recipe.register();
+                        return;
+                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
     }
 
     public static List<JsonObject> loadJsonResources(Class<?> clazz, String path)

@@ -15,11 +15,16 @@ import foxiwhitee.FoxAE2Upgrade.container.ContainerAdvancedDrive;
 import foxiwhitee.FoxAE2Upgrade.container.assemblers.ContainerAdvancedMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.container.assemblers.ContainerQuantumMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.container.assemblers.ContainerUltimateMolecularAssembler;
+import foxiwhitee.FoxAE2Upgrade.recipes.AutoCrystallizerCraft;
+import foxiwhitee.FoxAE2Upgrade.recipes.AutoPressCraft;
 import foxiwhitee.FoxAE2Upgrade.tile.TileAdvancedDrive;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileAdvancedMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileUltimateMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileQuantumMolecularAssembler;
+import foxiwhitee.FoxLib.api.FoxLibApi;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.EnumHelper;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class CommonProxy {
     private static GuiBridge GUI_ADV_ME_DRIVE = null;
@@ -55,6 +60,32 @@ public class CommonProxy {
             Api.INSTANCE.registries().interfaceTerminal().register(TileAdvancedMolecularAssembler.class);
             Api.INSTANCE.registries().interfaceTerminal().register(TileUltimateMolecularAssembler.class);
             Api.INSTANCE.registries().interfaceTerminal().register(TileQuantumMolecularAssembler.class);
+        }
+        if (ContentConfig.enableCables) {
+            for (int i = 0; i < 17; i++) {
+                OreDictionary.registerOre("cableAlite", new ItemStack(ModItems.ITEM_PARTS, 1, i));
+            }
+            for (int i = 17; i < 34; i++) {
+                OreDictionary.registerOre("cableBimare", new ItemStack(ModItems.ITEM_PARTS, 1, i));
+            }
+            for (int i = 34; i < 51; i++) {
+                OreDictionary.registerOre("cableDefit", new ItemStack(ModItems.ITEM_PARTS, 1, i));
+            }
+            for (int i = 51; i < 68; i++) {
+                OreDictionary.registerOre("cableEfrim", new ItemStack(ModItems.ITEM_PARTS, 1, i));
+            }
+            for (int i = 68; i < 85; i++) {
+                OreDictionary.registerOre("cableNur", new ItemStack(ModItems.ITEM_PARTS, 1, i));
+            }
+            for (int i = 85; i < 102; i++) {
+                OreDictionary.registerOre("cableXaur", new ItemStack(ModItems.ITEM_PARTS, 1, i));
+            }
+        }
+        if (ContentConfig.enableAutoPress) {
+            FoxLibApi.instance.registries().registerJsonRecipe().register(AutoPressCraft.class, "autoPress");
+        }
+        if (ContentConfig.enableAutoCrystallizer) {
+            FoxLibApi.instance.registries().registerJsonRecipe().register(AutoCrystallizerCraft.class, "autoCrystallizer");
         }
     }
 
