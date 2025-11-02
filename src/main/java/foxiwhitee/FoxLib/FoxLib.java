@@ -4,7 +4,9 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import foxiwhitee.FoxLib.commands.CommandHand;
 import foxiwhitee.FoxLib.config.ConfigHandler;
 import foxiwhitee.FoxLib.integration.IntegrationLoader;
 import foxiwhitee.FoxLib.items.ItemProductivityCard;
@@ -67,4 +69,10 @@ public class FoxLib {
         IntegrationLoader.postInit(e);
         RecipesHandler.init();
     }
+
+    @Mod.EventHandler
+    public void onServerStarting(FMLServerStartingEvent event) {
+        event.registerServerCommand(new CommandHand());
+    }
+
 }

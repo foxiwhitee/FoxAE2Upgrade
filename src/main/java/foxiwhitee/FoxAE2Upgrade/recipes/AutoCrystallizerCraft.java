@@ -72,7 +72,8 @@ public class AutoCrystallizerCraft implements IJsonRecipe<ItemStack, ItemStack> 
     public IJsonRecipe create(JsonObject data) {
         try {
             this.outputs = new ItemStack[] { RecipeUtils.getOutput(data) };
-            this.inputs = (ItemStack[]) RecipeUtils.getInputs(data, hasOreDict());
+            Object[] objects = RecipeUtils.getInputs(data, hasOreDict());
+            this.inputs = Arrays.copyOf(objects, objects.length, ItemStack[].class);
         } catch (RuntimeException e) {
             if (e.getMessage().startsWith("Item not found:")) {
                 this.inputs = null;
@@ -91,7 +92,7 @@ public class AutoCrystallizerCraft implements IJsonRecipe<ItemStack, ItemStack> 
         }
         if (inputs == null || inputs.length == 0)
             throw new IllegalArgumentException("Inputs cannot be empty for autoCrystallizer recipe");
-        BaseAutoBlockRecipe recipe = new BaseAutoBlockRecipe(outputs[0], Arrays.asList(inputs));
+        BaseAutoBlockRecipe recipe = new BaseAutoBlockRecipe(outputs[0], Arrays.asList((Object[]) inputs));
         ModRecipes.autoCrystallizerRecipes.add(recipe);
     }
 

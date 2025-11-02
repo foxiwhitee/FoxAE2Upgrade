@@ -5,7 +5,7 @@
       "output": "<foxlib:productivityCard>",
       "inputs": ["<minecraft:redstone_block>", "<minecraft:redstone_torch>", "<minecraft:redstone_block>",
                 "<minecraft:iron_ingot>", "<minecraft:comparator>", "<minecraft:iron_ingot>",
-                "<minecraft:redstone_block><minecraft:redstone_block>", "<minecraft:redstone_torch>", "<minecraft:redstone_block>"]
+                "<minecraft:redstone_block>", "<minecraft:redstone_torch>", "<minecraft:redstone_block>"]
     },
     {
       "type": "workbenchShaped",
