@@ -1,0 +1,39 @@
+{
+  "crafts": [
+    {
+      "type": "autoPress",
+      "output": "<appliedenergistics2:item.ItemMultiMaterial.17>",
+      "inputs": ["<minecraft:diamond>"]
+    },
+    {
+      "type": "autoPress",
+      "output": "<appliedenergistics2:item.ItemMultiMaterial.18>",
+      "inputs": ["<minecraft:gold_ingot>"]
+    },
+    {
+      "type": "autoPress",
+      "output": "<appliedenergistics2:item.ItemMultiMaterial.16>",
+      "inputs": ["<appliedenergistics2:item.ItemMultiMaterial.10>"]
+    },
+    {
+      "type": "autoPress",
+      "output": "<appliedenergistics2:item.ItemMultiMaterial.20>",
+      "inputs": ["<appliedenergistics2:item.ItemMultiMaterial.5>"]
+    },
+    {
+      "type": "autoPress",
+      "output": "<appliedenergistics2:item.ItemMultiMaterial.24>",
+      "inputs": ["<appliedenergistics2:item.ItemMultiMaterial.17>", "<appliedenergistics2:item.ItemMultiMaterial.20>", "<minecraft:redstone>"]
+    },
+    {
+      "type": "autoPress",
+      "output": "<appliedenergistics2:item.ItemMultiMaterial.22>",
+      "inputs": ["<appliedenergistics2:item.ItemMultiMaterial.18>", "<appliedenergistics2:item.ItemMultiMaterial.20>", "<minecraft:redstone>"]
+    },
+    {
+      "type": "autoPress",
+      "output": "<appliedenergistics2:item.ItemMultiMaterial.23>",
+      "inputs": ["<appliedenergistics2:item.ItemMultiMaterial.16>", "<appliedenergistics2:item.ItemMultiMaterial.20>", "<minecraft:redstone>"]
+    }
+  ]
+}

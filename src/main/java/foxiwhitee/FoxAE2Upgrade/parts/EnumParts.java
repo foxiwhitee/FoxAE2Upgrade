@@ -18,32 +18,32 @@ import java.util.Set;
 
 public enum EnumParts {
     InvalidType(-1, EnumSet.of(AEFeature.Core), EnumSet.noneOf(IntegrationType.class), null, false, ""),
-    ALITE_SMART_CABLE(0, EnumSet.of(AEFeature.Core), EnumSet.noneOf(IntegrationType.class), PartCableAlite.class, ContentConfig.enableCables, StatCollector.translateToLocalFormatted("tooltips.cables.channels", FoxConfig.cableAliteMaxChannelSize)) {
+    ALITE_SMART_CABLE(0, EnumSet.of(AEFeature.Core), EnumSet.noneOf(IntegrationType.class), PartCableAlite.class, ContentConfig.enableCables, StatCollector.translateToLocalFormatted("tooltip.cables.channels", FoxConfig.cableAliteMaxChannelSize)) {
         public boolean isCable() {
             return true;
         }
     },
-    BIMARE_SMART_CABLE(17, EnumSet.of(AEFeature.Core), EnumSet.noneOf(IntegrationType.class), PartCableBimare.class, ContentConfig.enableCables, StatCollector.translateToLocalFormatted("tooltips.cables.channels", FoxConfig.cableBimareMaxChannelSize)) {
+    BIMARE_SMART_CABLE(17, EnumSet.of(AEFeature.Core), EnumSet.noneOf(IntegrationType.class), PartCableBimare.class, ContentConfig.enableCables, StatCollector.translateToLocalFormatted("tooltip.cables.channels", FoxConfig.cableBimareMaxChannelSize)) {
         public boolean isCable() {
             return true;
         }
     },
-    DEFIT_SMART_CABLE(34, EnumSet.of(AEFeature.Core), EnumSet.noneOf(IntegrationType.class), PartCableDefit.class, ContentConfig.enableCables, StatCollector.translateToLocalFormatted("tooltips.cables.channels", FoxConfig.cableDefitMaxChannelSize)) {
+    DEFIT_SMART_CABLE(34, EnumSet.of(AEFeature.Core), EnumSet.noneOf(IntegrationType.class), PartCableDefit.class, ContentConfig.enableCables, StatCollector.translateToLocalFormatted("tooltip.cables.channels", FoxConfig.cableDefitMaxChannelSize)) {
         public boolean isCable() {
             return true;
         }
     },
-    EFRIM_SMART_CABLE(51, EnumSet.of(AEFeature.Core), EnumSet.noneOf(IntegrationType.class), PartCableEfrim.class, ContentConfig.enableCables, StatCollector.translateToLocalFormatted("tooltips.cables.channels", FoxConfig.cableEfrimMaxChannelSize)) {
+    EFRIM_SMART_CABLE(51, EnumSet.of(AEFeature.Core), EnumSet.noneOf(IntegrationType.class), PartCableEfrim.class, ContentConfig.enableCables, StatCollector.translateToLocalFormatted("tooltip.cables.channels", FoxConfig.cableEfrimMaxChannelSize)) {
         public boolean isCable() {
             return true;
         }
     },
-    NUR_DENSE_CABLE(68, EnumSet.of(AEFeature.Core), EnumSet.noneOf(IntegrationType.class), PartDenseCableNur.class, ContentConfig.enableCables, StatCollector.translateToLocalFormatted("tooltips.cables.channels", FoxConfig.cableNurMaxChannelSize)) {
+    NUR_DENSE_CABLE(68, EnumSet.of(AEFeature.Core), EnumSet.noneOf(IntegrationType.class), PartDenseCableNur.class, ContentConfig.enableCables, StatCollector.translateToLocalFormatted("tooltip.cables.channels", FoxConfig.cableNurMaxChannelSize)) {
         public boolean isCable() {
             return true;
         }
     },
-    XAUR_DENSE_CABLE(85, EnumSet.of(AEFeature.Core), EnumSet.noneOf(IntegrationType.class), PartDenseCableXaur.class, ContentConfig.enableCables, StatCollector.translateToLocalFormatted("tooltips.cables.channels", FoxConfig.cableXaurMaxChannelSize)) {
+    XAUR_DENSE_CABLE(85, EnumSet.of(AEFeature.Core), EnumSet.noneOf(IntegrationType.class), PartDenseCableXaur.class, ContentConfig.enableCables, StatCollector.translateToLocalFormatted("tooltip.cables.channels", FoxConfig.cableXaurMaxChannelSize)) {
         public boolean isCable() {
             return true;
         }
@@ -101,7 +101,7 @@ public enum EnumParts {
     }
 
     public ItemStack getStack() {
-        return new ItemStack((Item)ModItems.ITEM_PARTS, 1, getBaseDamage());
+        return new ItemStack((Item) ModItems.ITEM_PARTS, 1, getBaseDamage());
     }
 
     public boolean isRegister() {

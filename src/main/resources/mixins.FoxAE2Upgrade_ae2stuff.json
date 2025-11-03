@@ -4,7 +4,7 @@
   "required": true,
   "target": "@env(DEFAULT)",
   "package": "foxiwhitee.FoxAE2Upgrade.mixins.ae2stuff",
-  "refmap": "mixins.FoxAE2Upgrade.refmap.json",
+  "refmap": "mixins.FoxLib.refmap.json",
   "injectors": {
     "defaultRequire": 1
   },

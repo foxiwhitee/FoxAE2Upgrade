@@ -40,7 +40,7 @@ import static appeng.tile.storage.TileDrive.*;
 public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive, IPriorityHost {
     private final int[] sides = new int[0];
 
-    private final AppEngInternalInventory inv = new AppEngInternalInventory((IAEAppEngInventory)this, 30);
+    private final AppEngInternalInventory inv = new AppEngInternalInventory(this, 30);
 
     private final ICellHandler[] handlersBySlot = new ICellHandler[30];
 
@@ -56,15 +56,15 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
 
     private long lastStateChange = 0L;
 
-    private final int[] state = new int[] { 0, 0, 0 };
+    private final int[] state = new int[]{0, 0, 0};
 
     private int priority = 0;
 
     private boolean wasActive = false;
 
     public TileAdvancedDrive() {
-        this.mySrc = (BaseActionSource)new MachineSource((IActionHost)this);
-        getProxy().setFlags(new GridFlags[] { GridFlags.REQUIRE_CHANNEL });
+        this.mySrc = new MachineSource(this);
+        getProxy().setFlags(new GridFlags[]{GridFlags.REQUIRE_CHANNEL});
     }
 
     @TileEvent(TileEventType.NETWORK_WRITE)
@@ -104,10 +104,10 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
         if (handler == null)
             return 0;
         if (handler.getChannel() == StorageChannel.ITEMS &&
-                ch != null)
+            ch != null)
             return ch.getStatusForCell(cell, handler.getInternal());
         if (handler.getChannel() == StorageChannel.FLUIDS &&
-                ch != null)
+            ch != null)
             return ch.getStatusForCell(cell, handler.getInternal());
         return 0;
     }
@@ -121,13 +121,13 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
     public boolean toggleItemStorageCellLocking() {
         boolean res = false;
 
-        for(int i = 0; i < this.handlersBySlot.length; ++i) {
+        for (int i = 0; i < this.handlersBySlot.length; ++i) {
             ICellHandler cellHandler = this.handlersBySlot[i];
             ItemStack cell = this.inv.getStackInSlot(i);
             if (!ItemBasicStorageCell.checkInvalidForLockingAndStickyCarding(cell, cellHandler)) {
                 IMEInventoryHandler<?> inv = cellHandler.getCellInventory(cell, this, StorageChannel.ITEMS);
                 if (inv instanceof ICellInventoryHandler) {
-                    ICellInventoryHandler handler = (ICellInventoryHandler)inv;
+                    ICellInventoryHandler handler = (ICellInventoryHandler) inv;
                     if (ItemBasicStorageCell.cellIsPartitioned(handler)) {
                         unpartitionStorageCell(handler);
                     } else {
@@ -155,13 +155,13 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
     public int applyStickyToItemStorageCells(ItemStack cards) {
         int res = 0;
 
-        for(int i = 0; i < this.handlersBySlot.length; ++i) {
+        for (int i = 0; i < this.handlersBySlot.length; ++i) {
             ICellHandler cellHandler = this.handlersBySlot[i];
             ItemStack cell = this.inv.getStackInSlot(i);
             if (!ItemBasicStorageCell.checkInvalidForLockingAndStickyCarding(cell, cellHandler)) {
                 Item var7 = cell.getItem();
                 if (var7 instanceof ICellWorkbenchItem) {
-                    ICellWorkbenchItem cellItem = (ICellWorkbenchItem)var7;
+                    ICellWorkbenchItem cellItem = (ICellWorkbenchItem) var7;
                     if (res + 1 <= cards.stackSize && applyStickyCardToItemStorageCell(cellHandler, cell, this, cellItem)) {
                         ++res;
                     }
@@ -266,11 +266,11 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
     }
 
     public DimensionalCoord getLocation() {
-        return new DimensionalCoord((TileEntity)this);
+        return new DimensionalCoord((TileEntity) this);
     }
 
     public IInventory getInternalInventory() {
-        return (IInventory)this.inv;
+        return (IInventory) this.inv;
     }
 
     public boolean isItemValidForSlot(int i, ItemStack itemstack) {
@@ -283,10 +283,11 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
             updateState();
         }
         try {
-            getProxy().getGrid().postEvent((MENetworkEvent)new MENetworkCellArrayUpdate());
+            getProxy().getGrid().postEvent((MENetworkEvent) new MENetworkCellArrayUpdate());
             IStorageGrid gs = getProxy().getStorage();
             Platform.postChanges(gs, removed, added, this.mySrc);
-        } catch (GridAccessException gridAccessException) {}
+        } catch (GridAccessException gridAccessException) {
+        }
         markForUpdate();
     }
 
@@ -306,17 +307,17 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
                 if (is != null) {
                     this.handlersBySlot[x] = AEApi.instance().registries().cell().getHandler(is);
                     if (this.handlersBySlot[x] != null) {
-                        IMEInventoryHandler<?> cell = this.handlersBySlot[x].getCellInventory(is, (ISaveProvider)this, StorageChannel.ITEMS);
+                        IMEInventoryHandler<?> cell = this.handlersBySlot[x].getCellInventory(is, (ISaveProvider) this, StorageChannel.ITEMS);
                         if (cell != null) {
-                            power += this.handlersBySlot[x].cellIdleDrain(is, (IMEInventory)cell);
+                            power += this.handlersBySlot[x].cellIdleDrain(is, (IMEInventory) cell);
                             MEInventoryHandler<IAEItemStack> ih = new MEInventoryHandler(cell, cell.getChannel());
                             ih.setPriority(this.priority);
                             this.invBySlot[x] = ih;
                             this.items.add(ih);
                         } else {
-                            cell = this.handlersBySlot[x].getCellInventory(is, (ISaveProvider)this, StorageChannel.FLUIDS);
+                            cell = this.handlersBySlot[x].getCellInventory(is, (ISaveProvider) this, StorageChannel.FLUIDS);
                             if (cell != null) {
-                                power += this.handlersBySlot[x].cellIdleDrain(is, (IMEInventory)cell);
+                                power += this.handlersBySlot[x].cellIdleDrain(is, (IMEInventory) cell);
                                 MEInventoryHandler<IAEItemStack> ih = new MEInventoryHandler(cell, cell.getChannel());
                                 ih.setPriority(this.priority);
                                 this.invBySlot[x] = ih;
@@ -339,7 +340,7 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
     public List<IMEInventoryHandler> getCellArray(StorageChannel channel) {
         if (getProxy().isActive()) {
             updateState();
-            return (channel == StorageChannel.ITEMS) ? (List)this.items : (List)this.fluids;
+            return (channel == StorageChannel.ITEMS) ? (List) this.items : (List) this.fluids;
         }
         return new ArrayList<>();
     }
@@ -354,8 +355,9 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
         this.isCached = false;
         updateState();
         try {
-            getProxy().getGrid().postEvent((MENetworkEvent)new MENetworkCellArrayUpdate());
-        } catch (GridAccessException gridAccessException) {}
+            getProxy().getGrid().postEvent((MENetworkEvent) new MENetworkCellArrayUpdate());
+        } catch (GridAccessException gridAccessException) {
+        }
     }
 
     public void blinkCell(int slot) {
@@ -370,6 +372,6 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
     }
 
     public void saveChanges(IMEInventory cellInventory) {
-        this.worldObj.markTileEntityChunkModified(this.xCoord, this.yCoord, this.zCoord, (TileEntity)this);
+        this.worldObj.markTileEntityChunkModified(this.xCoord, this.yCoord, this.zCoord, (TileEntity) this);
     }
 }

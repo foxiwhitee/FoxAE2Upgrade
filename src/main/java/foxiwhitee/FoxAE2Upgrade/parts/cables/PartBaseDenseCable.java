@@ -22,7 +22,7 @@ import org.lwjgl.opengl.GL11;
 import java.util.EnumSet;
 import java.util.Iterator;
 
-public abstract class PartBaseDenseCable extends PartBaseCable{
+public abstract class PartBaseDenseCable extends PartBaseCable {
     public PartBaseDenseCable(ItemStack is) {
         super(is);
     }
@@ -99,9 +99,9 @@ public abstract class PartBaseDenseCable extends PartBaseCable{
         OffsetIcon ch1 = new OffsetIcon(getChannelTex(4, false).getIcon(), offU, offV);
         OffsetIcon ch2 = new OffsetIcon(getChannelTex(4, true).getIcon(), offU, offV);
         for (ForgeDirection side : EnumSet.<ForgeDirection>of(ForgeDirection.UP, ForgeDirection.DOWN)) {
-            rh.renderInventoryFace((IIcon)main, side, renderer);
-            rh.renderInventoryFace((IIcon)ch1, side, renderer);
-            rh.renderInventoryFace((IIcon)ch2, side, renderer);
+            rh.renderInventoryFace((IIcon) main, side, renderer);
+            rh.renderInventoryFace((IIcon) ch1, side, renderer);
+            rh.renderInventoryFace((IIcon) ch2, side, renderer);
         }
         offU = 9.0F;
         offV = 0.0F;
@@ -109,17 +109,17 @@ public abstract class PartBaseDenseCable extends PartBaseCable{
         ch1 = new OffsetIcon(getChannelTex(4, false).getIcon(), offU, offV);
         ch2 = new OffsetIcon(getChannelTex(4, true).getIcon(), offU, offV);
         for (ForgeDirection side : EnumSet.<ForgeDirection>of(ForgeDirection.EAST, ForgeDirection.WEST)) {
-            rh.renderInventoryFace((IIcon)main, side, renderer);
-            rh.renderInventoryFace((IIcon)ch1, side, renderer);
-            rh.renderInventoryFace((IIcon)ch2, side, renderer);
+            rh.renderInventoryFace((IIcon) main, side, renderer);
+            rh.renderInventoryFace((IIcon) ch1, side, renderer);
+            rh.renderInventoryFace((IIcon) ch2, side, renderer);
         }
         main = new OffsetIcon(getTexture(getCableColor()), 0.0F, 0.0F);
         ch1 = new OffsetIcon(getChannelTex(4, false).getIcon(), 0.0F, 0.0F);
         ch2 = new OffsetIcon(getChannelTex(4, true).getIcon(), 0.0F, 0.0F);
         for (ForgeDirection side : EnumSet.<ForgeDirection>of(ForgeDirection.SOUTH, ForgeDirection.NORTH)) {
-            rh.renderInventoryFace((IIcon)main, side, renderer);
-            rh.renderInventoryFace((IIcon)ch1, side, renderer);
-            rh.renderInventoryFace((IIcon)ch2, side, renderer);
+            rh.renderInventoryFace((IIcon) main, side, renderer);
+            rh.renderInventoryFace((IIcon) ch1, side, renderer);
+            rh.renderInventoryFace((IIcon) ch2, side, renderer);
         }
         rh.setTexture(null);
     }
@@ -131,7 +131,7 @@ public abstract class PartBaseDenseCable extends PartBaseCable{
         EnumSet<ForgeDirection> sides = this.getConnections().clone();
         boolean hasBuses = false;
 
-        for(ForgeDirection of : this.getConnections()) {
+        for (ForgeDirection of : this.getConnections()) {
             if (!this.isDense(of)) {
                 hasBuses = true;
             }
@@ -141,7 +141,7 @@ public abstract class PartBaseDenseCable extends PartBaseCable{
             ForgeDirection selectedSide = ForgeDirection.UNKNOWN;
             Iterator i$ = this.getConnections().iterator();
             if (i$.hasNext()) {
-                ForgeDirection of = (ForgeDirection)i$.next();
+                ForgeDirection of = (ForgeDirection) i$.next();
                 selectedSide = of;
             }
 
@@ -155,7 +155,7 @@ public abstract class PartBaseDenseCable extends PartBaseCable{
             switch (selectedSide) {
                 case DOWN:
                 case UP:
-                    renderer.setRenderBounds((double)0.1875F, (double)0.0F, (double)0.1875F, (double)0.8125F, (double)1.0F, (double)0.8125F);
+                    renderer.setRenderBounds((double) 0.1875F, (double) 0.0F, (double) 0.1875F, (double) 0.8125F, (double) 1.0F, (double) 0.8125F);
                     rh.setTexture(def, def, off, off, off, off);
                     rh.renderBlockCurrentBounds(x, y, z, renderer);
                     renderer.uvRotateTop = 0;
@@ -165,10 +165,10 @@ public abstract class PartBaseDenseCable extends PartBaseCable{
                     Tessellator.instance.setBrightness(15728880);
                     Tessellator.instance.setColorOpaque_I(this.getCableColor().blackVariant);
                     rh.setTexture(firstIcon, firstIcon, firstOffset, firstOffset, firstOffset, firstOffset);
-                    this.renderAllFaces((AEBaseBlock)rh.getBlock(), x, y, z, rh, renderer);
+                    this.renderAllFaces((AEBaseBlock) rh.getBlock(), x, y, z, rh, renderer);
                     Tessellator.instance.setColorOpaque_I(this.getCableColor().whiteVariant);
                     rh.setTexture(secondIcon, secondIcon, secondOffset, secondOffset, secondOffset, secondOffset);
-                    this.renderAllFaces((AEBaseBlock)rh.getBlock(), x, y, z, rh, renderer);
+                    this.renderAllFaces((AEBaseBlock) rh.getBlock(), x, y, z, rh, renderer);
                     break;
                 case EAST:
                 case WEST:
@@ -179,10 +179,10 @@ public abstract class PartBaseDenseCable extends PartBaseCable{
                     renderer.uvRotateTop = 1;
                     renderer.uvRotateSouth = 0;
                     renderer.uvRotateNorth = 0;
-                    AEBaseBlock blk = (AEBaseBlock)rh.getBlock();
+                    AEBaseBlock blk = (AEBaseBlock) rh.getBlock();
                     FlippableIcon ico = blk.getRendererInstance().getTexture(ForgeDirection.EAST);
                     ico.setFlip(false, true);
-                    renderer.setRenderBounds((double)0.0F, (double)0.1875F, (double)0.1875F, (double)1.0F, (double)0.8125F, (double)0.8125F);
+                    renderer.setRenderBounds((double) 0.0F, (double) 0.1875F, (double) 0.1875F, (double) 1.0F, (double) 0.8125F, (double) 0.8125F);
                     rh.renderBlockCurrentBounds(x, y, z, renderer);
                     Tessellator.instance.setBrightness(15728880);
                     FlippableIcon fpA = new FlippableIcon(firstIcon);
@@ -191,10 +191,10 @@ public abstract class PartBaseDenseCable extends PartBaseCable{
                     fpB.setFlip(true, false);
                     Tessellator.instance.setColorOpaque_I(this.getCableColor().blackVariant);
                     rh.setTexture(firstOffset, firstOffset, firstOffset, firstOffset, firstIcon, fpA);
-                    this.renderAllFaces((AEBaseBlock)rh.getBlock(), x, y, z, rh, renderer);
+                    this.renderAllFaces((AEBaseBlock) rh.getBlock(), x, y, z, rh, renderer);
                     Tessellator.instance.setColorOpaque_I(this.getCableColor().whiteVariant);
                     rh.setTexture(secondOffset, secondOffset, secondOffset, secondOffset, secondIcon, fpB);
-                    this.renderAllFaces((AEBaseBlock)rh.getBlock(), x, y, z, rh, renderer);
+                    this.renderAllFaces((AEBaseBlock) rh.getBlock(), x, y, z, rh, renderer);
                     break;
                 case NORTH:
                 case SOUTH:
@@ -204,18 +204,18 @@ public abstract class PartBaseDenseCable extends PartBaseCable{
                     renderer.uvRotateNorth = 1;
                     renderer.uvRotateSouth = 2;
                     renderer.uvRotateWest = 1;
-                    renderer.setRenderBounds((double)0.1875F, (double)0.1875F, (double)0.0F, (double)0.8125F, (double)0.8125F, (double)1.0F);
+                    renderer.setRenderBounds((double) 0.1875F, (double) 0.1875F, (double) 0.0F, (double) 0.8125F, (double) 0.8125F, (double) 1.0F);
                     rh.renderBlockCurrentBounds(x, y, z, renderer);
                     Tessellator.instance.setBrightness(15728880);
                     Tessellator.instance.setColorOpaque_I(this.getCableColor().blackVariant);
                     rh.setTexture(firstOffset, firstOffset, firstIcon, firstIcon, firstOffset, firstOffset);
-                    this.renderAllFaces((AEBaseBlock)rh.getBlock(), x, y, z, rh, renderer);
+                    this.renderAllFaces((AEBaseBlock) rh.getBlock(), x, y, z, rh, renderer);
                     Tessellator.instance.setColorOpaque_I(this.getCableColor().whiteVariant);
                     rh.setTexture(secondOffset, secondOffset, secondIcon, secondIcon, secondOffset, secondOffset);
-                    this.renderAllFaces((AEBaseBlock)rh.getBlock(), x, y, z, rh, renderer);
+                    this.renderAllFaces((AEBaseBlock) rh.getBlock(), x, y, z, rh, renderer);
             }
         } else {
-            for(ForgeDirection of : this.getConnections()) {
+            for (ForgeDirection of : this.getConnections()) {
                 if (this.isDense(of)) {
                     this.renderDenseConnection(x, y, z, rh, renderer, this.getChannelsOnSide()[of.ordinal()], of);
                 } else if (this.isSmart(of)) {
@@ -231,6 +231,6 @@ public abstract class PartBaseDenseCable extends PartBaseCable{
         }
 
         renderer.uvRotateBottom = renderer.uvRotateEast = renderer.uvRotateNorth = renderer.uvRotateSouth = renderer.uvRotateTop = renderer.uvRotateWest = 0;
-        rh.setTexture((IIcon)null);
+        rh.setTexture((IIcon) null);
     }
 }

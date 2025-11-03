@@ -3,9 +3,9 @@
 tile.autoCrystallizer.name=Автоматичний кристалізатор
 tile.autoPress.name=Автоматичний прес
 tile.cobblestoneDuper.name=Дюпер кругляку
-tile.baseMolecularAssembler.name=Базовий молекулярний асемблер
-tile.hybridMolecularAssembler.name=Гібрідний молекулярний асемблер
-tile.ultimateMolecularAssembler.name=Ультимативеий молекулярний асемблер
+tile.advancedMolecularAssembler.name=Розширений молекулярний асемблер
+tile.ultimateMolecularAssembler.name=Ультимативний молекулярний асемблер
+tile.quantumMolecularAssembler.name=Квантовий молекулярний асемблер
 tile.advancedDriver.name=Розширений ME-Привід
 tile.meServer.name=ME Сервер
 #Items
@@ -23,4 +23,5 @@ tooltip.autoPress=§9Автоматизує створення всіх проц
 tooltip.cobblestoneDuper=§9Заповнює будь-яку комірку зберігання кругляком
 tooltip.cables.channels=§9Кабель з максимальною кількістю каналів: %s
 tooltip.meServer=§9Вміщує в собі до 12 кластерів зі сховищ крафту
-
+tooltip.productivity.card=§9Додає %s% продуктивності
+tooltip.productivity.base=§9Мають базову продуктивність: %s%%

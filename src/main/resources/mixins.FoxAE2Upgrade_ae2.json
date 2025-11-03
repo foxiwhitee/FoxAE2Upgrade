@@ -4,19 +4,13 @@
   "required": true,
   "target": "@env(DEFAULT)",
   "package": "foxiwhitee.FoxAE2Upgrade.mixins",
-  "refmap": "mixins.FoxAE2Upgrade.refmap.json",
+  "refmap": "mixins.FoxLib.refmap.json",
   "injectors": {
     "defaultRequire": 1
   },
   "mixins": [
-    "AEBasePartMixin",
-    "AENetworkProxyMixin",
-    "ContainerUpgradeableMixin",
     "ControllerValidatorMixin",
-    "CraftingCPUCalculatorMixin",
-    "CraftingCPUClusterMixin",
-    "CraftingGridCacheMixin",
-    "GridNodeMixin"
+    "CraftingGridCacheMixin"
   ],
   "client": [],
   "server": []

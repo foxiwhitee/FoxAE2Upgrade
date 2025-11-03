@@ -1,5 +1,6 @@
 package foxiwhitee.FoxAE2Upgrade.recipes;
 
+import foxiwhitee.FoxLib.recipes.IFoxRecipe;
 import net.minecraft.item.ItemStack;
 
 import java.util.List;
@@ -12,6 +13,7 @@ public class BaseAutoBlockRecipe implements IFoxRecipe {
         this.output = output;
         this.inputs = inputs;
     }
+
     @Override
     public ItemStack getOut() {
         return output;

@@ -1,0 +1,60 @@
+{
+	"crafts": [
+    {
+      "type": "workbenchShaped",
+      "output": "<foxae2upgrade:cobblestoneDuper>",
+      "inputs": ["<appliedenergistics2:item.ItemMultiMaterial.47>", "<appliedenergistics2:tile.BlockMolecularAssembler>", "<appliedenergistics2:item.ItemMultiMaterial.47>",
+      			"<appliedenergistics2:tile.BlockCraftingStorage.3>", "<appliedenergistics2:tile.BlockChest>", "<appliedenergistics2:tile.BlockCraftingStorage.3>",
+      			"<appliedenergistics2:tile.BlockDenseEnergyCell>", "<appliedenergistics2:tile.BlockController>", "<appliedenergistics2:tile.BlockDenseEnergyCell>"]
+    },
+    {
+      "type": "workbenchShaped",
+      "output": "<foxae2upgrade:advancedDriver>",
+      "inputs": ["<appliedenergistics2:item.ItemMultiMaterial.44>", "<appliedenergistics2:item.ItemMultiMaterial.59>", "<appliedenergistics2:item.ItemMultiMaterial.43>",
+      			"<appliedenergistics2:tile.BlockDrive>", "<appliedenergistics2:tile.BlockPatternOptimizationMatrix>", "<appliedenergistics2:tile.BlockDrive>",
+      			"<appliedenergistics2:item.ItemMultiMaterial.43>", "<appliedenergistics2:tile.BlockController>", "<appliedenergistics2:item.ItemMultiMaterial.44>"]
+    },
+    {
+      "type": "workbenchShaped",
+      "output": "<foxae2upgrade:autoPress>",
+      "inputs": ["<appliedenergistics2:item.ItemMultiMaterial.13>", "<appliedenergistics2:tile.BlockInterface>", "<appliedenergistics2:item.ItemMultiMaterial.15>",
+      			"<appliedenergistics2:tile.BlockMolecularAssembler>", "<appliedenergistics2:tile.BlockInscriber>", "<appliedenergistics2:tile.BlockMolecularAssembler>",
+      			"<appliedenergistics2:item.ItemMultiMaterial.14>", "<appliedenergistics2:tile.BlockController>", "<appliedenergistics2:item.ItemMultiMaterial.19>"]
+    },
+    {
+      "type": "workbenchShaped",
+      "output": "<foxae2upgrade:autoCrystallizer>",
+      "inputs": ["<appliedenergistics2:tile.BlockQuartzGrowthAccelerator>", "<appliedenergistics2:tile.BlockInterface>", "<ore:pearlFluix>",
+      			"<appliedenergistics2:tile.BlockMolecularAssembler>", "<appliedenergistics2:tile.BlockCharger>", "<appliedenergistics2:tile.BlockMolecularAssembler>",
+      			"<appliedenergistics2:item.ItemMultiMaterial.47>", "<appliedenergistics2:tile.BlockController>", "<appliedenergistics2:tile.BlockQuartzGrowthAccelerator>"]
+    },
+    {
+      "type": "workbenchShaped",
+      "output": "<foxae2upgrade:advancedMolecularAssembler>",
+      "inputs": ["<appliedenergistics2:item.ItemMultiMaterial.54>", "<appliedenergistics2:tile.BlockAdvancedCraftingUnit>", "<appliedenergistics2:item.ItemMultiMaterial.54>",
+      			"<appliedenergistics2:tile.BlockMolecularAssembler>", "<appliedenergistics2:tile.BlockController>", "<appliedenergistics2:tile.BlockMolecularAssembler>",
+      			"<appliedenergistics2:item.ItemMultiMaterial.54>", "<appliedenergistics2:tile.BlockAdvancedCraftingUnit>", "<appliedenergistics2:item.ItemMultiMaterial.54>"]
+    },
+    {
+      "type": "workbenchShaped",
+      "output": "<foxae2upgrade:ultimateMolecularAssembler>",
+      "inputs": ["<appliedenergistics2:item.ItemMultiMaterial.54>", "<appliedenergistics2:tile.BlockAdvancedCraftingUnit.1>", "<foxlib:productivityCard.2>",
+      			"<appliedenergistics2:tile.BlockAdvancedCraftingStorage>", "<foxae2upgrade:advancedMolecularAssembler>", "<appliedenergistics2:tile.BlockAdvancedCraftingStorage>",
+      			"<foxlib:productivityCard.2>", "<appliedenergistics2:tile.BlockAdvancedCraftingUnit.1>", "<appliedenergistics2:item.ItemMultiMaterial.54>"]
+    },
+    {
+      "type": "workbenchShaped",
+      "output": "<foxae2upgrade:quantumMolecularAssembler>",
+      "inputs": ["<appliedenergistics2:item.ItemMultiMaterial.54>", "<appliedenergistics2:tile.BlockAdvancedCraftingUnit.1>", "<foxlib:productivityCard.4>",
+      			"<appliedenergistics2:tile.BlockAdvancedCraftingStorage.1>", "<foxae2upgrade:ultimateMolecularAssembler>", "<appliedenergistics2:tile.BlockAdvancedCraftingStorage.1>",
+      			"<foxlib:productivityCard.4>", "<appliedenergistics2:tile.BlockAdvancedCraftingUnit.1>", "<appliedenergistics2:item.ItemMultiMaterial.54>"]
+    },
+    {
+      "type": "workbenchShaped",
+      "output": "<foxae2upgrade:meServer>",
+      "inputs": ["<appliedenergistics2:tile.BlockController>", "<appliedenergistics2:tile.BlockAdvancedCraftingUnit.2>", "<appliedenergistics2:tile.BlockCraftingMonitor>",
+      			"<appliedenergistics2:tile.BlockAdvancedCraftingStorage.2>", "<foxae2upgrade:advancedDriver>", "<appliedenergistics2:tile.BlockAdvancedCraftingStorage.2>",
+      			"<appliedenergistics2:tile.BlockCraftingMonitor>", "<appliedenergistics2:tile.BlockAdvancedCraftingUnit.2>", "<appliedenergistics2:tile.BlockController>"]
+    }
+  ]
+}

@@ -6,9 +6,9 @@ tile.autoPress.name=Auto Press
 tile.cobblestoneDuper.name=Cobblestone Duper
 tile.advancedDriver.name=Advanced ME Driver
 tile.meServer.name=ME Server
-tile.baseMolecularAssembler.name=Base Molecular Assembler
-tile.hybridMolecularAssembler.name=Hybrid Molecular Assembler
+tile.advancedMolecularAssembler.name=Advanced Molecular Assembler
 tile.ultimateMolecularAssembler.name=Ultimate Molecular Assembler
+tile.quantumMolecularAssembler.name=Quantum Molecular Assembler
 
 #Items
 item.alite_smart_cable.name=ME Alite Cable
@@ -25,3 +25,5 @@ tooltip.autoPress=§9Automates crafting of all processors
 tooltip.cobblestoneDuper=§9Fills any storage cell with a cobblestone
 tooltip.cables.channels=§9Cable with maximum number of channels: %s
 tooltip.meServer=§9Holds up to 12 clusters from crafting storages
+tooltip.productivity.card=§9Adds %s%% productivity
+tooltip.productivity.base=§9Have a base productivity of: %s%%

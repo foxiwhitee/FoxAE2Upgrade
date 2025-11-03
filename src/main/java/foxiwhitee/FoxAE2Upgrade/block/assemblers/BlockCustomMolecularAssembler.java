@@ -1,6 +1,7 @@
 package foxiwhitee.FoxAE2Upgrade.block.assemblers;
 
 import appeng.block.AEBaseTileBlock;
+import foxiwhitee.FoxAE2Upgrade.FoxCore;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,6 +13,7 @@ public abstract class BlockCustomMolecularAssembler extends AEBaseTileBlock {
         super(Material.iron);
         setHardness(1.0F);
         setBlockName(name);
+        setCreativeTab(FoxCore.FOX_TAB);
         this.isOpaque = false;
         this.lightOpacity = 1;
 
@@ -37,8 +39,6 @@ public abstract class BlockCustomMolecularAssembler extends AEBaseTileBlock {
         return false;
     }
 
-    public abstract int getRenderType();
-
     public int getRenderBlockPass() {
         return 1;
     }
@@ -48,4 +48,8 @@ public abstract class BlockCustomMolecularAssembler extends AEBaseTileBlock {
         return (pass == 0 || pass == 1);
     }
 
+    @Override
+    public int getRenderType() {
+        return -1;
+    }
 }

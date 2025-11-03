@@ -1,0 +1,47 @@
+{
+  "crafts": [
+    {
+      "type": "autoCrystallizer",
+      "output": "<appliedenergistics2:item.ItemMultiMaterial.1>",
+      "inputs": ["<appliedenergistics2:item.ItemMultiMaterial>"]
+    },
+    {
+      "type": "autoCrystallizer",
+      "output": "<appliedenergistics2:item.ItemMultiMaterial.7:2>",
+      "inputs": ["<appliedenergistics2:item.ItemMultiMaterial.1>", "<minecraft:redstone>", "<minecraft:quartz>"]
+    },
+    {
+      "type": "autoCrystallizer",
+      "output": "<appliedenergistics2:item.ItemMultiMaterial.10>",
+      "inputs": [
+        {
+          "value": "<appliedenergistics2:item.ItemCrystalSeed>",
+          "tag": {
+            "progress": 0
+          }
+        }]
+    },
+    {
+      "type": "autoCrystallizer",
+      "output": "<appliedenergistics2:item.ItemMultiMaterial.11>",
+      "inputs": [
+        {
+          "value": "<appliedenergistics2:item.ItemCrystalSeed.600>",
+          "tag": {
+            "progress": 600
+          }
+        }]
+    },
+    {
+      "type": "autoCrystallizer",
+      "output": "<appliedenergistics2:item.ItemMultiMaterial.12>",
+      "inputs": [
+        {
+          "value": "<appliedenergistics2:item.ItemCrystalSeed.1200>",
+          "tag": {
+            "progress": 1200
+          }
+        }]
+    }
+  ]
+}

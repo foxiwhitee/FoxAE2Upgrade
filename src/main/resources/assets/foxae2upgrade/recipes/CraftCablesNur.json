@@ -1,0 +1,95 @@
+{
+  "crafts": [
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.84:3>",
+      "inputs": ["<ore:cableEfrim>", "<ore:cableEfrim>", "<appliedenergistics2:item.ItemMultiPart.76>", "<appliedenergistics2:item.ItemMultiPart.76>",
+        "<appliedenergistics2:item.ItemMultiMaterial.36>", "<ore:pearlFluix>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.84>",
+      "inputs": ["<ore:cableNur>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.68>",
+      "inputs": ["<ore:cableNur>", "<ore:dyeWhite>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.69>",
+      "inputs": ["<ore:cableNur>", "<ore:dyeOrange>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.70>",
+      "inputs": ["<ore:cableNur>", "<ore:dyeMagenta>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.71>",
+      "inputs": ["<ore:cableNur>", "<ore:dyeLightBlue>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.72>",
+      "inputs": ["<ore:cableNur>", "<ore:dyeYellow>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.73>",
+      "inputs": ["<ore:cableNur>", "<ore:dyeLime>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.74>",
+      "inputs": ["<ore:cableNur>", "<ore:dyePink>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.75>",
+      "inputs": ["<ore:cableNur>", "<ore:dyeGray>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.76>",
+      "inputs": ["<ore:cableNur>", "<ore:dyeLightGray>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.77>",
+      "inputs": ["<ore:cableNur>", "<ore:dyeCyan>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.78>",
+      "inputs": ["<ore:cableNur>", "<ore:dyePurple>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.79>",
+      "inputs": ["<ore:cableNur>", "<ore:dyeBlue>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.80>",
+      "inputs": ["<ore:cableNur>", "<ore:dyeBrown>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.81>",
+      "inputs": ["<ore:cableNur>", "<ore:dyeGreen>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.82>",
+      "inputs": ["<ore:cableNur>", "<ore:dyeRed>"]
+    },
+    {
+      "type": "workbenchShapeless",
+      "output": "<foxae2upgrade:fox-part.83>",
+      "inputs": ["<ore:cableNur>", "<ore:dyeBlack>"]
+    }
+  ]
+}

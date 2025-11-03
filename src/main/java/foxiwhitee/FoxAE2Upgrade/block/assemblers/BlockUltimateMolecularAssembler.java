@@ -3,7 +3,6 @@ package foxiwhitee.FoxAE2Upgrade.block.assemblers;
 import appeng.util.Platform;
 import foxiwhitee.FoxAE2Upgrade.proxy.CommonProxy;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileUltimateMolecularAssembler;
-import foxiwhitee.FoxAE2Upgrade.utils.helpers.RenderIDs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -25,7 +24,4 @@ public class BlockUltimateMolecularAssembler extends BlockCustomMolecularAssembl
         return false;
     }
 
-    public int getRenderType() {
-        return RenderIDs.ULTIMATE_MOLECULAR_ASSEMBLER.getId();
-    }
 }

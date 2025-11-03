@@ -15,12 +15,12 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-
 public class BlockAdvancedDriver extends AEBaseTileBlock {
     public BlockAdvancedDriver(String name) {
         super(Material.iron);
         setHardness(1.0F);
         setBlockName(name);
+        setCreativeTab(FoxCore.FOX_TAB);
         setBlockTextureName(FoxCore.MODID + ":driver/" + name);
         setTileEntity(TileAdvancedDrive.class);
         this.isOpaque = false;
