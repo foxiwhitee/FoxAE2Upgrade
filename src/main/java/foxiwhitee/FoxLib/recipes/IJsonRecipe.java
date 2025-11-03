@@ -1,6 +1,9 @@
 package foxiwhitee.FoxLib.recipes;
 
 import com.google.gson.JsonObject;
+import minetweaker.api.item.IIngredient;
+import minetweaker.api.item.IItemStack;
+import net.minecraft.item.ItemStack;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,12 +18,12 @@ public interface IJsonRecipe<I, O> {
     IJsonRecipe create(JsonObject data);
     void register();
 
-    default String addCraftByMineTweaker() {
-        return "";
+    default void addCraftByMineTweaker(IItemStack stack, IIngredient... inputs) {
+
     }
 
-    default String removeCraftByMineTweaker() {
-        return "";
+    default void removeCraftByMineTweaker(IItemStack stack) {
+
     }
 
     default boolean matches(I[] objects) {

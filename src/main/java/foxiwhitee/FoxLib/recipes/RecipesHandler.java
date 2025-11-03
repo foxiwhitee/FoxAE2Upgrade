@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import cpw.mods.fml.common.discovery.ASMDataTable;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import foxiwhitee.FoxLib.api.FoxLibApi;
+import foxiwhitee.FoxLib.integration.crafttweaker.DynamicIntegration;
 
 import java.io.*;
 import java.lang.reflect.Constructor;
@@ -93,6 +94,9 @@ public class RecipesHandler {
                         IJsonRecipe recipe = constructor.newInstance();
                         recipe.create(jsonObject);
                         recipe.register();
+                        if (recipe.hasMineTweakerIntegration()) {
+                            DynamicIntegration.DYNAMIC_TYPES.add(recipe);
+                        }
                         return;
                     } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                         throw new RuntimeException(e);

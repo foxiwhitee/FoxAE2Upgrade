@@ -5,6 +5,8 @@ import foxiwhitee.FoxAE2Upgrade.ModRecipes;
 import foxiwhitee.FoxLib.recipes.IFoxRecipe;
 import foxiwhitee.FoxLib.recipes.IJsonRecipe;
 import foxiwhitee.FoxLib.recipes.RecipeUtils;
+import minetweaker.api.item.IIngredient;
+import minetweaker.api.item.IItemStack;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -61,7 +63,7 @@ public class AutoPressCraft implements IJsonRecipe<ItemStack, ItemStack> {
 
     @Override
     public boolean hasMineTweakerIntegration() {
-        return false;
+        return true;
     }
 
     @Override
@@ -98,12 +100,25 @@ public class AutoPressCraft implements IJsonRecipe<ItemStack, ItemStack> {
     }
 
     @Override
-    public String addCraftByMineTweaker() {
-        return IJsonRecipe.super.addCraftByMineTweaker();
+    public void addCraftByMineTweaker(IItemStack stack, IIngredient... inputs) {
+        Object[] objects = new Object[inputs.length];
+        for (int i = 0; i < inputs.length; i++) {
+            IIngredient ingredient= inputs[i];
+            objects[i] = ingredient.getInternal();
+        }
+        ItemStack real = (ItemStack) stack.getInternal();
+        BaseAutoBlockRecipe recipe = new BaseAutoBlockRecipe(real, Arrays.asList(objects));
+        ModRecipes.autoPressRecipes.add(recipe);
     }
 
     @Override
-    public String removeCraftByMineTweaker() {
-        return IJsonRecipe.super.removeCraftByMineTweaker();
+    public void removeCraftByMineTweaker(IItemStack stack) {
+        ItemStack real = (ItemStack) stack.getInternal();
+        for (BaseAutoBlockRecipe recipe : ModRecipes.autoPressRecipes) {
+            if (IFoxRecipe.simpleAreStacksEqual(real, recipe.getOut())) {
+                ModRecipes.autoPressRecipes.remove(recipe);
+                break;
+            }
+        }
     }
 }
