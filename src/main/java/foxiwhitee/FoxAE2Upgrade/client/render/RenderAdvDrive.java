@@ -22,13 +22,13 @@ public class RenderAdvDrive extends BaseBlockRender<BlockAdvancedDriver, TileAdv
 
     public void renderInventory(BlockAdvancedDriver block, ItemStack is, RenderBlocks renderer, IItemRenderer.ItemRenderType type, Object[] obj) {
         renderer.overrideBlockTexture = ExtraBlockTextures.getMissing();
-        renderInvBlock(EnumSet.of(ForgeDirection.SOUTH), (BlockAdvancedDriver) block, is, Tessellator.instance, 0, renderer);
+        renderInvBlock(EnumSet.of(ForgeDirection.SOUTH), block, is, Tessellator.instance, 0, renderer);
         renderer.overrideBlockTexture = null;
-        super.renderInventory((BlockAdvancedDriver) block, is, renderer, type, obj);
+        super.renderInventory( block, is, renderer, type, obj);
     }
 
     public boolean renderInWorld(BlockAdvancedDriver imb, IBlockAccess world, int x, int y, int z, RenderBlocks renderer) {
-        TileAdvancedDrive sp = (TileAdvancedDrive)imb.getTileEntity(world, x, y, z);
+        TileAdvancedDrive sp = (TileAdvancedDrive) imb.getTileEntity(world, x, y, z);
         ForgeDirection up = sp.getUp();
         ForgeDirection forward = sp.getForward();
         ForgeDirection west = Platform.crossProduct(forward, up);

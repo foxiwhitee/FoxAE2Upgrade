@@ -6,7 +6,7 @@ import foxiwhitee.FoxAE2Upgrade.config.FoxConfig;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
-public class TileAdvancedMolecularAssembler extends TileCustomMolecularAssembler{
+public class TileAdvancedMolecularAssembler extends TileCustomMolecularAssembler {
 
     public TileAdvancedMolecularAssembler() {
         getProxy().setIdlePowerUsage(FoxConfig.advanced_molecular_assembler_power);

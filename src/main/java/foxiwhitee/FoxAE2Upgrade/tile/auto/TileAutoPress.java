@@ -8,7 +8,7 @@ import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
-public class TileAutoPress extends TileAutomatedBlock{
+public class TileAutoPress extends TileAutomatedBlock {
     @Override
     protected ItemStack getItemFromTile(Object obj) {
         return new ItemStack(ModBlocks.AUTO_PRESS);

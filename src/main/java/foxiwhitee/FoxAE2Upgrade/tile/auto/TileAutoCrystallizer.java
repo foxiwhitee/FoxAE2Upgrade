@@ -9,7 +9,7 @@ import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
-public class TileAutoCrystallizer extends TileAutomatedBlock{
+public class TileAutoCrystallizer extends TileAutomatedBlock {
     @Override
     protected ItemStack getItemFromTile(Object obj) {
         return new ItemStack(ModBlocks.AUTO_CRYSTALLIZER);

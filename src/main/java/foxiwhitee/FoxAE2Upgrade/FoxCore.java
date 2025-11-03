@@ -17,10 +17,10 @@ import static foxiwhitee.FoxAE2Upgrade.FoxCore.*;
 @Mod(modid = MODID, name = MODNAME, version = VERSION, dependencies = DEPEND)
 public class FoxCore {
     public static final String
-            MODID = "foxae2upgrade",
-            MODNAME = "FoxAE2Upgrade",
-            VERSION = "0.1.0",
-            DEPEND = "required-after:appliedenergistics2;";
+        MODID = "foxae2upgrade",
+        MODNAME = "FoxAE2Upgrade",
+        VERSION = "0.1.0",
+        DEPEND = "required-after:appliedenergistics2;";
 
     public static final CreativeTabs FOX_TAB = new CreativeTabs("FOX_AE2_UPGRADE_TAB") {
         @Override

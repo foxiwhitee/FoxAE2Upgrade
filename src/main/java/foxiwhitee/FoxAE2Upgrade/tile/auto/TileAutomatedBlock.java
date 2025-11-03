@@ -11,7 +11,6 @@ import appeng.api.networking.security.MachineSource;
 import appeng.api.networking.ticking.IGridTickable;
 import appeng.api.networking.ticking.TickRateModulation;
 import appeng.api.networking.ticking.TickingRequest;
-import appeng.api.storage.IMEInventory;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IAEStack;
 import appeng.crafting.MECraftingInventory;
@@ -22,9 +21,9 @@ import appeng.tile.events.TileEventType;
 import appeng.tile.grid.AENetworkTile;
 import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
-import foxiwhitee.FoxLib.api.crafting.ICraftingCPUClusterAccessor;
-import foxiwhitee.FoxLib.api.crafting.IPreCraftingMedium;
 import foxiwhitee.FoxAE2Upgrade.recipes.BaseAutoBlockRecipe;
+import foxiwhitee.FoxLib.integration.applied.api.crafting.ICraftingCPUClusterAccessor;
+import foxiwhitee.FoxLib.integration.applied.api.crafting.IPreCraftingMedium;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -66,12 +65,15 @@ public abstract class TileAutomatedBlock extends AENetworkTile implements IPreCr
     }
 
     public boolean pushPattern(ICraftingPatternDetails details, InventoryCrafting ic, CraftingCPUCluster cluster) {
+        if (isBusy) {
+            return false;
+        }
         if (!(details instanceof InternalPattern))
             return false;
         if (patternList == null || !patternList.contains(details) || details.isCraftable()) {
             return false;
         }
-        ICraftingCPUClusterAccessor accessor = (ICraftingCPUClusterAccessor)((Object) cluster);
+        ICraftingCPUClusterAccessor accessor = (ICraftingCPUClusterAccessor) ((Object) cluster);
         long required = accessor.getWaitingFor(details) - 1;
         long actualRequired = required + 1;
         required = Math.min(required, getMaxCount());
@@ -104,6 +106,7 @@ public abstract class TileAutomatedBlock extends AENetworkTile implements IPreCr
         activePattern = details;
         craftCount = required + 1;
         craftingGrid = ic;
+        isBusy = true;
         return true;
     }
 
@@ -115,11 +118,11 @@ public abstract class TileAutomatedBlock extends AENetworkTile implements IPreCr
         if (activePattern == null) return TickRateModulation.IDLE;
         List<IAEItemStack> outputs = new ArrayList<>();
         Arrays.stream(activePattern.getCondensedAEOutputs())
-                .map(stack -> {
-                    IAEItemStack copy = (IAEItemStack) stack.copy();
-                    copy.setStackSize(copy.getStackSize() * craftCount);
-                    return copy;
-                }).forEach(outputs::add);
+            .map(stack -> {
+                IAEItemStack copy = (IAEItemStack) stack.copy();
+                copy.setStackSize(copy.getStackSize() * craftCount);
+                return copy;
+            }).forEach(outputs::add);
         for (int i = 0; i < craftingGrid.getSizeInventory(); i++) {
             ItemStack item = Platform.getContainerItem(craftingGrid.getStackInSlot(i));
             if (item != null) {
@@ -130,7 +133,7 @@ public abstract class TileAutomatedBlock extends AENetworkTile implements IPreCr
         for (IAEItemStack output : outputs) {
             try {
                 IAEItemStack remainder = getProxy().getStorage().getItemInventory()
-                        .injectItems(output.copy(), Actionable.SIMULATE, new MachineSource(this));
+                    .injectItems(output.copy(), Actionable.SIMULATE, new MachineSource(this));
                 if (remainder != null && remainder.getStackSize() > 0) {
                     canCraft = false;
                     break;
@@ -144,11 +147,14 @@ public abstract class TileAutomatedBlock extends AENetworkTile implements IPreCr
             for (IAEItemStack output : outputs) {
                 try {
                     getProxy().getStorage().getItemInventory()
-                            .injectItems(output.copy(), Actionable.MODULATE, new MachineSource(this));
-                } catch (GridAccessException ignored) {}
+                        .injectItems(output.copy(), Actionable.MODULATE, new MachineSource(this));
+                } catch (GridAccessException ignored) {
+                    ignored.printStackTrace();
+                }
             }
             activePattern = null;
             craftCount = 0;
+            isBusy = false;
         }
         return TickRateModulation.IDLE;
     }
@@ -201,11 +207,11 @@ public abstract class TileAutomatedBlock extends AENetworkTile implements IPreCr
         }
 
         public IAEItemStack[] getCondensedOutputs() {
-            return new IAEItemStack[] { this.output };
+            return new IAEItemStack[]{this.output};
         }
 
         public IAEItemStack[] getOutputs() {
-            return new IAEItemStack[] { this.output };
+            return new IAEItemStack[]{this.output};
         }
 
         public boolean canSubstitute() {
@@ -220,6 +226,7 @@ public abstract class TileAutomatedBlock extends AENetworkTile implements IPreCr
             return 0;
         }
 
-        public void setPriority(int i) {}
+        public void setPriority(int i) {
+        }
     }
 }

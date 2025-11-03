@@ -18,8 +18,8 @@ import appeng.tile.inventory.IAEAppEngInventory;
 import appeng.tile.inventory.InvOperation;
 import appeng.util.Platform;
 import cpw.mods.fml.common.FMLCommonHandler;
-import foxiwhitee.FoxLib.api.crafting.ICraftingCPUClusterAccessor;
-import net.minecraft.block.Block;
+import foxiwhitee.FoxLib.integration.applied.api.ITileMEServer;
+import foxiwhitee.FoxLib.integration.applied.api.crafting.ICraftingCPUClusterAccessor;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory {
+public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory, ITileMEServer {
     private final List<CraftingCPUCluster> virtualClusters = new ArrayList<>(12);
     private boolean isFormed = true;
     private AppEngInternalInventory storage = new AppEngInternalInventory(this, 12);
@@ -71,15 +71,15 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
                 storageItemsAmt += stack.stackSize;
                 for (int i = 0; i < stack.stackSize; i++) {
                     storageAmt += AEApi.instance().definitions().blocks().craftingStorage1k().isSameAs(stack) ? 1024
-                            : AEApi.instance().definitions().blocks().craftingStorage4k().isSameAs(stack) ? 1024 * 4
-                            : AEApi.instance().definitions().blocks().craftingStorage16k().isSameAs(stack) ? 1024 * 16
-                            : AEApi.instance().definitions().blocks().craftingStorage64k().isSameAs(stack) ? 1024 * 64
-                            : AEApi.instance().definitions().blocks().craftingStorage256k().isSameAs(stack) ? 1024 * 256
-                            : AEApi.instance().definitions().blocks().craftingStorage1024k().isSameAs(stack) ? 1024 * 1024
-                            : AEApi.instance().definitions().blocks().craftingStorage4096k().isSameAs(stack) ? 1024 * 4096
-                            : AEApi.instance().definitions().blocks().craftingStorage16384k().isSameAs(stack) ? 1024 * 16384
-                            : AEApi.instance().definitions().blocks().craftingStorageSingularity().isSameAs(stack) ? Long.MAX_VALUE
-                            : 0;
+                        : AEApi.instance().definitions().blocks().craftingStorage4k().isSameAs(stack) ? 1024 * 4
+                        : AEApi.instance().definitions().blocks().craftingStorage16k().isSameAs(stack) ? 1024 * 16
+                        : AEApi.instance().definitions().blocks().craftingStorage64k().isSameAs(stack) ? 1024 * 64
+                        : AEApi.instance().definitions().blocks().craftingStorage256k().isSameAs(stack) ? 1024 * 256
+                        : AEApi.instance().definitions().blocks().craftingStorage1024k().isSameAs(stack) ? 1024 * 1024
+                        : AEApi.instance().definitions().blocks().craftingStorage4096k().isSameAs(stack) ? 1024 * 4096
+                        : AEApi.instance().definitions().blocks().craftingStorage16384k().isSameAs(stack) ? 1024 * 16384
+                        : AEApi.instance().definitions().blocks().craftingStorageSingularity().isSameAs(stack) ? Long.MAX_VALUE
+                        : 0;
                 }
             }
             storage_bytes[id] = storageAmt;
@@ -94,13 +94,13 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
                 acceleratorItemsAmt += stack.stackSize;
                 for (int i = 0; i < stack.stackSize; i++) {
                     acceleratorAmt += AEApi.instance().definitions().blocks().craftingAccelerator().isSameAs(stack) ? 1
-                            : AEApi.instance().definitions().blocks().craftingAccelerator4x().isSameAs(stack) ? 4
-                            : AEApi.instance().definitions().blocks().craftingAccelerator16x().isSameAs(stack) ? 16
-                            : AEApi.instance().definitions().blocks().craftingAccelerator64x().isSameAs(stack) ? 64
-                            : AEApi.instance().definitions().blocks().craftingAccelerator256x().isSameAs(stack) ? 256
-                            : AEApi.instance().definitions().blocks().craftingAccelerator1024x().isSameAs(stack) ? 1024
-                            : AEApi.instance().definitions().blocks().craftingAccelerator4096x().isSameAs(stack) ? 4096
-                            : 0;
+                        : AEApi.instance().definitions().blocks().craftingAccelerator4x().isSameAs(stack) ? 4
+                        : AEApi.instance().definitions().blocks().craftingAccelerator16x().isSameAs(stack) ? 16
+                        : AEApi.instance().definitions().blocks().craftingAccelerator64x().isSameAs(stack) ? 64
+                        : AEApi.instance().definitions().blocks().craftingAccelerator256x().isSameAs(stack) ? 256
+                        : AEApi.instance().definitions().blocks().craftingAccelerator1024x().isSameAs(stack) ? 1024
+                        : AEApi.instance().definitions().blocks().craftingAccelerator4096x().isSameAs(stack) ? 4096
+                        : 0;
                 }
             }
             accelerators_count[id] = acceleratorAmt;
@@ -126,7 +126,8 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
     }
 
     @Override
-    public final void updateMultiBlock() {}
+    public final void updateMultiBlock() {
+    }
 
     @Override
     protected AENetworkProxy createProxy() {
@@ -254,7 +255,7 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
         super.onReady();
         initializeClusters();
         virtualClusters.forEach(craftingCPUCluster -> {
-            ((ICraftingCPUClusterAccessor)(Object)craftingCPUCluster).doneMEServer();
+            ((ICraftingCPUClusterAccessor) (Object) craftingCPUCluster).doneMEServer();
         });
     }
 

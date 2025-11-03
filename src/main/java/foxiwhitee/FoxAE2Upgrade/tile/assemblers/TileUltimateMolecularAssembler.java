@@ -42,10 +42,11 @@ public class TileUltimateMolecularAssembler extends TileCustomMolecularAssembler
                 });
         }
     }
+
     @Override
     public void onChangeInventory(IInventory inv, int slot, InvOperation op, ItemStack removed, ItemStack added) {
         if (removed != null && removed.getItem() instanceof ItemEncodedPattern) {
-            ICraftingPatternDetails details = ((ItemEncodedPattern)removed.getItem()).getPatternForItem(removed, this.worldObj);
+            ICraftingPatternDetails details = ((ItemEncodedPattern) removed.getItem()).getPatternForItem(removed, this.worldObj);
             if (productivityHistory.containsKey(details)) {
                 productivityHistory.remove(details);
             }

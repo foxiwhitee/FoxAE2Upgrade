@@ -9,6 +9,7 @@ import foxiwhitee.FoxAE2Upgrade.block.assemblers.BlockAdvancedMolecularAssembler
 import foxiwhitee.FoxAE2Upgrade.block.assemblers.BlockUltimateMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.block.assemblers.BlockQuantumMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.config.ContentConfig;
+import foxiwhitee.FoxAE2Upgrade.items.ModItemBlock;
 import foxiwhitee.FoxAE2Upgrade.tile.TileAdvancedDrive;
 import foxiwhitee.FoxAE2Upgrade.tile.TileCobblestoneDuper;
 import foxiwhitee.FoxAE2Upgrade.tile.TileMEServer;
@@ -49,27 +50,27 @@ public class ModBlocks {
 
     public static void registerBlocks() {
         if (ContentConfig.enableCobblestoneDuper) {
-            RegisterUtils.registerBlock(COBBLESTONE_DUPER);
+            RegisterUtils.registerBlock(COBBLESTONE_DUPER, ModItemBlock.class);
             RegisterUtils.registerTile(TileCobblestoneDuper.class);
         }
         if (ContentConfig.enableAdvancedDriver) {
-            RegisterUtils.registerBlock(ADVANCED_DRIVER);
+            RegisterUtils.registerBlock(ADVANCED_DRIVER, ModItemBlock.class);
             RegisterUtils.registerTile(TileAdvancedDrive.class);
         }
         if (ContentConfig.enableAutoCrystallizer) {
-            RegisterUtils.registerBlock(AUTO_CRYSTALLIZER);
+            RegisterUtils.registerBlock(AUTO_CRYSTALLIZER, ModItemBlock.class);
             RegisterUtils.registerTile(TileAutoCrystallizer.class);
         }
         if (ContentConfig.enableAutoPress) {
-            RegisterUtils.registerBlock(AUTO_PRESS);
+            RegisterUtils.registerBlock(AUTO_PRESS, ModItemBlock.class);
             RegisterUtils.registerTile(TileAutoPress.class);
         }
         if (ContentConfig.enableMolecularAssemblers) {
-            RegisterUtils.registerBlocks(ADVANCED_MOLECULAR_ASSEMBLER, ULTIMATE_MOLECULAR_ASSEMBLER, QUANTUM_MOLECULAR_ASSEMBLER);
+            RegisterUtils.registerBlocks(ModItemBlock.class, ADVANCED_MOLECULAR_ASSEMBLER, ULTIMATE_MOLECULAR_ASSEMBLER, QUANTUM_MOLECULAR_ASSEMBLER);
             RegisterUtils.findClasses("foxiwhitee.FoxAE2Upgrade.tile.assemblers", TileEntity.class).forEach(RegisterUtils::registerTile);
         }
         if (ContentConfig.enableMEServer) {
-            RegisterUtils.registerBlock(ME_SERVER);
+            RegisterUtils.registerBlock(ME_SERVER, ModItemBlock.class);
             RegisterUtils.registerTile(TileMEServer.class);
         }
     }

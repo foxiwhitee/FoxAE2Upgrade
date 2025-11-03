@@ -20,7 +20,8 @@ public class AutoCrystallizerCraft implements IJsonRecipe<ItemStack, ItemStack> 
     private ItemStack[] outputs;
     private ItemStack[] inputs;
 
-    public AutoCrystallizerCraft() {}
+    public AutoCrystallizerCraft() {
+    }
 
     @Override
     public ItemStack[] getOutputs() {
@@ -75,7 +76,7 @@ public class AutoCrystallizerCraft implements IJsonRecipe<ItemStack, ItemStack> 
     @Override
     public IJsonRecipe create(JsonObject data) {
         try {
-            this.outputs = new ItemStack[] { RecipeUtils.getOutput(data) };
+            this.outputs = new ItemStack[]{RecipeUtils.getOutput(data)};
             Object[] objects = RecipeUtils.getInputs(data, hasOreDict());
             this.inputs = Arrays.copyOf(objects, objects.length, ItemStack[].class);
         } catch (RuntimeException e) {
@@ -104,7 +105,7 @@ public class AutoCrystallizerCraft implements IJsonRecipe<ItemStack, ItemStack> 
     public void addCraftByMineTweaker(IItemStack stack, IIngredient... inputs) {
         Object[] objects = new Object[inputs.length];
         for (int i = 0; i < inputs.length; i++) {
-            IIngredient ingredient= inputs[i];
+            IIngredient ingredient = inputs[i];
             objects[i] = ingredient.getInternal();
         }
         ItemStack real = (ItemStack) stack.getInternal();

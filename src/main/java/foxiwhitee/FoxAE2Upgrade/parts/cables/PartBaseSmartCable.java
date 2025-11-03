@@ -20,7 +20,7 @@ import org.lwjgl.opengl.GL11;
 import java.util.EnumSet;
 import java.util.Iterator;
 
-public abstract class PartBaseSmartCable extends PartBaseCable{
+public abstract class PartBaseSmartCable extends PartBaseCable {
 
     public PartBaseSmartCable(ItemStack is) {
         super(is);
@@ -74,9 +74,9 @@ public abstract class PartBaseSmartCable extends PartBaseCable{
         OffsetIcon ch2 = new OffsetIcon(getChannelTex(4, true).getIcon(), offU, offV);
         for (ForgeDirection side : EnumSet.<ForgeDirection>of(ForgeDirection.UP, ForgeDirection.DOWN)) {
             rh.setBounds(5.0F, 5.0F, 2.0F, 11.0F, 11.0F, 14.0F);
-            rh.renderInventoryFace((IIcon)main, side, renderer);
-            rh.renderInventoryFace((IIcon)ch1, side, renderer);
-            rh.renderInventoryFace((IIcon)ch2, side, renderer);
+            rh.renderInventoryFace((IIcon) main, side, renderer);
+            rh.renderInventoryFace((IIcon) ch1, side, renderer);
+            rh.renderInventoryFace((IIcon) ch2, side, renderer);
         }
         offU = 9.0F;
         offV = 0.0F;
@@ -85,25 +85,25 @@ public abstract class PartBaseSmartCable extends PartBaseCable{
         ch2 = new OffsetIcon(getChannelTex(4, true).getIcon(), offU, offV);
         for (ForgeDirection side : EnumSet.<ForgeDirection>of(ForgeDirection.EAST, ForgeDirection.WEST)) {
             rh.setBounds(5.0F, 5.0F, 2.0F, 11.0F, 11.0F, 14.0F);
-            rh.renderInventoryFace((IIcon)main, side, renderer);
-            rh.renderInventoryFace((IIcon)ch1, side, renderer);
-            rh.renderInventoryFace((IIcon)ch2, side, renderer);
+            rh.renderInventoryFace((IIcon) main, side, renderer);
+            rh.renderInventoryFace((IIcon) ch1, side, renderer);
+            rh.renderInventoryFace((IIcon) ch2, side, renderer);
         }
         main = new OffsetIcon(getTexture(getCableColor()), 0.0F, 0.0F);
         ch1 = new OffsetIcon(getChannelTex(4, false).getIcon(), 0.0F, 0.0F);
         ch2 = new OffsetIcon(getChannelTex(4, true).getIcon(), 0.0F, 0.0F);
         for (ForgeDirection side : EnumSet.<ForgeDirection>of(ForgeDirection.SOUTH, ForgeDirection.NORTH)) {
             rh.setBounds(5.0F, 5.0F, 2.0F, 11.0F, 11.0F, 14.0F);
-            rh.renderInventoryFace((IIcon)main, side, renderer);
-            rh.renderInventoryFace((IIcon)ch1, side, renderer);
-            rh.renderInventoryFace((IIcon)ch2, side, renderer);
+            rh.renderInventoryFace((IIcon) main, side, renderer);
+            rh.renderInventoryFace((IIcon) ch1, side, renderer);
+            rh.renderInventoryFace((IIcon) ch2, side, renderer);
         }
         rh.setTexture(null);
     }
 
     @SideOnly(Side.CLIENT)
     public void renderStatic(int x, int y, int z, IPartRenderHelper rh, RenderBlocks renderer) {
-        setRenderCache(rh.useSimplifiedRendering(x, y, z, (IBoxProvider)this, getRenderCache()));
+        setRenderCache(rh.useSimplifiedRendering(x, y, z, (IBoxProvider) this, getRenderCache()));
         rh.setTexture(getTexture(getCableColor()));
         EnumSet<ForgeDirection> sides = getConnections().clone();
         boolean hasBuses = false;
@@ -144,17 +144,17 @@ public abstract class PartBaseSmartCable extends PartBaseCable{
                     TaughtIcon taughtIcon1 = new TaughtIcon(getChannelTex(getChannelsOnSide()[of.ordinal()], false).getIcon(), -0.2F);
                     TaughtIcon taughtIcon2 = new TaughtIcon(getChannelTex(getChannelsOnSide()[of.ordinal()], true).getIcon(), -0.2F);
                     if (of == ForgeDirection.EAST || of == ForgeDirection.WEST) {
-                        AEBaseBlock blk = (AEBaseBlock)rh.getBlock();
+                        AEBaseBlock blk = (AEBaseBlock) rh.getBlock();
                         FlippableIcon ico = blk.getRendererInstance().getTexture(ForgeDirection.EAST);
                         ico.setFlip(false, true);
                     }
                     Tessellator.instance.setBrightness(15728880);
                     Tessellator.instance.setColorOpaque_I((getCableColor()).blackVariant);
-                    rh.setTexture((IIcon)taughtIcon1, (IIcon)taughtIcon1, (IIcon)taughtIcon1, (IIcon)taughtIcon1, (IIcon)taughtIcon1, (IIcon)taughtIcon1);
-                    renderAllFaces((AEBaseBlock)rh.getBlock(), x, y, z, rh, renderer);
+                    rh.setTexture((IIcon) taughtIcon1, (IIcon) taughtIcon1, (IIcon) taughtIcon1, (IIcon) taughtIcon1, (IIcon) taughtIcon1, (IIcon) taughtIcon1);
+                    renderAllFaces((AEBaseBlock) rh.getBlock(), x, y, z, rh, renderer);
                     Tessellator.instance.setColorOpaque_I((getCableColor()).whiteVariant);
-                    rh.setTexture((IIcon)taughtIcon2, (IIcon)taughtIcon2, (IIcon)taughtIcon2, (IIcon)taughtIcon2, (IIcon)taughtIcon2, (IIcon)taughtIcon2);
-                    renderAllFaces((AEBaseBlock)rh.getBlock(), x, y, z, rh, renderer);
+                    rh.setTexture((IIcon) taughtIcon2, (IIcon) taughtIcon2, (IIcon) taughtIcon2, (IIcon) taughtIcon2, (IIcon) taughtIcon2, (IIcon) taughtIcon2);
+                    renderAllFaces((AEBaseBlock) rh.getBlock(), x, y, z, rh, renderer);
                     renderer.uvRotateBottom = renderer.uvRotateEast = renderer.uvRotateNorth = renderer.uvRotateSouth = renderer.uvRotateTop = renderer.uvRotateWest = 0;
                     rh.setTexture(getTexture(getCableColor()));
                 }
@@ -179,14 +179,14 @@ public abstract class PartBaseSmartCable extends PartBaseCable{
             IIcon def = getTexture(getCableColor());
             OffsetIcon offsetIcon1 = new OffsetIcon(def, 0.0F, -12.0F);
             TaughtIcon taughtIcon1 = new TaughtIcon(getChannelTex(channels, false).getIcon(), -0.2F);
-            OffsetIcon offsetIcon2 = new OffsetIcon((IIcon)taughtIcon1, 0.0F, -12.0F);
+            OffsetIcon offsetIcon2 = new OffsetIcon((IIcon) taughtIcon1, 0.0F, -12.0F);
             TaughtIcon taughtIcon2 = new TaughtIcon(getChannelTex(channels, true).getIcon(), -0.2F);
-            OffsetIcon offsetIcon3 = new OffsetIcon((IIcon)taughtIcon2, 0.0F, -12.0F);
+            OffsetIcon offsetIcon3 = new OffsetIcon((IIcon) taughtIcon2, 0.0F, -12.0F);
             switch (selectedSide) {
                 case DOWN:
                 case UP:
                     renderer.setRenderBounds(0.3125D, 0.0D, 0.3125D, 0.6875D, 1.0D, 0.6875D);
-                    rh.setTexture(def, def, (IIcon)offsetIcon1, (IIcon)offsetIcon1, (IIcon)offsetIcon1, (IIcon)offsetIcon1);
+                    rh.setTexture(def, def, (IIcon) offsetIcon1, (IIcon) offsetIcon1, (IIcon) offsetIcon1, (IIcon) offsetIcon1);
                     rh.renderBlockCurrentBounds(x, y, z, renderer);
                     renderer.uvRotateTop = 0;
                     renderer.uvRotateBottom = 0;
@@ -194,43 +194,43 @@ public abstract class PartBaseSmartCable extends PartBaseCable{
                     renderer.uvRotateEast = 3;
                     Tessellator.instance.setBrightness(15728880);
                     Tessellator.instance.setColorOpaque_I((getCableColor()).blackVariant);
-                    rh.setTexture((IIcon)taughtIcon1, (IIcon)taughtIcon1, (IIcon)offsetIcon2, (IIcon)offsetIcon2, (IIcon)offsetIcon2, (IIcon)offsetIcon2);
-                    renderAllFaces((AEBaseBlock)rh.getBlock(), x, y, z, rh, renderer);
+                    rh.setTexture((IIcon) taughtIcon1, (IIcon) taughtIcon1, (IIcon) offsetIcon2, (IIcon) offsetIcon2, (IIcon) offsetIcon2, (IIcon) offsetIcon2);
+                    renderAllFaces((AEBaseBlock) rh.getBlock(), x, y, z, rh, renderer);
                     Tessellator.instance.setColorOpaque_I((getCableColor()).whiteVariant);
-                    rh.setTexture((IIcon)taughtIcon2, (IIcon)taughtIcon2, (IIcon)offsetIcon3, (IIcon)offsetIcon3, (IIcon)offsetIcon3, (IIcon)offsetIcon3);
-                    renderAllFaces((AEBaseBlock)rh.getBlock(), x, y, z, rh, renderer);
+                    rh.setTexture((IIcon) taughtIcon2, (IIcon) taughtIcon2, (IIcon) offsetIcon3, (IIcon) offsetIcon3, (IIcon) offsetIcon3, (IIcon) offsetIcon3);
+                    renderAllFaces((AEBaseBlock) rh.getBlock(), x, y, z, rh, renderer);
                     break;
                 case EAST:
                 case WEST:
-                    rh.setTexture((IIcon)offsetIcon1, (IIcon)offsetIcon1, (IIcon)offsetIcon1, (IIcon)offsetIcon1, def, def);
+                    rh.setTexture((IIcon) offsetIcon1, (IIcon) offsetIcon1, (IIcon) offsetIcon1, (IIcon) offsetIcon1, def, def);
                     renderer.uvRotateEast = 2;
                     renderer.uvRotateWest = 1;
                     renderer.uvRotateBottom = 2;
                     renderer.uvRotateTop = 1;
                     renderer.uvRotateSouth = 0;
                     renderer.uvRotateNorth = 0;
-                    blk = (AEBaseBlock)rh.getBlock();
+                    blk = (AEBaseBlock) rh.getBlock();
                     ico = blk.getRendererInstance().getTexture(ForgeDirection.EAST);
                     ico.setFlip(false, true);
                     renderer.setRenderBounds(0.0D, 0.3125D, 0.3125D, 1.0D, 0.6875D, 0.6875D);
                     rh.renderBlockCurrentBounds(x, y, z, renderer);
                     Tessellator.instance.setBrightness(15728880);
-                    fpA = new FlippableIcon((IIcon)taughtIcon1);
-                    fpB = new FlippableIcon((IIcon)taughtIcon2);
-                    fpA = new FlippableIcon((IIcon)taughtIcon1);
-                    fpB = new FlippableIcon((IIcon)taughtIcon2);
+                    fpA = new FlippableIcon((IIcon) taughtIcon1);
+                    fpB = new FlippableIcon((IIcon) taughtIcon2);
+                    fpA = new FlippableIcon((IIcon) taughtIcon1);
+                    fpB = new FlippableIcon((IIcon) taughtIcon2);
                     fpA.setFlip(true, false);
                     fpB.setFlip(true, false);
                     Tessellator.instance.setColorOpaque_I((getCableColor()).blackVariant);
-                    rh.setTexture((IIcon)offsetIcon2, (IIcon)offsetIcon2, (IIcon)offsetIcon2, (IIcon)offsetIcon2, (IIcon)taughtIcon1, (IIcon)fpA);
-                    renderAllFaces((AEBaseBlock)rh.getBlock(), x, y, z, rh, renderer);
+                    rh.setTexture((IIcon) offsetIcon2, (IIcon) offsetIcon2, (IIcon) offsetIcon2, (IIcon) offsetIcon2, (IIcon) taughtIcon1, (IIcon) fpA);
+                    renderAllFaces((AEBaseBlock) rh.getBlock(), x, y, z, rh, renderer);
                     Tessellator.instance.setColorOpaque_I((getCableColor()).whiteVariant);
-                    rh.setTexture((IIcon)offsetIcon3, (IIcon)offsetIcon3, (IIcon)offsetIcon3, (IIcon)offsetIcon3, (IIcon)taughtIcon2, (IIcon)fpB);
-                    renderAllFaces((AEBaseBlock)rh.getBlock(), x, y, z, rh, renderer);
+                    rh.setTexture((IIcon) offsetIcon3, (IIcon) offsetIcon3, (IIcon) offsetIcon3, (IIcon) offsetIcon3, (IIcon) taughtIcon2, (IIcon) fpB);
+                    renderAllFaces((AEBaseBlock) rh.getBlock(), x, y, z, rh, renderer);
                     break;
                 case NORTH:
                 case SOUTH:
-                    rh.setTexture((IIcon)offsetIcon1, (IIcon)offsetIcon1, def, def, (IIcon)offsetIcon1, (IIcon)offsetIcon1);
+                    rh.setTexture((IIcon) offsetIcon1, (IIcon) offsetIcon1, def, def, (IIcon) offsetIcon1, (IIcon) offsetIcon1);
                     renderer.uvRotateTop = 3;
                     renderer.uvRotateBottom = 3;
                     renderer.uvRotateNorth = 1;
@@ -240,11 +240,11 @@ public abstract class PartBaseSmartCable extends PartBaseCable{
                     rh.renderBlockCurrentBounds(x, y, z, renderer);
                     Tessellator.instance.setBrightness(15728880);
                     Tessellator.instance.setColorOpaque_I((getCableColor()).blackVariant);
-                    rh.setTexture((IIcon)offsetIcon2, (IIcon)offsetIcon2, (IIcon)taughtIcon1, (IIcon)taughtIcon1, (IIcon)offsetIcon2, (IIcon)offsetIcon2);
-                    renderAllFaces((AEBaseBlock)rh.getBlock(), x, y, z, rh, renderer);
+                    rh.setTexture((IIcon) offsetIcon2, (IIcon) offsetIcon2, (IIcon) taughtIcon1, (IIcon) taughtIcon1, (IIcon) offsetIcon2, (IIcon) offsetIcon2);
+                    renderAllFaces((AEBaseBlock) rh.getBlock(), x, y, z, rh, renderer);
                     Tessellator.instance.setColorOpaque_I((getCableColor()).whiteVariant);
-                    rh.setTexture((IIcon)offsetIcon3, (IIcon)offsetIcon3, (IIcon)taughtIcon2, (IIcon)taughtIcon2, (IIcon)offsetIcon3, (IIcon)offsetIcon3);
-                    renderAllFaces((AEBaseBlock)rh.getBlock(), x, y, z, rh, renderer);
+                    rh.setTexture((IIcon) offsetIcon3, (IIcon) offsetIcon3, (IIcon) taughtIcon2, (IIcon) taughtIcon2, (IIcon) offsetIcon3, (IIcon) offsetIcon3);
+                    renderAllFaces((AEBaseBlock) rh.getBlock(), x, y, z, rh, renderer);
                     break;
             }
         }

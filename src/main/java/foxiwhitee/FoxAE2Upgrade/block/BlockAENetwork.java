@@ -6,7 +6,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 
 public class BlockAENetwork extends AEBaseTileBlock {
-
     public BlockAENetwork(String name, Class<? extends TileEntity> tile) {
         super(Material.iron);
         setBlockName(name);

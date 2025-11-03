@@ -1,7 +1,7 @@
 package foxiwhitee.FoxAE2Upgrade;
 
 import appeng.api.AEApi;
-import foxiwhitee.FoxAE2Upgrade.items.part.ItemParts;
+import foxiwhitee.FoxAE2Upgrade.items.ItemParts;
 import foxiwhitee.FoxLib.registries.RegisterUtils;
 import net.minecraft.item.Item;
 

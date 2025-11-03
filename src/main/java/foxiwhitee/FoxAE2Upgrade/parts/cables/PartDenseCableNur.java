@@ -7,7 +7,7 @@ import appeng.api.util.AEColor;
 import foxiwhitee.FoxAE2Upgrade.ModItems;
 import foxiwhitee.FoxAE2Upgrade.client.render.CableBusTextures;
 import foxiwhitee.FoxAE2Upgrade.config.FoxConfig;
-import foxiwhitee.FoxAE2Upgrade.items.part.ItemParts;
+import foxiwhitee.FoxAE2Upgrade.items.ItemParts;
 import foxiwhitee.FoxAE2Upgrade.parts.EnumParts;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
@@ -19,47 +19,30 @@ public class PartDenseCableNur extends PartBaseDenseCable {
 
     @Override
     public IIcon getTexture(AEColor c) {
-        switch (c) {
-            case Red:
-                return CableBusTextures.DenseCableNur_Red.getIcon();
-            case Blue:
-                return CableBusTextures.DenseCableNur_Blue.getIcon();
-            case Cyan:
-                return CableBusTextures.DenseCableNur_Cyan.getIcon();
-            case Gray:
-                return CableBusTextures.DenseCableNur_Grey.getIcon();
-            case Lime:
-                return CableBusTextures.DenseCableNur_Lime.getIcon();
-            case Pink:
-                return CableBusTextures.DenseCableNur_Pink.getIcon();
-            case Black:
-                return CableBusTextures.DenseCableNur_Black.getIcon();
-            case Brown:
-                return CableBusTextures.DenseCableNur_Brown.getIcon();
-            case Green:
-                return CableBusTextures.DenseCableNur_Green.getIcon();
-            case White:
-                return CableBusTextures.DenseCableNur_White.getIcon();
-            case Orange:
-                return CableBusTextures.DenseCableNur_Orange.getIcon();
-            case Purple:
-                return CableBusTextures.DenseCableNur_Purple.getIcon();
-            case Yellow:
-                return CableBusTextures.DenseCableNur_Yellow.getIcon();
-            case Magenta:
-                return CableBusTextures.DenseCableNur_Magenta.getIcon();
-            case LightBlue:
-                return CableBusTextures.DenseCableNur_LightBlue.getIcon();
-            case LightGray:
-                return CableBusTextures.DenseCableNur_LightGrey.getIcon();
-            default:
-                return CableBusTextures.DenseCableNur.getIcon();
-        }
+        return switch (c) {
+            case Red -> CableBusTextures.DenseCableNur_Red.getIcon();
+            case Blue -> CableBusTextures.DenseCableNur_Blue.getIcon();
+            case Cyan -> CableBusTextures.DenseCableNur_Cyan.getIcon();
+            case Gray -> CableBusTextures.DenseCableNur_Grey.getIcon();
+            case Lime -> CableBusTextures.DenseCableNur_Lime.getIcon();
+            case Pink -> CableBusTextures.DenseCableNur_Pink.getIcon();
+            case Black -> CableBusTextures.DenseCableNur_Black.getIcon();
+            case Brown -> CableBusTextures.DenseCableNur_Brown.getIcon();
+            case Green -> CableBusTextures.DenseCableNur_Green.getIcon();
+            case White -> CableBusTextures.DenseCableNur_White.getIcon();
+            case Orange -> CableBusTextures.DenseCableNur_Orange.getIcon();
+            case Purple -> CableBusTextures.DenseCableNur_Purple.getIcon();
+            case Yellow -> CableBusTextures.DenseCableNur_Yellow.getIcon();
+            case Magenta -> CableBusTextures.DenseCableNur_Magenta.getIcon();
+            case LightBlue -> CableBusTextures.DenseCableNur_LightBlue.getIcon();
+            case LightGray -> CableBusTextures.DenseCableNur_LightGrey.getIcon();
+            default -> CableBusTextures.DenseCableNur.getIcon();
+        };
     }
 
     @Override
     public ItemStack getPartItemStack(AEColor paramAEColor) {
-        return ((ItemParts)ModItems.ITEM_PARTS).createPart(EnumParts.NUR_DENSE_CABLE, paramAEColor).stack(1);
+        return ((ItemParts) ModItems.ITEM_PARTS).createPart(EnumParts.NUR_DENSE_CABLE, paramAEColor).stack(1);
     }
 
     @Override

@@ -10,7 +10,7 @@ import net.minecraft.inventory.Container;
 
 public class GuiAdvancedMolecularAssembler extends AEBaseGui {
     public GuiAdvancedMolecularAssembler(InventoryPlayer ip, TileAdvancedMolecularAssembler te) {
-        super((Container)new ContainerAdvancedMolecularAssembler(ip, te));
+        super(new ContainerAdvancedMolecularAssembler(ip, te));
         this.xSize = 210;
         this.ySize = 199;
     }

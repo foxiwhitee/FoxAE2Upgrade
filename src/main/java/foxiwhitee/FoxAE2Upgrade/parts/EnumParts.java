@@ -101,7 +101,7 @@ public enum EnumParts {
     }
 
     public ItemStack getStack() {
-        return new ItemStack((Item)ModItems.ITEM_PARTS, 1, getBaseDamage());
+        return new ItemStack((Item) ModItems.ITEM_PARTS, 1, getBaseDamage());
     }
 
     public boolean isRegister() {

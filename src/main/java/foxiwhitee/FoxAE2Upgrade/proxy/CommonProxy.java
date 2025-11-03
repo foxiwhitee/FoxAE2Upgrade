@@ -52,7 +52,6 @@ public class CommonProxy {
         ModBlocks.registerBlocks();
         ModItems.registerItems();
         ModRecipes.registerRecipes();
-
     }
 
     public void init(FMLInitializationEvent event) {
@@ -90,7 +89,6 @@ public class CommonProxy {
     }
 
     public void postInit(FMLPostInitializationEvent event) {
-        //MinecraftForge.EVENT_BUS.register(ServerEventHandler.INSTANCE);
         if (ContentConfig.enableAdvancedDriver) {
             GUI_ADV_ME_DRIVE = (GuiBridge) EnumHelper.addEnum(GuiBridge.class, "AdvMEDrive", new Class[]{Class.class, Class.class, GuiHostType.class, SecurityPermissions.class}, new Object[]{ContainerAdvancedDrive.class, TileAdvancedDrive.class, GuiHostType.WORLD, SecurityPermissions.BUILD});
         }

@@ -1,0 +1,17 @@
+{
+  "minVersion": "0.8.2",
+  "compatibilityLevel": "JAVA_8",
+  "required": true,
+  "target": "@env(DEFAULT)",
+  "package": "foxiwhitee.FoxAE2Upgrade.mixins",
+  "refmap": "mixins.FoxLib.refmap.json",
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+    "ControllerValidatorMixin",
+    "CraftingGridCacheMixin"
+  ],
+  "client": [],
+  "server": []
+}

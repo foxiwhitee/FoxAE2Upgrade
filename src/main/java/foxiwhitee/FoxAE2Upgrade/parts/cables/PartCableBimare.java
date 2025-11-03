@@ -7,7 +7,7 @@ import appeng.api.util.AEColor;
 import foxiwhitee.FoxAE2Upgrade.ModItems;
 import foxiwhitee.FoxAE2Upgrade.client.render.CableBusTextures;
 import foxiwhitee.FoxAE2Upgrade.config.FoxConfig;
-import foxiwhitee.FoxAE2Upgrade.items.part.ItemParts;
+import foxiwhitee.FoxAE2Upgrade.items.ItemParts;
 import foxiwhitee.FoxAE2Upgrade.parts.EnumParts;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
@@ -19,30 +19,30 @@ public class PartCableBimare extends PartBaseSmartCable {
 
     @Override
     public IIcon getTexture(AEColor c) {
-        switch (c) {
-            case Red: return CableBusTextures.CableBimare_Red.getIcon();
-            case Blue: return CableBusTextures.CableBimare_Blue.getIcon();
-            case Cyan: return CableBusTextures.CableBimare_Cyan.getIcon();
-            case Gray: return CableBusTextures.CableBimare_Grey.getIcon();
-            case Lime: return CableBusTextures.CableBimare_Lime.getIcon();
-            case Pink: return CableBusTextures.CableBimare_Pink.getIcon();
-            case Black: return CableBusTextures.CableBimare_Black.getIcon();
-            case Brown: return CableBusTextures.CableBimare_Brown.getIcon();
-            case Green: return CableBusTextures.CableBimare_Green.getIcon();
-            case White: return CableBusTextures.CableBimare_White.getIcon();
-            case Orange: return CableBusTextures.CableBimare_Orange.getIcon();
-            case Purple: return CableBusTextures.CableBimare_Purple.getIcon();
-            case Yellow: return CableBusTextures.CableBimare_Yellow.getIcon();
-            case Magenta: return CableBusTextures.CableBimare_Magenta.getIcon();
-            case LightBlue: return CableBusTextures.CableBimare_LightBlue.getIcon();
-            case LightGray: return CableBusTextures.CableBimare_LightGrey.getIcon();
-            default: return CableBusTextures.CableBimare.getIcon();
-        }
+        return switch (c) {
+            case Red -> CableBusTextures.CableBimare_Red.getIcon();
+            case Blue -> CableBusTextures.CableBimare_Blue.getIcon();
+            case Cyan -> CableBusTextures.CableBimare_Cyan.getIcon();
+            case Gray -> CableBusTextures.CableBimare_Grey.getIcon();
+            case Lime -> CableBusTextures.CableBimare_Lime.getIcon();
+            case Pink -> CableBusTextures.CableBimare_Pink.getIcon();
+            case Black -> CableBusTextures.CableBimare_Black.getIcon();
+            case Brown -> CableBusTextures.CableBimare_Brown.getIcon();
+            case Green -> CableBusTextures.CableBimare_Green.getIcon();
+            case White -> CableBusTextures.CableBimare_White.getIcon();
+            case Orange -> CableBusTextures.CableBimare_Orange.getIcon();
+            case Purple -> CableBusTextures.CableBimare_Purple.getIcon();
+            case Yellow -> CableBusTextures.CableBimare_Yellow.getIcon();
+            case Magenta -> CableBusTextures.CableBimare_Magenta.getIcon();
+            case LightBlue -> CableBusTextures.CableBimare_LightBlue.getIcon();
+            case LightGray -> CableBusTextures.CableBimare_LightGrey.getIcon();
+            default -> CableBusTextures.CableBimare.getIcon();
+        };
     }
 
     @Override
     public ItemStack getPartItemStack(AEColor paramAEColor) {
-        return ((ItemParts)ModItems.ITEM_PARTS).createPart(EnumParts.BIMARE_SMART_CABLE, paramAEColor).stack(1);
+        return ((ItemParts) ModItems.ITEM_PARTS).createPart(EnumParts.BIMARE_SMART_CABLE, paramAEColor).stack(1);
     }
 
     @Override

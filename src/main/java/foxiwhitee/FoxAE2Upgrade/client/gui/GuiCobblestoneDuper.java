@@ -38,14 +38,14 @@ public class GuiCobblestoneDuper extends AEBaseGui {
         TileCobblestoneDuper tile = (TileCobblestoneDuper) container.getTileEntity();
         if (tile.getTick() > 0) {
             double l = ProductivityUtil.gauge(142, tile.getTick(), 20 * FoxConfig.cobblestoneDuperSecondsNeed);
-            UtilGui.drawTexture(offsetX - 341, offsetY - 78, 0, 243, (int)(l + 1.0D), 6, (int)(l + 1.0D), 6 , 256, 256);
+            UtilGui.drawTexture(offsetX - 341, offsetY - 78, 0, 243, (int) (l + 1.0D), 6, (int) (l + 1.0D), 6, 256, 256);
         }
         if (tile.getProductivity() > 0) {
-            double l = ProductivityUtil.gaugeProductivityProgressBar(tile.getTick(), tile.getProductivity(), tile.getProgressProductivity(), 134);
+            double l = ProductivityUtil.gaugeProductivityProgressBar(tile.getTick(), tile.getProductivity(), tile.getProgressProductivity(), 134, 20 * FoxConfig.cobblestoneDuperSecondsNeed);
             if (l > 134) {
                 l = l % 134;
             }
-            UtilGui.drawTexture(offsetX - 337, offsetY - 67, 0, 250, (int)(l + 1.0D), 6, (int)(l + 1.0D), 6 , 256, 256);
+            UtilGui.drawTexture(offsetX - 337, offsetY - 67, 0, 250, (int) (l + 1.0D), 6, (int) (l + 1.0D), 6, 256, 256);
         }
 
     }

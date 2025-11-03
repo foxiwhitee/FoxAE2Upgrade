@@ -15,7 +15,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-
 public class BlockAdvancedDriver extends AEBaseTileBlock {
     public BlockAdvancedDriver(String name) {
         super(Material.iron);
