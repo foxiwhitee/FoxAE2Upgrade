@@ -60,6 +60,7 @@ public class ModItemBlock extends AEBaseItemBlock {
             } else if (this.blockType.equals(ModBlocks.COBBLESTONE_DUPER)) {
                 list.add(LocalizationUtils.localize("tooltip.cobblestoneDuper"));
                 list.add(LocalizationUtils.localize("tooltip.productivity.base", 0));
+                list.add(LocalizationUtils.localize("tooltip.productivity.warning"));
             } else if (this.blockType.equals(ModBlocks.ME_SERVER)) {
                 list.add(LocalizationUtils.localize("tooltip.meServer"));
             }

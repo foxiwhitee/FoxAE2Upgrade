@@ -32,27 +32,24 @@ public class GuiCobblestoneDuper extends AEBaseGui {
     }
 
     public void drawFG(int offsetX, int offsetY, int mouseX, int mouseY) {
-        int h = (this.width - this.xSize / 2) / 2;
-        int k = (this.height - this.ySize / 2) / 2;
         this.bindTexture(FoxCore.MODID.toLowerCase(), this.getBackground());
+    }
+
+    public void drawBG(int offsetX, int offsetY, int mouseX, int mouseY) {
+        this.bindTexture(FoxCore.MODID.toLowerCase(), this.getBackground());
+        drawTexturedModalRect(offsetX, offsetY, 23, 28, this.xSize, this.ySize);
         TileCobblestoneDuper tile = (TileCobblestoneDuper) container.getTileEntity();
         if (tile.getTick() > 0) {
             double l = ProductivityUtil.gauge(142, tile.getTick(), 20 * FoxConfig.cobblestoneDuperSecondsNeed);
-            UtilGui.drawTexture(offsetX - 341, offsetY - 78, 0, 243, (int) (l + 1.0D), 6, (int) (l + 1.0D), 6, 256, 256);
+            UtilGui.drawTexture(offsetX + 57 - 23, offsetY + 103 - 28, 0, 243, (int) (l + 1.0D), 6, (int) (l + 1.0D), 6, 256, 256);
         }
         if (tile.getProductivity() > 0) {
             double l = ProductivityUtil.gaugeProductivityProgressBar(tile.getTick(), tile.getProductivity(), tile.getProgressProductivity(), 134, 20 * FoxConfig.cobblestoneDuperSecondsNeed);
             if (l > 134) {
                 l = l % 134;
             }
-            UtilGui.drawTexture(offsetX - 337, offsetY - 67, 0, 250, (int) (l + 1.0D), 6, (int) (l + 1.0D), 6, 256, 256);
+            UtilGui.drawTexture(offsetX + 64 - 23, offsetY + 114 - 28, 0, 250, (int) (l + 1.0D), 6, (int) (l + 1.0D), 6, 256, 256);
         }
-
-    }
-
-    public void drawBG(int offsetX, int offsetY, int mouseX, int mouseY) {
-        this.bindTexture(FoxCore.MODID.toLowerCase(), this.getBackground());
-        drawTexturedModalRect(offsetX, offsetY, 23, 28, this.xSize, this.ySize);
     }
 
     protected String getBackground() {

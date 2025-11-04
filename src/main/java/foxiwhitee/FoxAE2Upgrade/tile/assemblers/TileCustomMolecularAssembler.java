@@ -231,6 +231,7 @@ public abstract class TileCustomMolecularAssembler extends AENetworkInvTile impl
         try {
             getProxy().getGrid().postEvent(new MENetworkCraftingPatternChange(this, getProxy().getNode()));
         } catch (GridAccessException ignored) {
+            ignored.printStackTrace();
         }
     }
 

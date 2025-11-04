@@ -27,3 +27,4 @@ tooltip.cables.channels=§9Cable with maximum number of channels: %s
 tooltip.meServer=§9Holds up to 12 clusters from crafting storages
 tooltip.productivity.card=§9Adds %s%% productivity
 tooltip.productivity.base=§9Have a base productivity of: %s%%
+tooltip.productivity.warning=§4Additional output appears along with the main one, not at the end of the productivity scale

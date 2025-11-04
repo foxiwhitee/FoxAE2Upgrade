@@ -249,7 +249,7 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
             }
             if (inventory.getStackInSlot(0) != null) storeContents();
         }
-        if (tick++ >= 20 * FoxConfig.cobblestoneDuperSecondsNeed) {
+        if (inventory.getStackInSlot(1) != null && tick++ >= 20 * FoxConfig.cobblestoneDuperSecondsNeed) {
             tick = 0;
             if (productivity > 0) {
                 progressProductivity[0]++;
@@ -356,6 +356,7 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
 
     public void onChangeInventory(IInventory inv, int slot, InvOperation op, ItemStack removed, ItemStack added) {
         if (slot == 1) {
+            tick = 0;
             itemMonitor = null;
             fluidMonitor = null;
             isHandlerCached = false;

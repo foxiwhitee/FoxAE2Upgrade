@@ -54,10 +54,16 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
     public void onChangeInventory(IInventory iInventory, int i, InvOperation invOperation, ItemStack itemStack, ItemStack itemStack1) {
         if (this.getProxy().isReady() && (itemStack != null || itemStack1 != null)) {
             if (iInventory == storage) {
-                calculateCraftingStorage(i, itemStack1);
+                calculateCraftingStorage(i, storage.getStackInSlot(i));
             }
             if (iInventory == accelerators) {
-                calculateCraftingAccelerators(i, itemStack1);
+                calculateCraftingAccelerators(i, accelerators.getStackInSlot(i));
+            }
+            initializeClusters();
+        } else if (invOperation == InvOperation.markDirty) {
+            for (int j = 0; j < 12; j++) {
+                calculateCraftingStorage(i, storage.getStackInSlot(i));
+                calculateCraftingAccelerators(i, accelerators.getStackInSlot(i));
             }
             initializeClusters();
         }
@@ -65,44 +71,40 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
 
     private void calculateCraftingStorage(int id, ItemStack stack) {
         if (id >= 0 && id <= storage_bytes.length) {
-            long storageAmt = 0;
-            int storageItemsAmt = 0;
-            if (stack != null) {
-                storageItemsAmt += stack.stackSize;
-                for (int i = 0; i < stack.stackSize; i++) {
-                    storageAmt += AEApi.instance().definitions().blocks().craftingStorage1k().isSameAs(stack) ? 1024
-                        : AEApi.instance().definitions().blocks().craftingStorage4k().isSameAs(stack) ? 1024 * 4
-                        : AEApi.instance().definitions().blocks().craftingStorage16k().isSameAs(stack) ? 1024 * 16
-                        : AEApi.instance().definitions().blocks().craftingStorage64k().isSameAs(stack) ? 1024 * 64
-                        : AEApi.instance().definitions().blocks().craftingStorage256k().isSameAs(stack) ? 1024 * 256
-                        : AEApi.instance().definitions().blocks().craftingStorage1024k().isSameAs(stack) ? 1024 * 1024
-                        : AEApi.instance().definitions().blocks().craftingStorage4096k().isSameAs(stack) ? 1024 * 4096
-                        : AEApi.instance().definitions().blocks().craftingStorage16384k().isSameAs(stack) ? 1024 * 16384
-                        : AEApi.instance().definitions().blocks().craftingStorageSingularity().isSameAs(stack) ? Long.MAX_VALUE
-                        : 0;
-                }
+            if (stack == null) {
+                storage_bytes[id] = 0;
+                return;
             }
+            long storageAmt = AEApi.instance().definitions().blocks().craftingStorage1k().isSameAs(stack) ? 1024
+                : AEApi.instance().definitions().blocks().craftingStorage4k().isSameAs(stack) ? 1024 * 4
+                : AEApi.instance().definitions().blocks().craftingStorage16k().isSameAs(stack) ? 1024 * 16
+                : AEApi.instance().definitions().blocks().craftingStorage64k().isSameAs(stack) ? 1024 * 64
+                : AEApi.instance().definitions().blocks().craftingStorage256k().isSameAs(stack) ? 1024 * 256
+                : AEApi.instance().definitions().blocks().craftingStorage1024k().isSameAs(stack) ? 1024 * 1024
+                : AEApi.instance().definitions().blocks().craftingStorage4096k().isSameAs(stack) ? 1024 * 4096
+                : AEApi.instance().definitions().blocks().craftingStorage16384k().isSameAs(stack) ? 1024 * 16384
+                : AEApi.instance().definitions().blocks().craftingStorageSingularity().isSameAs(stack) ? Long.MAX_VALUE
+                : 0;
+            storageAmt *= stack.stackSize;
             storage_bytes[id] = storageAmt;
         }
     }
 
     private void calculateCraftingAccelerators(int id, ItemStack stack) {
         if (id >= 0 && id <= accelerators_count.length) {
-            int acceleratorAmt = 0;
-            int acceleratorItemsAmt = 0;
-            if (stack != null) {
-                acceleratorItemsAmt += stack.stackSize;
-                for (int i = 0; i < stack.stackSize; i++) {
-                    acceleratorAmt += AEApi.instance().definitions().blocks().craftingAccelerator().isSameAs(stack) ? 1
-                        : AEApi.instance().definitions().blocks().craftingAccelerator4x().isSameAs(stack) ? 4
-                        : AEApi.instance().definitions().blocks().craftingAccelerator16x().isSameAs(stack) ? 16
-                        : AEApi.instance().definitions().blocks().craftingAccelerator64x().isSameAs(stack) ? 64
-                        : AEApi.instance().definitions().blocks().craftingAccelerator256x().isSameAs(stack) ? 256
-                        : AEApi.instance().definitions().blocks().craftingAccelerator1024x().isSameAs(stack) ? 1024
-                        : AEApi.instance().definitions().blocks().craftingAccelerator4096x().isSameAs(stack) ? 4096
-                        : 0;
-                }
+            if (stack == null) {
+                accelerators_count[id] = 0;
+                return;
             }
+            int acceleratorAmt = AEApi.instance().definitions().blocks().craftingAccelerator().isSameAs(stack) ? 1
+                : AEApi.instance().definitions().blocks().craftingAccelerator4x().isSameAs(stack) ? 4
+                : AEApi.instance().definitions().blocks().craftingAccelerator16x().isSameAs(stack) ? 16
+                : AEApi.instance().definitions().blocks().craftingAccelerator64x().isSameAs(stack) ? 64
+                : AEApi.instance().definitions().blocks().craftingAccelerator256x().isSameAs(stack) ? 256
+                : AEApi.instance().definitions().blocks().craftingAccelerator1024x().isSameAs(stack) ? 1024
+                : AEApi.instance().definitions().blocks().craftingAccelerator4096x().isSameAs(stack) ? 4096
+                : 0;
+            acceleratorAmt *= stack.stackSize;
             accelerators_count[id] = acceleratorAmt;
         }
     }
