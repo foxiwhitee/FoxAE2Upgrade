@@ -115,7 +115,7 @@ public abstract class TileCustomMolecularAssembler extends AENetworkInvTile impl
 
     @Override
     public void provideCrafting(ICraftingProviderHelper helper) {
-        if (getProxy().isActive() && patternList != null) {
+        if (patternList != null) {
             patternList.stream()
                 .filter(ICraftingPatternDetails::isCraftable)
                 .forEach(pattern -> helper.addCraftingOption(this, pattern));
@@ -194,7 +194,6 @@ public abstract class TileCustomMolecularAssembler extends AENetworkInvTile impl
                     }
             }
         }
-        updatePatternList();
     }
 
     private void addPattern(ItemStack stack) {
@@ -210,7 +209,7 @@ public abstract class TileCustomMolecularAssembler extends AENetworkInvTile impl
 
     void updatePatternList() {
         if (!getProxy().isReady()) return;
-        Boolean[] tracked = new Boolean[36];
+        Boolean[] tracked = new Boolean[patternInventory.getSizeInventory()];
         Arrays.fill(tracked, false);
         if (patternList != null) {
             patternList.removeIf(pattern -> {

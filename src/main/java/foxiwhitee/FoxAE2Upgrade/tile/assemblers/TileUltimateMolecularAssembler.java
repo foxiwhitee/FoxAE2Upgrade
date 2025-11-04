@@ -31,7 +31,8 @@ public class TileUltimateMolecularAssembler extends TileCustomMolecularAssembler
 
     @Override
     public void provideCrafting(ICraftingProviderHelper helper) {
-        if (getProxy().isActive() && patternList != null) {
+        System.out.println("PROVIDE " + getProxy().isActive());
+        if (patternList != null) {
             patternList.stream()
                 .filter(ICraftingPatternDetails::isCraftable)
                 .forEach(pattern -> {
