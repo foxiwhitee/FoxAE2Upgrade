@@ -62,8 +62,8 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
             initializeClusters();
         } else if (invOperation == InvOperation.markDirty) {
             for (int j = 0; j < 12; j++) {
-                calculateCraftingStorage(j, storage.getStackInSlot(i));
-                calculateCraftingAccelerators(j, accelerators.getStackInSlot(i));
+                calculateCraftingStorage(j, storage.getStackInSlot(j));
+                calculateCraftingAccelerators(j, accelerators.getStackInSlot(j));
             }
             initializeClusters();
         }

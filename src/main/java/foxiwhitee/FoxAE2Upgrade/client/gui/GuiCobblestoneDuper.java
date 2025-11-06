@@ -48,7 +48,7 @@ public class GuiCobblestoneDuper extends AEBaseGui {
             if (l > 134) {
                 l = l % 134;
             }
-            UtilGui.drawTexture(offsetX + 64 - 23, offsetY + 114 - 28, 0, 250, (int) (l + 1.0D), 6, (int) (l + 1.0D), 6, 256, 256);
+            UtilGui.drawTexture(offsetX + 64 - 26, offsetY + 114 - 28, 0, 250, (int) (l + 1.0D), 6, (int) (l + 1.0D), 6, 256, 256);
         }
     }
 
