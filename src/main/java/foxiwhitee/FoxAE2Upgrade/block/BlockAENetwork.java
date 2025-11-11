@@ -12,6 +12,7 @@ public class BlockAENetwork extends AEBaseTileBlock {
         setTileEntity(tile);
         setCreativeTab(FoxCore.FOX_TAB);
         setHardness(1.0F);
+        setBlockTextureName(FoxCore.MODID + ":" + name);
         this.lightOpacity = 1;
     }
 }
