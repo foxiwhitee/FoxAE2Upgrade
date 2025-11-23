@@ -209,7 +209,7 @@ public abstract class TileCustomMolecularAssembler extends AENetworkInvTile impl
 
     void updatePatternList() {
         if (!getProxy().isReady()) return;
-        Boolean[] tracked = new Boolean[patternInventory.getSizeInventory()];
+        Boolean[] tracked = new Boolean[getPatterns().getSizeInventory()];
         Arrays.fill(tracked, false);
         if (patternList != null) {
             patternList.removeIf(pattern -> {
