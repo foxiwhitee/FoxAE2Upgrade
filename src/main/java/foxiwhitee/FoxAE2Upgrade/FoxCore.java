@@ -19,7 +19,7 @@ public class FoxCore {
     public static final String
         MODID = "foxae2upgrade",
         MODNAME = "FoxAE2Upgrade",
-        VERSION = "1.0.0",
+        VERSION = "1.0.2",
         DEPEND = "required-after:appliedenergistics2;required-after:foxlib;";
 
     public static final CreativeTabs FOX_TAB = new CreativeTabs("FOX_AE2_UPGRADE_TAB") {

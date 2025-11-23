@@ -15,7 +15,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-@SimpleGuiHandler(index = GuiHandlers.meServer, tile = TileMEServer.class, gui = GuiMEServer.class, container = ContainerMEServer.class)
+@SimpleGuiHandler(tile = TileMEServer.class, gui = GuiMEServer.class, container = ContainerMEServer.class)
 public class BlockMEServer extends AEBaseTileBlock {
     public BlockMEServer(String name) {
         super(Material.iron);
@@ -28,7 +28,7 @@ public class BlockMEServer extends AEBaseTileBlock {
     public boolean onActivated(World world, int x, int y, int z, EntityPlayer player, int p_149727_6_, float p_149727_7_, float p_149727_8_, float p_149727_9_) {
         TileEntity tile = world.getTileEntity(x, y, z);
         if (tile instanceof TileMEServer)
-            FMLNetworkHandler.openGui(player, FoxLib.instance, GuiHandlers.meServer, world, x, y, z);
+            FMLNetworkHandler.openGui(player, FoxLib.instance, GuiHandlers.getHandler(BlockMEServer.class), world, x, y, z);
         return true;
     }
 
