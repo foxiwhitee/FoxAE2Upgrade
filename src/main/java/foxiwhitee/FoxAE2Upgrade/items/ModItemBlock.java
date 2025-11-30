@@ -43,20 +43,24 @@ public class ModItemBlock extends AEBaseItemBlock {
     @Override
     public void addCheckedInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean advancedToolTips) {
         super.addCheckedInformation(itemStack, player, list, advancedToolTips);
-        if (FoxConfig.enable_tooltips) {
+        if (FoxConfig.enableTooltips) {
             if (this.blockType.equals(ModBlocks.AUTO_CRYSTALLIZER)) {
                 list.add(LocalizationUtils.localize("tooltip.autoCrystallizer"));
             } else if (this.blockType.equals(ModBlocks.AUTO_PRESS)) {
                 list.add(LocalizationUtils.localize("tooltip.autoPress"));
             }
             if (this.blockType.equals(ModBlocks.ADVANCED_MOLECULAR_ASSEMBLER)) {
-                list.add(LocalizationUtils.localize("tooltip.assembler.speed", FoxConfig.advanced_molecular_assembler_speed));
+                list.add(LocalizationUtils.localize("tooltip.assembler.speed", FoxConfig.advancedMolecularAssemblerSpeed));
             } else if (this.blockType.equals(ModBlocks.ULTIMATE_MOLECULAR_ASSEMBLER)) {
-                list.add(LocalizationUtils.localize("tooltip.assembler.speed", FoxConfig.ultimate_molecular_assembler_speed));
-                list.add(LocalizationUtils.localize("tooltip.productivity.base", FoxConfig.ultimate_molecular_assembler_productivity));
+                list.add(LocalizationUtils.localize("tooltip.assembler.speed", FoxConfig.ultimateMolecularAssemblerSpeed));
+                if (FoxConfig.hasUltimateMolecularAssemblerProductivity) {
+                    list.add(LocalizationUtils.localize("tooltip.productivity.base", FoxConfig.ultimateMolecularAssemblerProductivity));
+                }
             } else if (this.blockType.equals(ModBlocks.QUANTUM_MOLECULAR_ASSEMBLER)) {
-                list.add(LocalizationUtils.localize("tooltip.assembler.speed", FoxConfig.quantum_molecular_assembler_speed));
-                list.add(LocalizationUtils.localize("tooltip.productivity.base", FoxConfig.quantum_molecular_assembler_productivity));
+                list.add(LocalizationUtils.localize("tooltip.assembler.speed", FoxConfig.quantumMolecularAssemblerSpeed));
+                if (FoxConfig.hasQuantumMolecularAssemblerProductivity) {
+                    list.add(LocalizationUtils.localize("tooltip.productivity.base", FoxConfig.quantumMolecularAssemblerProductivity));
+                }
             } else if (this.blockType.equals(ModBlocks.COBBLESTONE_DUPER)) {
                 list.add(LocalizationUtils.localize("tooltip.cobblestoneDuper"));
                 list.add(LocalizationUtils.localize("tooltip.productivity.base", 0));

@@ -65,7 +65,7 @@ public class ItemParts extends AEBaseItem implements IPartItem, IItemGroup {
     @Override
     protected void addCheckedInformation(ItemStack stack, EntityPlayer player, List<String> lines, boolean displayMoreInfo) {
         EnumParts part = getTypeByStack(stack);
-        if (part.getDescription() != null && FoxConfig.enable_tooltips) {
+        if (part.getDescription() != null && FoxConfig.enableTooltips) {
             lines.add(part.getDescription());
         }
     }

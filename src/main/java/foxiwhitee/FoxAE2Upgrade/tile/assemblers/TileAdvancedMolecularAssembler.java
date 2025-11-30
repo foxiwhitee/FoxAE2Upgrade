@@ -9,7 +9,7 @@ import net.minecraft.tileentity.TileEntity;
 public class TileAdvancedMolecularAssembler extends TileCustomMolecularAssembler {
 
     public TileAdvancedMolecularAssembler() {
-        getProxy().setIdlePowerUsage(FoxConfig.advanced_molecular_assembler_power);
+        getProxy().setIdlePowerUsage(FoxConfig.advancedMolecularAssemblerPower);
     }
 
     @Override
@@ -19,12 +19,12 @@ public class TileAdvancedMolecularAssembler extends TileCustomMolecularAssembler
 
     @Override
     public long getMaxCount() {
-        return FoxConfig.advanced_molecular_assembler_speed - 1L;
+        return FoxConfig.advancedMolecularAssemblerSpeed - 1L;
     }
 
     @Override
     protected double getPower() {
-        return FoxConfig.advanced_molecular_assembler_power;
+        return FoxConfig.advancedMolecularAssemblerPower;
     }
 
     public String getName() {

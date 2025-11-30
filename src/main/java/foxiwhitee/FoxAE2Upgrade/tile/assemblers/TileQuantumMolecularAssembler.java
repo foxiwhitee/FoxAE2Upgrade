@@ -10,7 +10,7 @@ public class TileQuantumMolecularAssembler extends TileUltimateMolecularAssemble
     protected AppEngInternalInventory patternInventory = new AppEngInternalInventory(this, 108, 1);
 
     public TileQuantumMolecularAssembler() {
-        getProxy().setIdlePowerUsage(FoxConfig.quantum_molecular_assembler_power);
+        getProxy().setIdlePowerUsage(FoxConfig.quantumMolecularAssemblerPower);
     }
 
     @Override
@@ -20,12 +20,12 @@ public class TileQuantumMolecularAssembler extends TileUltimateMolecularAssemble
 
     @Override
     public long getMaxCount() {
-        return FoxConfig.quantum_molecular_assembler_speed - 1L;
+        return FoxConfig.quantumMolecularAssemblerSpeed - 1L;
     }
 
     @Override
     protected double getPower() {
-        return FoxConfig.quantum_molecular_assembler_power;
+        return FoxConfig.quantumMolecularAssemblerPower;
     }
 
     public String getName() {
@@ -54,6 +54,11 @@ public class TileQuantumMolecularAssembler extends TileUltimateMolecularAssemble
 
     @Override
     protected int getProductivity() {
-        return FoxConfig.quantum_molecular_assembler_productivity;
+        return FoxConfig.quantumMolecularAssemblerProductivity;
+    }
+
+    @Override
+    protected boolean hasProductivity() {
+        return FoxConfig.hasQuantumMolecularAssemblerProductivity;
     }
 }

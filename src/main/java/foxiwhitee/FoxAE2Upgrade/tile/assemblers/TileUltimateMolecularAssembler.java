@@ -58,7 +58,7 @@ public class TileUltimateMolecularAssembler extends TileCustomMolecularAssembler
     }
 
     public TileUltimateMolecularAssembler() {
-        getProxy().setIdlePowerUsage(FoxConfig.ultimate_molecular_assembler_power);
+        getProxy().setIdlePowerUsage(FoxConfig.ultimateMolecularAssemblerPower);
     }
 
     @Override
@@ -88,8 +88,11 @@ public class TileUltimateMolecularAssembler extends TileCustomMolecularAssembler
         }
         if (!canInjectAll(outputs, itemInv, src)) return TickRateModulation.IDLE;
         injectAll(outputs, itemInv, src);
-        productivityHistory.merge(activePattern, (double) craftCount, Double::sum);
-        int bonusCount = ProductivityUtil.check(productivityHistory, activePattern, getProductivity());
+        int bonusCount = 0;
+        if (hasProductivity()) {
+            productivityHistory.merge(activePattern, (double) craftCount, Double::sum);
+            bonusCount = ProductivityUtil.check(productivityHistory, activePattern, getProductivity());
+        }
         craftCount = 0;
         if (bonusCount > 0) {
             outputs.clear();
@@ -128,12 +131,12 @@ public class TileUltimateMolecularAssembler extends TileCustomMolecularAssembler
 
     @Override
     public long getMaxCount() {
-        return FoxConfig.ultimate_molecular_assembler_speed - 1L;
+        return FoxConfig.ultimateMolecularAssemblerSpeed - 1L;
     }
 
     @Override
     protected double getPower() {
-        return FoxConfig.ultimate_molecular_assembler_power;
+        return FoxConfig.ultimateMolecularAssemblerPower;
     }
 
     public String getName() {
@@ -161,6 +164,10 @@ public class TileUltimateMolecularAssembler extends TileCustomMolecularAssembler
     }
 
     protected int getProductivity() {
-        return FoxConfig.ultimate_molecular_assembler_productivity;
+        return FoxConfig.ultimateMolecularAssemblerProductivity;
+    }
+
+    protected boolean hasProductivity() {
+        return FoxConfig.hasUltimateMolecularAssemblerProductivity;
     }
 }
