@@ -23,6 +23,6 @@ tooltip.autoPress=§9Автоматизує створення всіх проц
 tooltip.cobblestoneDuper=§9Заповнює будь-яку комірку зберігання кругляком
 tooltip.cables.channels=§9Кабель з максимальною кількістю каналів: %s
 tooltip.meServer=§9Вміщує в собі до 12 кластерів зі сховищ крафту
-tooltip.productivity.card=§9Додає %s% продуктивності
+tooltip.productivity.card=§9Додає %s%% продуктивності
 tooltip.productivity.base=§9Мають базову продуктивність: %s%%
 tooltip.productivity.warning=§4Додатковий вихід продукції з'являється разом з основною, а не по закінченю шкали продуктивності

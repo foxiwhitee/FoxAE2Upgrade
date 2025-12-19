@@ -1,5 +1,6 @@
 package foxiwhitee.FoxAE2Upgrade.recipes;
 
+import appeng.recipes.Ingredient;
 import com.google.gson.JsonObject;
 import foxiwhitee.FoxAE2Upgrade.ModRecipes;
 import foxiwhitee.FoxLib.recipes.IFoxRecipe;
@@ -9,6 +10,7 @@ import minetweaker.api.item.IIngredient;
 import minetweaker.api.item.IItemStack;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import stanhebben.zenscript.value.IAny;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,7 +61,7 @@ public class AutoPressCraft implements IJsonRecipe<ItemStack, ItemStack> {
 
     @Override
     public boolean hasOreDict() {
-        return false;
+        return true;
     }
 
     @Override
@@ -77,7 +79,15 @@ public class AutoPressCraft implements IJsonRecipe<ItemStack, ItemStack> {
         try {
             this.outputs = new ItemStack[]{RecipeUtils.getOutput(data)};
             Object[] objects = RecipeUtils.getInputs(data, hasOreDict());
-            this.inputs = Arrays.copyOf(objects, objects.length, ItemStack[].class);
+            this.inputs = new ItemStack[objects.length];
+            for (int i = 0; i < objects.length; i++) {
+                if (objects[i] instanceof ItemStack stack) {
+                    inputs[i] = stack.copy();
+                } else if (objects[i] instanceof String string) {
+                    List<ItemStack> list = OreDictionary.getOres(string);
+                    inputs[i] = list.get(0);
+                }
+            }
         } catch (RuntimeException e) {
             if (e.getMessage().startsWith("Item not found:")) {
                 this.inputs = null;
@@ -105,7 +115,11 @@ public class AutoPressCraft implements IJsonRecipe<ItemStack, ItemStack> {
         Object[] objects = new Object[inputs.length];
         for (int i = 0; i < inputs.length; i++) {
             IIngredient ingredient = inputs[i];
-            objects[i] = ingredient.getInternal();
+            if (ingredient instanceof IItemStack) {
+                objects[i] = ingredient.getInternal();
+            } else {
+                objects[i] = ingredient.getItems().get(0);
+            }
         }
         ItemStack real = (ItemStack) stack.getInternal();
         BaseAutoBlockRecipe recipe = new BaseAutoBlockRecipe(real, Arrays.asList(objects));

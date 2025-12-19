@@ -19,6 +19,7 @@ import appeng.util.item.AEItemStack;
 import foxiwhitee.FoxAE2Upgrade.ModBlocks;
 import foxiwhitee.FoxAE2Upgrade.config.FoxConfig;
 import foxiwhitee.FoxLib.utils.ProductivityUtil;
+import foxiwhitee.FoxLib.utils.helpers.ProductivityBlackListHelper;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -90,8 +91,17 @@ public class TileUltimateMolecularAssembler extends TileCustomMolecularAssembler
         injectAll(outputs, itemInv, src);
         int bonusCount = 0;
         if (hasProductivity()) {
-            productivityHistory.merge(activePattern, (double) craftCount, Double::sum);
-            bonusCount = ProductivityUtil.check(productivityHistory, activePattern, getProductivity());
+            boolean isBlackListed = false;
+            for (IAEItemStack stack : outputs) {
+                if (ProductivityBlackListHelper.isInBlackList(stack.getItemStack())) {
+                    isBlackListed = true;
+                    break;
+                }
+            }
+            if (!isBlackListed) {
+                productivityHistory.merge(activePattern, (double) craftCount, Double::sum);
+                bonusCount = ProductivityUtil.check(productivityHistory, activePattern, getProductivity());
+            }
         }
         craftCount = 0;
         if (bonusCount > 0) {

@@ -19,7 +19,7 @@ public class FoxCore {
     public static final String
         MODID = "foxae2upgrade",
         MODNAME = "FoxAE2Upgrade",
-        VERSION = "1.0.3",
+        VERSION = "1.0.4",
         DEPEND = "required-after:appliedenergistics2;required-after:foxlib;";
 
     public static final CreativeTabs FOX_TAB = new CreativeTabs("FOX_AE2_UPGRADE_TAB") {
@@ -34,7 +34,6 @@ public class FoxCore {
 
     @SidedProxy(clientSide = "foxiwhitee.FoxAE2Upgrade.proxy.ClientProxy", serverSide = "foxiwhitee.FoxAE2Upgrade.proxy.CommonProxy")
     public static CommonProxy proxy;
-
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent e) {

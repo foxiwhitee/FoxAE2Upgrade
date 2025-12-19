@@ -18,7 +18,7 @@
     {
       "type": "autoPress",
       "output": "<appliedenergistics2:item.ItemMultiMaterial.20>",
-      "inputs": ["<appliedenergistics2:item.ItemMultiMaterial.5>"]
+      "inputs": ["<ore:itemSilicon>"]
     },
     {
       "type": "autoPress",
