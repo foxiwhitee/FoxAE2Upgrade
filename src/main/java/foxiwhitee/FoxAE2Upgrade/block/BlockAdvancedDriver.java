@@ -2,12 +2,21 @@ package foxiwhitee.FoxAE2Upgrade.block;
 
 import appeng.block.AEBaseTileBlock;
 import appeng.util.Platform;
+import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import foxiwhitee.FoxAE2Upgrade.FoxCore;
+import foxiwhitee.FoxAE2Upgrade.client.gui.GuiAdvancedDrive;
+import foxiwhitee.FoxAE2Upgrade.client.gui.GuiCobblestoneDuper;
 import foxiwhitee.FoxAE2Upgrade.client.render.RenderAdvDrive;
+import foxiwhitee.FoxAE2Upgrade.container.ContainerAdvancedDrive;
+import foxiwhitee.FoxAE2Upgrade.container.ContainerCobblestoneDuper;
 import foxiwhitee.FoxAE2Upgrade.proxy.CommonProxy;
 import foxiwhitee.FoxAE2Upgrade.tile.TileAdvancedDrive;
+import foxiwhitee.FoxAE2Upgrade.tile.TileCobblestoneDuper;
+import foxiwhitee.FoxLib.FoxLib;
+import foxiwhitee.FoxLib.utils.handler.GuiHandlers;
+import foxiwhitee.FoxLib.utils.handler.SimpleGuiHandler;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -15,6 +24,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+@SimpleGuiHandler(tile = TileAdvancedDrive.class, gui = GuiAdvancedDrive.class, container = ContainerAdvancedDrive.class)
 public class BlockAdvancedDriver extends AEBaseTileBlock {
     public BlockAdvancedDriver(String name) {
         super(Material.iron);
@@ -29,15 +39,10 @@ public class BlockAdvancedDriver extends AEBaseTileBlock {
     }
 
     public boolean onActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
-        if (player.isSneaking())
-            return false;
-        TileAdvancedDrive tg = (TileAdvancedDrive)getTileEntity((IBlockAccess)world, x, y, z);
-        if (tg != null) {
-            if (Platform.isServer())
-                Platform.openGUI(player, (TileEntity)tg, ForgeDirection.getOrientation(side), CommonProxy.getGuiAdvMeDrive());
-            return true;
-        }
-        return false;
+        TileEntity tile = world.getTileEntity(x, y, z);
+        if (tile instanceof TileAdvancedDrive)
+            FMLNetworkHandler.openGui(player, FoxLib.instance, GuiHandlers.getHandler(BlockAdvancedDriver.class), world, x, y, z);
+        return true;
     }
 
     @SideOnly(Side.CLIENT)

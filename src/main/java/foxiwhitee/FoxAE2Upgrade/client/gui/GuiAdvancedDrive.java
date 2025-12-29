@@ -19,8 +19,8 @@ import net.minecraft.inventory.Container;
 public class GuiAdvancedDrive extends AEBaseGui {
     private GuiTabButton priority;
 
-    public GuiAdvancedDrive(InventoryPlayer inventoryPlayer, TileAdvancedDrive te) {
-        super(new ContainerAdvancedDrive(inventoryPlayer, te));
+    public GuiAdvancedDrive(ContainerAdvancedDrive container) {
+        super(container);
         this.xSize = 220;
         this.ySize = 238;
     }

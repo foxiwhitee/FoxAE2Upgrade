@@ -10,8 +10,8 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 
 public class GuiQuantumMolecularAssembler extends AEBaseGui {
-    public GuiQuantumMolecularAssembler(InventoryPlayer ip, TileQuantumMolecularAssembler te) {
-        super(new ContainerQuantumMolecularAssembler(ip, te));
+    public GuiQuantumMolecularAssembler(ContainerQuantumMolecularAssembler container) {
+        super(container);
         this.xSize = 210;
         this.ySize = 343;
     }
