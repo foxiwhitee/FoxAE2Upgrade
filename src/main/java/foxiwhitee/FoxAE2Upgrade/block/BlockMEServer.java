@@ -8,6 +8,7 @@ import foxiwhitee.FoxAE2Upgrade.client.gui.GuiMEServer;
 import foxiwhitee.FoxAE2Upgrade.container.ContainerMEServer;
 import foxiwhitee.FoxAE2Upgrade.tile.TileMEServer;
 import foxiwhitee.FoxLib.FoxLib;
+import foxiwhitee.FoxLib.block.FoxBaseBlock;
 import foxiwhitee.FoxLib.utils.handler.GuiHandlers;
 import foxiwhitee.FoxLib.utils.handler.SimpleGuiHandler;
 import net.minecraft.block.material.Material;
@@ -16,20 +17,18 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 @SimpleGuiHandler(tile = TileMEServer.class, gui = GuiMEServer.class, container = ContainerMEServer.class)
-public class BlockMEServer extends AEBaseTileBlock {
+public class BlockMEServer extends BlockApplied {
     public BlockMEServer(String name) {
-        super(Material.iron);
-        this.setTileEntity( TileMEServer.class );
-        this.setBlockName(name);
-        this.setCreativeTab(FoxCore.FOX_TAB);
-        this.setBlockTextureName(FoxCore.MODID.toLowerCase() + ":meServer/" + name);
+        super(name, TileMEServer.class);
     }
 
-    public boolean onActivated(World world, int x, int y, int z, EntityPlayer player, int p_149727_6_, float p_149727_7_, float p_149727_8_, float p_149727_9_) {
-        TileEntity tile = world.getTileEntity(x, y, z);
-        if (tile instanceof TileMEServer)
-            FMLNetworkHandler.openGui(player, FoxLib.instance, GuiHandlers.getHandler(BlockMEServer.class), world, x, y, z);
+    @Override
+    public String getFolder() {
+        return "meServer/";
+    }
+
+    @Override
+    protected boolean hasUpDownRotate() {
         return true;
     }
-
 }

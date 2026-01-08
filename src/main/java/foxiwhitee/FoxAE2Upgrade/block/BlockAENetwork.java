@@ -5,14 +5,8 @@ import foxiwhitee.FoxAE2Upgrade.FoxCore;
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 
-public class BlockAENetwork extends AEBaseTileBlock {
+public class BlockAENetwork extends BlockApplied {
     public BlockAENetwork(String name, Class<? extends TileEntity> tile) {
-        super(Material.iron);
-        setBlockName(name);
-        setTileEntity(tile);
-        setCreativeTab(FoxCore.FOX_TAB);
-        setHardness(1.0F);
-        setBlockTextureName(FoxCore.MODID + ":" + name);
-        this.lightOpacity = 1;
+        super(name, tile);
     }
 }

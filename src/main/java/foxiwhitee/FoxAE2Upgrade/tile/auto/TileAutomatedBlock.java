@@ -22,23 +22,29 @@ import appeng.tile.grid.AENetworkTile;
 import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
 import foxiwhitee.FoxAE2Upgrade.recipes.BaseAutoBlockRecipe;
+import foxiwhitee.FoxLib.api.orientable.FastOrientableManager;
+import foxiwhitee.FoxLib.api.orientable.IOrientable;
 import foxiwhitee.FoxLib.integration.applied.api.crafting.ICraftingCPUClusterAccessor;
 import foxiwhitee.FoxLib.integration.applied.api.crafting.IPreCraftingMedium;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class TileAutomatedBlock extends AENetworkTile implements IPreCraftingMedium, IGridTickable, ICraftingProvider, ICraftingMedium {
+public abstract class TileAutomatedBlock extends AENetworkTile implements IPreCraftingMedium, IGridTickable, ICraftingProvider, ICraftingMedium, IOrientable {
     private List<ICraftingPatternDetails> patternList = new ArrayList<>();
     private ICraftingPatternDetails activePattern;
     private long craftCount;
     private InventoryCrafting craftingGrid;
     protected boolean isBusy = false;
+
+    private final int orientableId = FastOrientableManager.nextId();
 
     public void provideCrafting(ICraftingProviderHelper iCraftingProviderHelper) {
         if (getRecipes() != null) {
@@ -170,8 +176,43 @@ public abstract class TileAutomatedBlock extends AENetworkTile implements IPreCr
             this.isBusy = compound.getBoolean("isBusy");
     }
 
+    @TileEvent(TileEventType.NETWORK_WRITE)
+    public void writeToStream(ByteBuf data) {
+        if (this.canBeRotated()) {
+            data.writeByte((byte) getForward().ordinal());
+            data.writeByte((byte) getUp().ordinal());
+        }
+    }
+
+    @TileEvent(TileEventType.NETWORK_READ)
+    public boolean readFromStream(ByteBuf data) {
+        boolean output = false;
+        if (this.canBeRotated()) {
+            ForgeDirection oldForward = this.getForward(), oldUp = this.getUp();
+            byte orientationForward = data.readByte(), orientationUp = data.readByte();
+            ForgeDirection newForward = ForgeDirection.getOrientation(orientationForward & 7);
+            ForgeDirection newUp = ForgeDirection.getOrientation(orientationUp & 7);
+            this.setOrientation(newForward, newUp);
+            output = newForward != oldForward || newUp != oldUp;
+        }
+        return output;
+    }
+
     public boolean isBusy() {
         return this.isBusy;
+    }
+
+    @Override
+    public ForgeDirection getForward() { return FastOrientableManager.getForward(orientableId); }
+
+    @Override
+    public ForgeDirection getUp() { return FastOrientableManager.getUp(orientableId); }
+
+    @Override
+    public void setOrientation(ForgeDirection forward, ForgeDirection up) {
+        FastOrientableManager.set(orientableId, forward, up);
+        this.markForUpdate();
+        if (worldObj != null) worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
     }
 
     public static class InternalPattern implements ICraftingPatternDetails {

@@ -7,13 +7,14 @@ import foxiwhitee.FoxAE2Upgrade.config.FoxConfig;
 import foxiwhitee.FoxLib.utils.helpers.LocalizationUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import java.util.List;
 
-public class ModItemBlock extends AEBaseItemBlock {
+public class ModItemBlock extends ItemBlock {
     private final Block blockType;
 
     public ModItemBlock(Block b) {
@@ -41,8 +42,7 @@ public class ModItemBlock extends AEBaseItemBlock {
     }
 
     @Override
-    public void addCheckedInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean advancedToolTips) {
-        super.addCheckedInformation(itemStack, player, list, advancedToolTips);
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean advancedToolTips) {
         if (FoxConfig.enableTooltips) {
             if (this.blockType.equals(ModBlocks.AUTO_CRYSTALLIZER)) {
                 list.add(LocalizationUtils.localize("tooltip.autoCrystallizer"));

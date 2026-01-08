@@ -21,15 +21,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 @SimpleGuiHandler(tile = TileAdvancedMolecularAssembler.class, gui = GuiAdvancedMolecularAssembler.class, container = ContainerAdvancedMolecularAssembler.class)
 public class BlockAdvancedMolecularAssembler extends BlockCustomMolecularAssembler{
     public BlockAdvancedMolecularAssembler(String name) {
-        super(name);
-        setTileEntity(TileAdvancedMolecularAssembler.class);
+        super(name, TileAdvancedMolecularAssembler.class);
     }
-
-    public boolean onActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
-        TileEntity tile = world.getTileEntity(x, y, z);
-        if (tile instanceof TileAdvancedMolecularAssembler)
-            FMLNetworkHandler.openGui(player, FoxLib.instance, GuiHandlers.getHandler(BlockAdvancedMolecularAssembler.class), world, x, y, z);
-        return true;
-    }
-
 }

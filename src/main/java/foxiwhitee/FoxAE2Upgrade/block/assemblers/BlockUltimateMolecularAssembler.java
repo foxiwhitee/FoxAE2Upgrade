@@ -21,15 +21,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 @SimpleGuiHandler(tile = TileUltimateMolecularAssembler.class, gui = GuiUltimateMolecularAssembler.class, container = ContainerUltimateMolecularAssembler.class)
 public class BlockUltimateMolecularAssembler extends BlockCustomMolecularAssembler{
     public BlockUltimateMolecularAssembler(String name) {
-        super(name);
-        setTileEntity(TileUltimateMolecularAssembler.class);
+        super(name, TileUltimateMolecularAssembler.class);
     }
-
-    public boolean onActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
-        TileEntity tile = world.getTileEntity(x, y, z);
-        if (tile instanceof TileUltimateMolecularAssembler)
-            FMLNetworkHandler.openGui(player, FoxLib.instance, GuiHandlers.getHandler(BlockUltimateMolecularAssembler.class), world, x, y, z);
-        return true;
-    }
-
 }

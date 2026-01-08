@@ -42,6 +42,8 @@ import appeng.util.item.AEItemStack;
 import foxiwhitee.FoxAE2Upgrade.ModBlocks;
 import foxiwhitee.FoxAE2Upgrade.config.FoxConfig;
 import foxiwhitee.FoxLib.api.FoxLibApi;
+import foxiwhitee.FoxLib.api.orientable.FastOrientableManager;
+import foxiwhitee.FoxLib.api.orientable.IOrientable;
 import foxiwhitee.FoxLib.config.FoxLibConfig;
 import foxiwhitee.FoxLib.items.ItemProductivityCard;
 import foxiwhitee.FoxLib.utils.ProductivityUtil;
@@ -58,7 +60,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, IPriorityHost, IConfigManagerHost, IColorableTile {
+public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, IPriorityHost, IConfigManagerHost, IColorableTile, IOrientable {
     private static final int[] SIDES = {0};
     private static final int[] FRONT = {1};
     private static final int[] NO_SLOTS = {};
@@ -80,6 +82,8 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
     private int productivity;
     private int tick;
     private double[] progressProductivity = {0};
+
+    private final int orientableId = FastOrientableManager.nextId();
 
     public TileCobblestoneDuper() {
         getProxy().setFlags(GridFlags.REQUIRE_CHANNEL);
@@ -283,6 +287,10 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
         data.writeByte(color.ordinal());
         ItemStack cell = inventory.getStackInSlot(1);
         data.writeInt(cell == null ? 0 : (cell.getItemDamage() << 16) | Item.getIdFromItem(cell.getItem()));
+        if (this.canBeRotated()) {
+            data.writeByte((byte) getForward().ordinal());
+            data.writeByte((byte) getUp().ordinal());
+        }
     }
 
     @TileEvent(TileEventType.NETWORK_READ)
@@ -298,7 +306,16 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
         int item = data.readInt();
         cellType = item == 0 ? null : new ItemStack(Item.getItemById(item & 0xFFFF), 1, item >> 16);
         lastBlinkTime = worldObj.getTotalWorldTime();
-        return prevColor != color || (status & 0xDB6DB6DB) != (prevStatus & 0xDB6DB6DB) || !Platform.isSameItemPrecise(prevCell, cellType);
+        boolean output = false;
+        if (this.canBeRotated()) {
+            ForgeDirection oldForward = this.getForward(), oldUp = this.getUp();
+            byte orientationForward = data.readByte(), orientationUp = data.readByte();
+            ForgeDirection newForward = ForgeDirection.getOrientation(orientationForward & 7);
+            ForgeDirection newUp = ForgeDirection.getOrientation(orientationUp & 7);
+            this.setOrientation(newForward, newUp);
+            output = newForward != oldForward || newUp != oldUp;
+        }
+        return prevColor != color || (status & 0xDB6DB6DB) != (prevStatus & 0xDB6DB6DB) || !Platform.isSameItemPrecise(prevCell, cellType) || output;
     }
 
     @TileEvent(TileEventType.WORLD_NBT_READ)
@@ -594,5 +611,18 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
 
     public double[] getProgressProductivity() {
         return progressProductivity;
+    }
+
+    @Override
+    public ForgeDirection getForward() { return FastOrientableManager.getForward(orientableId); }
+
+    @Override
+    public ForgeDirection getUp() { return FastOrientableManager.getUp(orientableId); }
+
+    @Override
+    public void setOrientation(ForgeDirection forward, ForgeDirection up) {
+        FastOrientableManager.set(orientableId, forward, up);
+        this.markForUpdate();
+        if (worldObj != null) worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
     }
 }

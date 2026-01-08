@@ -1,6 +1,7 @@
 package foxiwhitee.FoxAE2Upgrade;
 
 
+import appeng.block.AEBaseItemBlock;
 import foxiwhitee.FoxAE2Upgrade.block.BlockAENetwork;
 import foxiwhitee.FoxAE2Upgrade.block.BlockAdvancedDriver;
 import foxiwhitee.FoxAE2Upgrade.block.BlockCobblestoneDuper;
@@ -54,7 +55,7 @@ public class ModBlocks {
             RegisterUtils.registerTile(TileCobblestoneDuper.class);
         }
         if (ContentConfig.enableAdvancedDriver) {
-            RegisterUtils.registerBlock(ADVANCED_DRIVER, ModItemBlock.class);
+            RegisterUtils.registerBlock(ADVANCED_DRIVER, AEBaseItemBlock.class);
             RegisterUtils.registerTile(TileAdvancedDrive.class);
         }
         if (ContentConfig.enableAutoCrystallizer) {

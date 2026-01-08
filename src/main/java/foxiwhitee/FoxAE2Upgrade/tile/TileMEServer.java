@@ -18,8 +18,11 @@ import appeng.tile.inventory.IAEAppEngInventory;
 import appeng.tile.inventory.InvOperation;
 import appeng.util.Platform;
 import cpw.mods.fml.common.FMLCommonHandler;
+import foxiwhitee.FoxLib.api.orientable.FastOrientableManager;
+import foxiwhitee.FoxLib.api.orientable.IOrientable;
 import foxiwhitee.FoxLib.integration.applied.api.ITileMEServer;
 import foxiwhitee.FoxLib.integration.applied.api.crafting.ICraftingCPUClusterAccessor;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,7 +34,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory, ITileMEServer {
+public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory, ITileMEServer, IOrientable {
     private final List<CraftingCPUCluster> virtualClusters = new ArrayList<>(12);
     private boolean isFormed = true;
     private AppEngInternalInventory storage = new AppEngInternalInventory(this, 12);
@@ -41,6 +44,8 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
     private long[] storage_bytes = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     private int[] accelerators_count = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     private NBTTagCompound[] previousStates = new NBTTagCompound[12];
+
+    private final int orientableId = FastOrientableManager.nextId();
 
     public TileMEServer() {
         this.getProxy().setFlags(GridFlags.REQUIRE_CHANNEL);
@@ -236,6 +241,28 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
         }
     }
 
+    @TileEvent(TileEventType.NETWORK_WRITE)
+    public void writeToStream(ByteBuf data) {
+        if (this.canBeRotated()) {
+            data.writeByte((byte) getForward().ordinal());
+            data.writeByte((byte) getUp().ordinal());
+        }
+    }
+
+    @TileEvent(TileEventType.NETWORK_READ)
+    public boolean readFromStream(ByteBuf data) {
+        boolean output = false;
+        if (this.canBeRotated()) {
+            ForgeDirection oldForward = this.getForward(), oldUp = this.getUp();
+            byte orientationForward = data.readByte(), orientationUp = data.readByte();
+            ForgeDirection newForward = ForgeDirection.getOrientation(orientationForward & 7);
+            ForgeDirection newUp = ForgeDirection.getOrientation(orientationUp & 7);
+            this.setOrientation(newForward, newUp);
+            output = newForward != oldForward || newUp != oldUp;
+        }
+        return output;
+    }
+
     @Override
     public void disconnect(boolean update) {
         for (CraftingCPUCluster cluster : virtualClusters) {
@@ -294,5 +321,18 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
                 drops.add(stack);
             }
         });
+    }
+
+    @Override
+    public ForgeDirection getForward() { return FastOrientableManager.getForward(orientableId); }
+
+    @Override
+    public ForgeDirection getUp() { return FastOrientableManager.getUp(orientableId); }
+
+    @Override
+    public void setOrientation(ForgeDirection forward, ForgeDirection up) {
+        FastOrientableManager.set(orientableId, forward, up);
+        this.markForUpdate();
+        if (worldObj != null) worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
     }
 }

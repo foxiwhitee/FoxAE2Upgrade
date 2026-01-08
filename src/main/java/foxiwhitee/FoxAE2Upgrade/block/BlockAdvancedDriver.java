@@ -35,7 +35,6 @@ public class BlockAdvancedDriver extends AEBaseTileBlock {
         setTileEntity(TileAdvancedDrive.class);
         this.isOpaque = false;
         this.lightOpacity = 1;
-
     }
 
     public boolean onActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {

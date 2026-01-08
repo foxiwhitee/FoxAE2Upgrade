@@ -21,15 +21,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 @SimpleGuiHandler(tile = TileQuantumMolecularAssembler.class, gui = GuiQuantumMolecularAssembler.class, container = ContainerQuantumMolecularAssembler.class)
 public class BlockQuantumMolecularAssembler extends BlockCustomMolecularAssembler{
     public BlockQuantumMolecularAssembler(String name) {
-        super(name);
-        setTileEntity(TileQuantumMolecularAssembler.class);
+        super(name, TileQuantumMolecularAssembler.class);
     }
-
-    public boolean onActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
-        TileEntity tile = world.getTileEntity(x, y, z);
-        if (tile instanceof TileQuantumMolecularAssembler)
-            FMLNetworkHandler.openGui(player, FoxLib.instance, GuiHandlers.getHandler(BlockQuantumMolecularAssembler.class), world, x, y, z);
-        return true;
-    }
-
 }

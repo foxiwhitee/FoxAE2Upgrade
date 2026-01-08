@@ -34,8 +34,11 @@ import appeng.tile.inventory.AppEngInternalInventory;
 import appeng.tile.inventory.InvOperation;
 import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
+import foxiwhitee.FoxLib.api.orientable.FastOrientableManager;
+import foxiwhitee.FoxLib.api.orientable.IOrientable;
 import foxiwhitee.FoxLib.integration.applied.api.crafting.ICraftingCPUClusterAccessor;
 import foxiwhitee.FoxLib.integration.applied.api.crafting.IPreCraftingMedium;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
@@ -49,7 +52,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class TileCustomMolecularAssembler extends AENetworkInvTile implements IPowerChannelState, ICraftingMachine, ICraftingProvider, IGridTickable, IInterfaceViewable, IPreCraftingMedium {
+public abstract class TileCustomMolecularAssembler extends AENetworkInvTile implements IPowerChannelState, ICraftingMachine, ICraftingProvider, IGridTickable, IInterfaceViewable, IPreCraftingMedium, IOrientable {
     private static final int[] SIDES = {0};
     protected AppEngInternalInventory patternInventory = new AppEngInternalInventory(this, 36, 1);
     ICraftingPatternDetails activePattern;
@@ -57,6 +60,8 @@ public abstract class TileCustomMolecularAssembler extends AENetworkInvTile impl
     InventoryCrafting craftingGrid;
     List<ICraftingPatternDetails> patternList;
     private boolean isPowered;
+
+    private final int orientableId = FastOrientableManager.nextId();
 
     protected abstract ItemStack getItemFromTile(Object obj);
 
@@ -194,6 +199,28 @@ public abstract class TileCustomMolecularAssembler extends AENetworkInvTile impl
                     }
             }
         }
+    }
+
+    @TileEvent(TileEventType.NETWORK_WRITE)
+    public void writeToStream(ByteBuf data) {
+        if (this.canBeRotated()) {
+            data.writeByte((byte) getForward().ordinal());
+            data.writeByte((byte) getUp().ordinal());
+        }
+    }
+
+    @TileEvent(TileEventType.NETWORK_READ)
+    public boolean readFromStream(ByteBuf data) {
+        boolean output = false;
+        if (this.canBeRotated()) {
+            ForgeDirection oldForward = this.getForward(), oldUp = this.getUp();
+            byte orientationForward = data.readByte(), orientationUp = data.readByte();
+            ForgeDirection newForward = ForgeDirection.getOrientation(orientationForward & 7);
+            ForgeDirection newUp = ForgeDirection.getOrientation(orientationUp & 7);
+            this.setOrientation(newForward, newUp);
+            output = newForward != oldForward || newUp != oldUp;
+        }
+        return output;
     }
 
     private void addPattern(ItemStack stack) {
@@ -339,5 +366,21 @@ public abstract class TileCustomMolecularAssembler extends AENetworkInvTile impl
         return getItemFromTile(null);
     }
 
+    @Override
+    public ForgeDirection getForward() { return FastOrientableManager.getForward(orientableId); }
 
+    @Override
+    public ForgeDirection getUp() { return FastOrientableManager.getUp(orientableId); }
+
+    @Override
+    public void setOrientation(ForgeDirection forward, ForgeDirection up) {
+        FastOrientableManager.set(orientableId, forward, up);
+        this.markForUpdate();
+        if (worldObj != null) worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
+    }
+
+    @Override
+    public boolean canBeRotated() {
+        return false;
+    }
 }
