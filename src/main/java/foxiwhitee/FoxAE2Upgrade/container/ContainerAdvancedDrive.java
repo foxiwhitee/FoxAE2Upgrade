@@ -3,14 +3,15 @@ package foxiwhitee.FoxAE2Upgrade.container;
 import appeng.container.AEBaseContainer;
 import appeng.container.slot.SlotRestrictedInput;
 import foxiwhitee.FoxAE2Upgrade.tile.TileAdvancedDrive;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.tileentity.TileEntity;
 
 public class ContainerAdvancedDrive extends AEBaseContainer {
-    public ContainerAdvancedDrive(InventoryPlayer ip, TileAdvancedDrive drive) {
-        super(ip, drive, null);
+    public ContainerAdvancedDrive(EntityPlayer ip, TileAdvancedDrive drive) {
+        super(ip.inventory, drive, null);
         int c = 0;
         for (int a = 29; a > 24; a--) {
             c++;
@@ -41,7 +42,7 @@ public class ContainerAdvancedDrive extends AEBaseContainer {
             w++;
             addSlotToContainer((Slot) new SlotRestrictedInput(SlotRestrictedInput.PlacableItemType.STORAGE_CELLS, drive, i2, 48 + w * 18, 26, getInventoryPlayer()));
         }
-        bindPlayerInventory(ip, 22, 147);
+        bindPlayerInventory(ip.inventory, 22, 147);
     }
 }
 

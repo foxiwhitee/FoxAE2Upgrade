@@ -1,13 +1,24 @@
 package foxiwhitee.FoxAE2Upgrade.block.assemblers;
 
 import appeng.util.Platform;
+import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
+import foxiwhitee.FoxAE2Upgrade.block.BlockCobblestoneDuper;
+import foxiwhitee.FoxAE2Upgrade.client.gui.GuiCobblestoneDuper;
+import foxiwhitee.FoxAE2Upgrade.client.gui.assemblers.GuiAdvancedMolecularAssembler;
+import foxiwhitee.FoxAE2Upgrade.container.ContainerCobblestoneDuper;
+import foxiwhitee.FoxAE2Upgrade.container.assemblers.ContainerAdvancedMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.proxy.CommonProxy;
+import foxiwhitee.FoxAE2Upgrade.tile.TileCobblestoneDuper;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileAdvancedMolecularAssembler;
+import foxiwhitee.FoxLib.FoxLib;
+import foxiwhitee.FoxLib.utils.handler.GuiHandlers;
+import foxiwhitee.FoxLib.utils.handler.SimpleGuiHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+@SimpleGuiHandler(tile = TileAdvancedMolecularAssembler.class, gui = GuiAdvancedMolecularAssembler.class, container = ContainerAdvancedMolecularAssembler.class)
 public class BlockAdvancedMolecularAssembler extends BlockCustomMolecularAssembler{
     public BlockAdvancedMolecularAssembler(String name) {
         super(name);
@@ -15,13 +26,10 @@ public class BlockAdvancedMolecularAssembler extends BlockCustomMolecularAssembl
     }
 
     public boolean onActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
-        TileAdvancedMolecularAssembler tile = (TileAdvancedMolecularAssembler) world.getTileEntity(x, y, z);
-        if (tile != null) {
-            if (Platform.isServer())
-                Platform.openGUI(player, (TileEntity) tile, ForgeDirection.getOrientation(side), CommonProxy.getGuiAdvancedMolecularAssembler());
-            return true;
-        }
-        return false;
+        TileEntity tile = world.getTileEntity(x, y, z);
+        if (tile instanceof TileAdvancedMolecularAssembler)
+            FMLNetworkHandler.openGui(player, FoxLib.instance, GuiHandlers.getHandler(BlockAdvancedMolecularAssembler.class), world, x, y, z);
+        return true;
     }
 
 }
