@@ -1,44 +1,21 @@
 package foxiwhitee.FoxAE2Upgrade.client.gui;
 
-import appeng.client.gui.AEBaseGui;
-import foxiwhitee.FoxAE2Upgrade.FoxCore;
 import foxiwhitee.FoxAE2Upgrade.config.FoxConfig;
 import foxiwhitee.FoxAE2Upgrade.container.ContainerCobblestoneDuper;
 import foxiwhitee.FoxAE2Upgrade.tile.TileCobblestoneDuper;
 import foxiwhitee.FoxLib.utils.ProductivityUtil;
-import foxiwhitee.FoxLib.utils.helpers.LocalizationUtils;
 import foxiwhitee.FoxLib.utils.helpers.UtilGui;
-import net.minecraft.client.gui.GuiButton;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class GuiCobblestoneDuper extends AEBaseGui {
-    private ContainerCobblestoneDuper container;
+public class GuiCobblestoneDuper extends AppengGui {
+    private final TileCobblestoneDuper tile;
 
     public GuiCobblestoneDuper(ContainerCobblestoneDuper container) {
-        super(container);
-        this.container = container;
-        this.ySize = 199;
-        this.xSize = 210;
-    }
-
-    protected void actionPerformed(GuiButton par1GuiButton) {
-        super.actionPerformed(par1GuiButton);
-    }
-
-    public void initGui() {
-        super.initGui();
-    }
-
-    public void drawFG(int offsetX, int offsetY, int mouseX, int mouseY) {
-        this.bindTexture(FoxCore.MODID.toLowerCase(), this.getBackground());
+        super(container, 199,210);
+        tile = (TileCobblestoneDuper) container.getTileEntity();
     }
 
     public void drawBG(int offsetX, int offsetY, int mouseX, int mouseY) {
-        this.bindTexture(FoxCore.MODID.toLowerCase(), this.getBackground());
-        drawTexturedModalRect(offsetX, offsetY, 23, 28, this.xSize, this.ySize);
-        TileCobblestoneDuper tile = (TileCobblestoneDuper) container.getTileEntity();
+        super.drawBG(offsetX, offsetY, mouseX, mouseY);
         if (tile.getTick() > 0) {
             double l = ProductivityUtil.gauge(142, tile.getTick(), 20 * FoxConfig.cobblestoneDuperSecondsNeed);
             UtilGui.drawTexture(offsetX + 57 - 23, offsetY + 103 - 28, 0, 243, (int) (l + 1.0D), 6, (int) (l + 1.0D), 6, 256, 256);
@@ -53,7 +30,7 @@ public class GuiCobblestoneDuper extends AEBaseGui {
     }
 
     protected String getBackground() {
-        return "gui/gui_cobblestone_duper.png";
+        return "gui/guiCobblestoneDuper.png";
     }
 
 }

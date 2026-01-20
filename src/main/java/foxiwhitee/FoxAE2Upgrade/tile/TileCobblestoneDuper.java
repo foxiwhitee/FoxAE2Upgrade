@@ -2,7 +2,6 @@ package foxiwhitee.FoxAE2Upgrade.tile;
 
 import appeng.api.AEApi;
 import appeng.api.config.*;
-import appeng.api.implementations.tiles.IColorableTile;
 import appeng.api.implementations.tiles.IMEChest;
 import appeng.api.networking.GridFlags;
 import appeng.api.networking.IGrid;
@@ -31,7 +30,6 @@ import appeng.me.GridAccessException;
 import appeng.me.storage.MEInventoryHandler;
 import appeng.tile.TileEvent;
 import appeng.tile.events.TileEventType;
-import appeng.tile.grid.AENetworkInvTile;
 import appeng.tile.inventory.AppEngInternalInventory;
 import appeng.tile.inventory.InvOperation;
 import appeng.tile.storage.TileDrive;
@@ -41,9 +39,6 @@ import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
 import foxiwhitee.FoxAE2Upgrade.ModBlocks;
 import foxiwhitee.FoxAE2Upgrade.config.FoxConfig;
-import foxiwhitee.FoxLib.api.FoxLibApi;
-import foxiwhitee.FoxLib.api.orientable.FastOrientableManager;
-import foxiwhitee.FoxLib.api.orientable.IOrientable;
 import foxiwhitee.FoxLib.config.FoxLibConfig;
 import foxiwhitee.FoxLib.items.ItemProductivityCard;
 import foxiwhitee.FoxLib.utils.ProductivityUtil;
@@ -60,7 +55,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, IPriorityHost, IConfigManagerHost, IColorableTile, IOrientable {
+public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements IMEChest, IPriorityHost, IConfigManagerHost {
     private static final int[] SIDES = {0};
     private static final int[] FRONT = {1};
     private static final int[] NO_SLOTS = {};
@@ -75,15 +70,13 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
     private AEColor color = AEColor.Transparent;
     private boolean isHandlerCached;
     private ICellHandler cellHandler;
-    private MEMonitorHandler<IAEItemStack> itemMonitor;
-    private MEMonitorHandler<IAEFluidStack> fluidMonitor;
+    private MEMonitorHandler itemMonitor;
+    private MEMonitorHandler fluidMonitor;
     private int priority;
 
     private int productivity;
     private int tick;
-    private double[] progressProductivity = {0};
-
-    private final int orientableId = FastOrientableManager.nextId();
+    private final double[] progressProductivity = {0};
 
     public TileCobblestoneDuper() {
         getProxy().setFlags(GridFlags.REQUIRE_CHANNEL);
@@ -93,7 +86,7 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
     }
 
     protected ItemStack getItemFromTile(Object obj) {
-        return new ItemStack(ModBlocks.COBBLESTONE_DUPER);
+        return new ItemStack(ModBlocks.cobblestoneDuper);
     }
 
     private void updateStatus() {
@@ -127,8 +120,8 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
                 cellHandler = AEApi.instance().registries().cell().getHandler(cell);
                 if (cellHandler != null) {
                     double power = 1.0;
-                    IMEInventoryHandler<IAEItemStack> itemHandler = cellHandler.getCellInventory(cell, this, StorageChannel.ITEMS);
-                    IMEInventoryHandler<IAEFluidStack> fluidHandler = cellHandler.getCellInventory(cell, this, StorageChannel.FLUIDS);
+                    IMEInventoryHandler<?> itemHandler = cellHandler.getCellInventory(cell, this, StorageChannel.ITEMS);
+                    IMEInventoryHandler<?> fluidHandler = cellHandler.getCellInventory(cell, this, StorageChannel.FLUIDS);
                     if (fluidHandler != null) {
                         power += cellHandler.cellIdleDrain(cell, fluidHandler);
                     }
@@ -154,7 +147,7 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
         MEInventoryHandler<T> internal = new MEInventoryHandler<>(handler, handler.getChannel());
         internal.setPriority(priority);
         MEMonitorHandler<T> monitor = new StorageMonitor<>(internal);
-        monitor.addListener(new StorageNotifier(handler.getChannel()), monitor);
+        monitor.addListener(new StorageNotifier<>(handler.getChannel()), monitor);
         return monitor;
     }
 
@@ -193,8 +186,7 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
             return false;
         } else {
             IMEInventoryHandler<?> inv = this.cellHandler.getCellInventory(cell, this, StorageChannel.ITEMS);
-            if (inv instanceof ICellInventoryHandler) {
-                ICellInventoryHandler handler = (ICellInventoryHandler) inv;
+            if (inv instanceof ICellInventoryHandler handler) {
                 if (ItemBasicStorageCell.cellIsPartitioned(handler)) {
                     TileDrive.unpartitionStorageCell(handler);
                 } else {
@@ -203,7 +195,7 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
 
                 try {
                     this.getProxy().getGrid().postEvent(new MENetworkCellArrayUpdate());
-                } catch (GridAccessException var5) {
+                } catch (GridAccessException ignored) {
                 }
             }
 
@@ -217,19 +209,15 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
             return 0;
         } else {
             Item var4 = cell.getItem();
-            if (var4 instanceof ICellWorkbenchItem) {
-                ICellWorkbenchItem cellItem = (ICellWorkbenchItem) var4;
+            if (var4 instanceof ICellWorkbenchItem cellItem) {
                 if (TileDrive.applyStickyCardToItemStorageCell(this.cellHandler, cell, this, cellItem)) {
-
                     try {
                         this.getProxy().getGrid().postEvent(new MENetworkCellArrayUpdate());
-                    } catch (GridAccessException var5) {
+                    } catch (GridAccessException ignored) {
                     }
-
                     return 1;
                 }
             }
-
             return 0;
         }
     }
@@ -287,10 +275,6 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
         data.writeByte(color.ordinal());
         ItemStack cell = inventory.getStackInSlot(1);
         data.writeInt(cell == null ? 0 : (cell.getItemDamage() << 16) | Item.getIdFromItem(cell.getItem()));
-        if (this.canBeRotated()) {
-            data.writeByte((byte) getForward().ordinal());
-            data.writeByte((byte) getUp().ordinal());
-        }
     }
 
     @TileEvent(TileEventType.NETWORK_READ)
@@ -306,16 +290,7 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
         int item = data.readInt();
         cellType = item == 0 ? null : new ItemStack(Item.getItemById(item & 0xFFFF), 1, item >> 16);
         lastBlinkTime = worldObj.getTotalWorldTime();
-        boolean output = false;
-        if (this.canBeRotated()) {
-            ForgeDirection oldForward = this.getForward(), oldUp = this.getUp();
-            byte orientationForward = data.readByte(), orientationUp = data.readByte();
-            ForgeDirection newForward = ForgeDirection.getOrientation(orientationForward & 7);
-            ForgeDirection newUp = ForgeDirection.getOrientation(orientationUp & 7);
-            this.setOrientation(newForward, newUp);
-            output = newForward != oldForward || newUp != oldUp;
-        }
-        return prevColor != color || (status & 0xDB6DB6DB) != (prevStatus & 0xDB6DB6DB) || !Platform.isSameItemPrecise(prevCell, cellType) || output;
+        return prevColor != color || (status & 0xDB6DB6DB) != (prevStatus & 0xDB6DB6DB) || !Platform.isSameItemPrecise(prevCell, cellType);
     }
 
     @TileEvent(TileEventType.WORLD_NBT_READ)
@@ -352,10 +327,6 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
     @MENetworkEventSubscribe
     public void onChannelChange(MENetworkChannelsChanged event) {
         updateStatus();
-    }
-
-    public IMEMonitor<IAEItemStack> getItemInventory() {
-        return itemMonitor;
     }
 
     public IMEMonitor<IAEFluidStack> getFluidInventory() {
@@ -480,47 +451,7 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
         return Platform.canAccess(getProxy(), src) && side != getForward() ? (IStorageMonitorable) this : null;
     }
 
-    public ItemStack getStorageType() {
-        return isPowered() ? cellType : null;
-    }
-
-    public IConfigManager getConfigManager() {
-        return settings;
-    }
-
     public void updateSetting(IConfigManager manager, Enum setting, Enum value) {
-    }
-
-    public boolean openGui(EntityPlayer player, ICellHandler handler, ItemStack cell, int side) {
-        try {
-            IMEInventoryHandler<?> inv = getInventoryHandler(StorageChannel.ITEMS);
-            if (handler != null && inv != null) {
-                handler.openChestGui(player, this, handler, inv, cell, StorageChannel.ITEMS);
-                return true;
-            }
-        } catch (NoHandlerException ignored) {
-        }
-        try {
-            IMEInventoryHandler<?> inv = getInventoryHandler(StorageChannel.FLUIDS);
-            if (handler != null && inv != null) {
-                handler.openChestGui(player, this, handler, inv, cell, StorageChannel.FLUIDS);
-                return true;
-            }
-        } catch (NoHandlerException ignored) {
-        }
-        return false;
-    }
-
-    public AEColor getColor() {
-        return color;
-    }
-
-    public boolean recolourBlock(ForgeDirection side, AEColor newColor, EntityPlayer player) {
-        if (color == newColor) return false;
-        color = newColor;
-        markDirty();
-        markForUpdate();
-        return true;
     }
 
     public void saveChanges(IMEInventory inventory) {
@@ -577,7 +508,7 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
 
         public IMEInventoryHandler<T> getInternal() {
             IMEInventoryHandler<T> handler = getHandler();
-            return handler instanceof MEInventoryHandler ? (IMEInventoryHandler<T>) ((MEInventoryHandler<T>) handler).getInternal() : handler;
+            return handler instanceof MEInventoryHandler ? (IMEInventoryHandler<T>)(handler).getInternal() : handler;
         }
 
         public T extractItems(T request, Actionable mode, BaseActionSource src) {
@@ -611,18 +542,5 @@ public class TileCobblestoneDuper extends AENetworkInvTile implements IMEChest, 
 
     public double[] getProgressProductivity() {
         return progressProductivity;
-    }
-
-    @Override
-    public ForgeDirection getForward() { return FastOrientableManager.getForward(orientableId); }
-
-    @Override
-    public ForgeDirection getUp() { return FastOrientableManager.getUp(orientableId); }
-
-    @Override
-    public void setOrientation(ForgeDirection forward, ForgeDirection up) {
-        FastOrientableManager.set(orientableId, forward, up);
-        this.markForUpdate();
-        if (worldObj != null) worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
     }
 }

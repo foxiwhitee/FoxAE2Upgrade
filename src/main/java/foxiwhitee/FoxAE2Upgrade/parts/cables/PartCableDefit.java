@@ -42,7 +42,7 @@ public class PartCableDefit extends PartBaseSmartCable {
 
     @Override
     public ItemStack getPartItemStack(AEColor paramAEColor) {
-        return ((ItemParts) ModItems.ITEM_PARTS).createPart(EnumParts.DEFIT_SMART_CABLE, paramAEColor).stack(1);
+        return ((ItemParts) ModItems.itemParts).createPart(EnumParts.DEFIT_SMART_CABLE, paramAEColor).stack(1);
     }
 
     @Override

@@ -6,10 +6,9 @@ import foxiwhitee.FoxLib.registries.RegisterUtils;
 import net.minecraft.item.Item;
 
 public class ModItems {
-
-    public static final Item ITEM_PARTS = new ItemParts(AEApi.instance().partHelper());
+    public static final Item itemParts = new ItemParts(AEApi.instance().partHelper());
 
     public static void registerItems() {
-        RegisterUtils.registerItem(ITEM_PARTS, "fox-part");
+        RegisterUtils.registerItem(itemParts, "fox-part");
     }
 }

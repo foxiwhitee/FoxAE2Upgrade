@@ -1,6 +1,5 @@
 package foxiwhitee.FoxAE2Upgrade.items;
 
-import appeng.block.AEBaseItemBlock;
 import appeng.me.helpers.IGridProxyable;
 import foxiwhitee.FoxAE2Upgrade.ModBlocks;
 import foxiwhitee.FoxAE2Upgrade.config.FoxConfig;
@@ -44,28 +43,28 @@ public class ModItemBlock extends ItemBlock {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean advancedToolTips) {
         if (FoxConfig.enableTooltips) {
-            if (this.blockType.equals(ModBlocks.AUTO_CRYSTALLIZER)) {
+            if (this.blockType.equals(ModBlocks.autoCrystallizer)) {
                 list.add(LocalizationUtils.localize("tooltip.autoCrystallizer"));
-            } else if (this.blockType.equals(ModBlocks.AUTO_PRESS)) {
+            } else if (this.blockType.equals(ModBlocks.autoPress)) {
                 list.add(LocalizationUtils.localize("tooltip.autoPress"));
             }
-            if (this.blockType.equals(ModBlocks.ADVANCED_MOLECULAR_ASSEMBLER)) {
+            if (this.blockType.equals(ModBlocks.advancedMolecularAssembler)) {
                 list.add(LocalizationUtils.localize("tooltip.assembler.speed", FoxConfig.advancedMolecularAssemblerSpeed));
-            } else if (this.blockType.equals(ModBlocks.ULTIMATE_MOLECULAR_ASSEMBLER)) {
+            } else if (this.blockType.equals(ModBlocks.ultimateMolecularAssembler)) {
                 list.add(LocalizationUtils.localize("tooltip.assembler.speed", FoxConfig.ultimateMolecularAssemblerSpeed));
                 if (FoxConfig.hasUltimateMolecularAssemblerProductivity) {
                     list.add(LocalizationUtils.localize("tooltip.productivity.base", FoxConfig.ultimateMolecularAssemblerProductivity));
                 }
-            } else if (this.blockType.equals(ModBlocks.QUANTUM_MOLECULAR_ASSEMBLER)) {
+            } else if (this.blockType.equals(ModBlocks.quantumMolecularAssembler)) {
                 list.add(LocalizationUtils.localize("tooltip.assembler.speed", FoxConfig.quantumMolecularAssemblerSpeed));
                 if (FoxConfig.hasQuantumMolecularAssemblerProductivity) {
                     list.add(LocalizationUtils.localize("tooltip.productivity.base", FoxConfig.quantumMolecularAssemblerProductivity));
                 }
-            } else if (this.blockType.equals(ModBlocks.COBBLESTONE_DUPER)) {
+            } else if (this.blockType.equals(ModBlocks.cobblestoneDuper)) {
                 list.add(LocalizationUtils.localize("tooltip.cobblestoneDuper"));
                 list.add(LocalizationUtils.localize("tooltip.productivity.base", 0));
                 list.add(LocalizationUtils.localize("tooltip.productivity.warning"));
-            } else if (this.blockType.equals(ModBlocks.ME_SERVER)) {
+            } else if (this.blockType.equals(ModBlocks.meServer)) {
                 list.add(LocalizationUtils.localize("tooltip.meServer"));
             }
         }

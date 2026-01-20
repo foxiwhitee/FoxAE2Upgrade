@@ -42,7 +42,7 @@ public class PartDenseCableXaur extends PartBaseDenseCable {
 
     @Override
     public ItemStack getPartItemStack(AEColor paramAEColor) {
-        return ((ItemParts) ModItems.ITEM_PARTS).createPart(EnumParts.XAUR_DENSE_CABLE, paramAEColor).stack(1);
+        return ((ItemParts) ModItems.itemParts).createPart(EnumParts.XAUR_DENSE_CABLE, paramAEColor).stack(1);
     }
 
     @Override

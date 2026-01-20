@@ -7,7 +7,6 @@ import foxiwhitee.FoxAE2Upgrade.ModItems;
 import foxiwhitee.FoxAE2Upgrade.config.ContentConfig;
 import foxiwhitee.FoxAE2Upgrade.config.FoxConfig;
 import foxiwhitee.FoxAE2Upgrade.parts.cables.*;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
 
@@ -101,7 +100,7 @@ public enum EnumParts {
     }
 
     public ItemStack getStack() {
-        return new ItemStack((Item) ModItems.ITEM_PARTS, 1, getBaseDamage());
+        return new ItemStack(ModItems.itemParts, 1, getBaseDamage());
     }
 
     public boolean isRegister() {

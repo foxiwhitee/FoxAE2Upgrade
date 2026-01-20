@@ -1,16 +1,9 @@
 package foxiwhitee.FoxAE2Upgrade;
 
-import appeng.api.AEApi;
 import foxiwhitee.FoxAE2Upgrade.recipes.BaseAutoBlockRecipe;
-import foxiwhitee.FoxLib.recipes.RecipesLocation;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.nbt.NBTTagCompound;
+import foxiwhitee.FoxLib.recipes.json.annotations.RecipesLocation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ModRecipes {

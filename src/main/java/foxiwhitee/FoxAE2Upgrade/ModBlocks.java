@@ -24,54 +24,52 @@ import foxiwhitee.FoxLib.registries.RegisterUtils;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 
-import java.util.Locale;
-
 
 public class ModBlocks {
 
-    public static final Block COBBLESTONE_DUPER = new BlockCobblestoneDuper("cobblestoneDuper");
+    public static final Block cobblestoneDuper = new BlockCobblestoneDuper("cobblestoneDuper");
 
-    public static final Block ADVANCED_DRIVER = new BlockAdvancedDriver("advancedDriver");
-    public static final Block ME_SERVER = new BlockMEServer("meServer");
+    public static final Block advancedDriver = new BlockAdvancedDriver("advancedDriver");
+    public static final Block meServer = new BlockMEServer("meServer");
 
-    public static final Block AUTO_CRYSTALLIZER = new BlockAENetwork("autoCrystallizer", TileAutoCrystallizer.class);
-    public static final Block AUTO_PRESS = new BlockAENetwork("autoPress", TileAutoPress.class);
+    public static final Block autoCrystallizer = new BlockAENetwork("autoCrystallizer", TileAutoCrystallizer.class);
+    public static final Block autoPress = new BlockAENetwork("autoPress", TileAutoPress.class);
 
     @StaticRender(modID = "foxae2upgrade", tile = TileAdvancedMolecularAssembler.class,
         model = "models/molecularAssembler.obj", texture = "textures/blocks/assemblers/advancedMolecularAssembler.png")
-    public static final Block ADVANCED_MOLECULAR_ASSEMBLER = new BlockAdvancedMolecularAssembler("advancedMolecularAssembler");
+    public static final Block advancedMolecularAssembler = new BlockAdvancedMolecularAssembler("advancedMolecularAssembler");
 
     @StaticRender(modID = "foxae2upgrade", tile = TileUltimateMolecularAssembler.class,
         model = "models/molecularAssembler.obj", texture = "textures/blocks/assemblers/ultimateMolecularAssembler.png")
-    public static final Block ULTIMATE_MOLECULAR_ASSEMBLER = new BlockUltimateMolecularAssembler("ultimateMolecularAssembler");
+    public static final Block ultimateMolecularAssembler = new BlockUltimateMolecularAssembler("ultimateMolecularAssembler");
 
     @StaticRender(modID = "foxae2upgrade", tile = TileQuantumMolecularAssembler.class,
         model = "models/molecularAssembler.obj", texture = "textures/blocks/assemblers/quantumMolecularAssembler.png")
-    public static final Block QUANTUM_MOLECULAR_ASSEMBLER = new BlockQuantumMolecularAssembler("quantumMolecularAssembler");
+    public static final Block quantumMolecularAssembler = new BlockQuantumMolecularAssembler("quantumMolecularAssembler");
 
     public static void registerBlocks() {
         if (ContentConfig.enableCobblestoneDuper) {
-            RegisterUtils.registerBlock(COBBLESTONE_DUPER, ModItemBlock.class);
+            RegisterUtils.registerBlock(cobblestoneDuper, ModItemBlock.class);
             RegisterUtils.registerTile(TileCobblestoneDuper.class);
         }
         if (ContentConfig.enableAdvancedDriver) {
-            RegisterUtils.registerBlock(ADVANCED_DRIVER, AEBaseItemBlock.class);
+            RegisterUtils.registerBlock(advancedDriver, AEBaseItemBlock.class);
             RegisterUtils.registerTile(TileAdvancedDrive.class);
         }
         if (ContentConfig.enableAutoCrystallizer) {
-            RegisterUtils.registerBlock(AUTO_CRYSTALLIZER, ModItemBlock.class);
+            RegisterUtils.registerBlock(autoCrystallizer, ModItemBlock.class);
             RegisterUtils.registerTile(TileAutoCrystallizer.class);
         }
         if (ContentConfig.enableAutoPress) {
-            RegisterUtils.registerBlock(AUTO_PRESS, ModItemBlock.class);
+            RegisterUtils.registerBlock(autoPress, ModItemBlock.class);
             RegisterUtils.registerTile(TileAutoPress.class);
         }
         if (ContentConfig.enableMolecularAssemblers) {
-            RegisterUtils.registerBlocks(ModItemBlock.class, ADVANCED_MOLECULAR_ASSEMBLER, ULTIMATE_MOLECULAR_ASSEMBLER, QUANTUM_MOLECULAR_ASSEMBLER);
+            RegisterUtils.registerBlocks(ModItemBlock.class, advancedMolecularAssembler, ultimateMolecularAssembler, quantumMolecularAssembler);
             RegisterUtils.findClasses("foxiwhitee.FoxAE2Upgrade.tile.assemblers", TileEntity.class).forEach(RegisterUtils::registerTile);
         }
         if (ContentConfig.enableMEServer) {
-            RegisterUtils.registerBlock(ME_SERVER, ModItemBlock.class);
+            RegisterUtils.registerBlock(meServer, ModItemBlock.class);
             RegisterUtils.registerTile(TileMEServer.class);
         }
     }

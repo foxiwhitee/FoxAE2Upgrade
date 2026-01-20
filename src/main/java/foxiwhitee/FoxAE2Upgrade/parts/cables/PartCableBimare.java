@@ -42,7 +42,7 @@ public class PartCableBimare extends PartBaseSmartCable {
 
     @Override
     public ItemStack getPartItemStack(AEColor paramAEColor) {
-        return ((ItemParts) ModItems.ITEM_PARTS).createPart(EnumParts.BIMARE_SMART_CABLE, paramAEColor).stack(1);
+        return ((ItemParts) ModItems.itemParts).createPart(EnumParts.BIMARE_SMART_CABLE, paramAEColor).stack(1);
     }
 
     @Override

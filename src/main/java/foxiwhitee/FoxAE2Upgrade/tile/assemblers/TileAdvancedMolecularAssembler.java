@@ -14,7 +14,7 @@ public class TileAdvancedMolecularAssembler extends TileCustomMolecularAssembler
 
     @Override
     protected ItemStack getItemFromTile(Object obj) {
-        return new ItemStack(ModBlocks.ADVANCED_MOLECULAR_ASSEMBLER);
+        return new ItemStack(ModBlocks.advancedMolecularAssembler);
     }
 
     @Override
@@ -28,7 +28,7 @@ public class TileAdvancedMolecularAssembler extends TileCustomMolecularAssembler
     }
 
     public String getName() {
-        return ModBlocks.ADVANCED_MOLECULAR_ASSEMBLER.getUnlocalizedName();
+        return ModBlocks.advancedMolecularAssembler.getUnlocalizedName();
     }
 
     @Override

@@ -1,12 +1,12 @@
 package foxiwhitee.FoxAE2Upgrade.tile;
 
 import appeng.api.AEApi;
+import appeng.api.definitions.IBlocks;
 import appeng.api.networking.GridFlags;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.events.MENetworkCraftingCpuChange;
 import appeng.api.util.WorldCoord;
 import appeng.core.AELog;
-import appeng.me.cluster.implementations.CraftingCPUCalculator;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.me.helpers.AENetworkProxy;
 import appeng.me.helpers.AENetworkProxyMultiblock;
@@ -26,218 +26,223 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
 public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory, ITileMEServer, IOrientable {
-    private final List<CraftingCPUCluster> virtualClusters = new ArrayList<>(12);
-    private boolean isFormed = true;
-    private AppEngInternalInventory storage = new AppEngInternalInventory(this, 12);
-    private AppEngInternalInventory accelerators = new AppEngInternalInventory(this, 12);
-    private final CraftingCPUCalculator calc = new CraftingCPUCalculator(this);
+    private static final int CLUSTER_COUNT = 12;
+    private static Method addTileMethod;
 
-    private long[] storage_bytes = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    private int[] accelerators_count = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    private NBTTagCompound[] previousStates = new NBTTagCompound[12];
+    static {
+        try {
+            addTileMethod = CraftingCPUCluster.class.getDeclaredMethod("addTile", TileCraftingTile.class);
+            addTileMethod.setAccessible(true);
+        } catch (NoSuchMethodException e) {
+            AELog.error("Critical Error: Could not find addTile method in CraftingCPUCluster!");
+        }
+    }
 
+    private final List<CraftingCPUCluster> virtualClusters = new ArrayList<>(CLUSTER_COUNT);
+    private final AppEngInternalInventory storage = new AppEngInternalInventory(this, CLUSTER_COUNT);
+    private final AppEngInternalInventory accelerators = new AppEngInternalInventory(this, CLUSTER_COUNT);
+
+    private final long[] storage_bytes = new long[CLUSTER_COUNT];
+    private final int[] accelerators_count = new int[CLUSTER_COUNT];
+    private final NBTTagCompound[] previousStates = new NBTTagCompound[CLUSTER_COUNT];
     private final int orientableId = FastOrientableManager.nextId();
 
     public TileMEServer() {
         this.getProxy().setFlags(GridFlags.REQUIRE_CHANNEL);
         WorldCoord loc = new WorldCoord(this);
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < CLUSTER_COUNT; i++) {
             virtualClusters.add(new CraftingCPUCluster(loc, loc));
         }
     }
 
     @Override
-    public void onChangeInventory(IInventory iInventory, int i, InvOperation invOperation, ItemStack itemStack, ItemStack itemStack1) {
-        if (this.getProxy().isReady() && (itemStack != null || itemStack1 != null)) {
-            if (iInventory == storage) {
-                calculateCraftingStorage(i, storage.getStackInSlot(i));
-            }
-            if (iInventory == accelerators) {
-                calculateCraftingAccelerators(i, accelerators.getStackInSlot(i));
-            }
-            initializeClusters();
-        } else if (invOperation == InvOperation.markDirty) {
-            for (int j = 0; j < 12; j++) {
-                calculateCraftingStorage(j, storage.getStackInSlot(j));
-                calculateCraftingAccelerators(j, accelerators.getStackInSlot(j));
-            }
-            initializeClusters();
+    public void onChangeInventory(IInventory inv, int slot, InvOperation ops, ItemStack removed, ItemStack added) {
+        if (Platform.isClient() || ops == InvOperation.markDirty) {
+            return;
+        }
+
+        if (inv == storage) {
+            calculateCraftingStorage(slot, added);
+        } else if (inv == accelerators) {
+            calculateCraftingAccelerators(slot, added);
+        }
+
+        if (this.getProxy().isReady()) {
+            this.initializeClusters();
         }
     }
 
     private void calculateCraftingStorage(int id, ItemStack stack) {
-        if (id >= 0 && id <= storage_bytes.length) {
-            if (stack == null) {
-                storage_bytes[id] = 0;
-                return;
-            }
-            long storageAmt = AEApi.instance().definitions().blocks().craftingStorage1k().isSameAs(stack) ? 1024
-                : AEApi.instance().definitions().blocks().craftingStorage4k().isSameAs(stack) ? 1024 * 4
-                : AEApi.instance().definitions().blocks().craftingStorage16k().isSameAs(stack) ? 1024 * 16
-                : AEApi.instance().definitions().blocks().craftingStorage64k().isSameAs(stack) ? 1024 * 64
-                : AEApi.instance().definitions().blocks().craftingStorage256k().isSameAs(stack) ? 1024 * 256
-                : AEApi.instance().definitions().blocks().craftingStorage1024k().isSameAs(stack) ? 1024 * 1024
-                : AEApi.instance().definitions().blocks().craftingStorage4096k().isSameAs(stack) ? 1024 * 4096
-                : AEApi.instance().definitions().blocks().craftingStorage16384k().isSameAs(stack) ? 1024 * 16384
-                : AEApi.instance().definitions().blocks().craftingStorageSingularity().isSameAs(stack) ? Long.MAX_VALUE
-                : 0;
-            storageAmt *= stack.stackSize;
-            storage_bytes[id] = storageAmt;
+        if (stack == null) {
+            storage_bytes[id] = 0;
+            return;
         }
+
+        IBlocks blocks = AEApi.instance().definitions().blocks();
+        long unit = 0;
+
+        if (blocks.craftingStorage1k().isSameAs(stack)) {
+            unit = 1024;
+        } else if (blocks.craftingStorage4k().isSameAs(stack)) {
+            unit = 1024 * 4;
+        } else if (blocks.craftingStorage16k().isSameAs(stack)) {
+            unit = 1024 * 16;
+        } else if (blocks.craftingStorage64k().isSameAs(stack)) {
+            unit = 1024 * 64;
+        } else if (blocks.craftingStorage256k().isSameAs(stack)) {
+            unit = 1024 * 256;
+        } else if (blocks.craftingStorage1024k().isSameAs(stack)) {
+            unit = 1024 * 1024;
+        } else if (blocks.craftingStorage4096k().isSameAs(stack)) {
+            unit = 1024 * 4096;
+        } else if (blocks.craftingStorage16384k().isSameAs(stack)) {
+            unit = 1024 * 16384;
+        } else if (blocks.craftingStorageSingularity().isSameAs(stack)) {
+            unit = Long.MAX_VALUE;
+        }
+        storage_bytes[id] = (long) Math.min(Long.MAX_VALUE - 1000000, ((double) unit * stack.stackSize));
     }
 
     private void calculateCraftingAccelerators(int id, ItemStack stack) {
-        if (id >= 0 && id <= accelerators_count.length) {
-            if (stack == null) {
-                accelerators_count[id] = 0;
-                return;
-            }
-            int acceleratorAmt = AEApi.instance().definitions().blocks().craftingAccelerator().isSameAs(stack) ? 1
-                : AEApi.instance().definitions().blocks().craftingAccelerator4x().isSameAs(stack) ? 4
-                : AEApi.instance().definitions().blocks().craftingAccelerator16x().isSameAs(stack) ? 16
-                : AEApi.instance().definitions().blocks().craftingAccelerator64x().isSameAs(stack) ? 64
-                : AEApi.instance().definitions().blocks().craftingAccelerator256x().isSameAs(stack) ? 256
-                : AEApi.instance().definitions().blocks().craftingAccelerator1024x().isSameAs(stack) ? 1024
-                : AEApi.instance().definitions().blocks().craftingAccelerator4096x().isSameAs(stack) ? 4096
-                : 0;
-            acceleratorAmt *= stack.stackSize;
-            accelerators_count[id] = acceleratorAmt;
+        if (stack == null) {
+            accelerators_count[id] = 0;
+            return;
         }
-    }
 
-    public long getClusterStorageBytes(int clusterIndex) {
-        if (clusterIndex >= 0 && clusterIndex < storage_bytes.length) {
-            return storage_bytes[clusterIndex];
+        IBlocks blocks = AEApi.instance().definitions().blocks();
+        int unit = 0;
+
+        if (blocks.craftingAccelerator().isSameAs(stack)) {
+            unit = 1;
+        } else if (blocks.craftingAccelerator4x().isSameAs(stack)) {
+            unit = 4;
+        } else if (blocks.craftingAccelerator16x().isSameAs(stack)) {
+            unit = 16;
+        } else if (blocks.craftingAccelerator64x().isSameAs(stack)) {
+            unit = 64;
+        } else if (blocks.craftingAccelerator256x().isSameAs(stack)) {
+            unit = 256;
+        } else if (blocks.craftingAccelerator1024x().isSameAs(stack)) {
+            unit = 1024;
+        } else if (blocks.craftingAccelerator4096x().isSameAs(stack)) {
+            unit = 4096;
         }
-        return 0;
-    }
 
-    public int getClusterAccelerator(int clusterIndex) {
-        if (clusterIndex >= 0 && clusterIndex < accelerators_count.length) {
-            return accelerators_count[clusterIndex];
-        }
-        return 0;
-    }
-
-    public int getClusterIndex(CraftingCPUCluster cluster) {
-        return virtualClusters.indexOf(cluster);
-    }
-
-    @Override
-    public final void updateMultiBlock() {
-    }
-
-    @Override
-    protected AENetworkProxy createProxy() {
-        return new AENetworkProxyMultiblock(this, "proxy", this.getItemFromTile(this), true);
+        accelerators_count[id] = unit * stack.stackSize;
     }
 
     public void initializeClusters() {
-        if (Platform.isClient()) return;
+        if (Platform.isClient() || worldObj == null) {
+            return;
+        }
 
-        try {
-            virtualClusters.forEach(CraftingCPUCluster::cancel);
-            virtualClusters.clear();
+        WorldCoord loc = new WorldCoord(this);
+        for (int i = 0; i < CLUSTER_COUNT; i++) {
+            CraftingCPUCluster oldCluster = virtualClusters.get(i);
 
-            WorldCoord loc = new WorldCoord(this);
-            for (int i = 0; i < 12; i++) {
-                CraftingCPUCluster cluster = new CraftingCPUCluster(loc, loc);
-                virtualClusters.add(cluster);
-                FMLCommonHandler.instance().bus().register(cluster);
-                invokeAddTile(cluster, this);
-                cluster.updateStatus(true);
+            FMLCommonHandler.instance().bus().unregister(oldCluster);
+            oldCluster.cancel();
+
+            CraftingCPUCluster newCluster = new CraftingCPUCluster(loc, loc);
+            virtualClusters.set(i, newCluster);
+
+            FMLCommonHandler.instance().bus().register(newCluster);
+            this.bindTileToCluster(newCluster);
+
+            if (previousStates[i] != null) {
+                newCluster.readFromNBT(previousStates[i]);
             }
 
-            updateMeta(true);
-            notifyNetwork();
-        } catch (Throwable err) {
-            AELog.debug("Error initializing ME Server clusters: %s", err.getMessage());
-            disconnect(true);
+            newCluster.updateStatus(true);
+            ((ICraftingCPUClusterAccessor) (Object) newCluster).doneMEServer();
         }
+
+        this.updateMeta(true);
+        this.notifyNetwork();
     }
 
-    private void invokeAddTile(CraftingCPUCluster cluster, TileMEServer tile) {
+    private void bindTileToCluster(CraftingCPUCluster cluster) {
         try {
-            Method addTileMethod = CraftingCPUCluster.class.getDeclaredMethod("addTile", TileCraftingTile.class);
-            addTileMethod.setAccessible(true);
-            addTileMethod.invoke(cluster, tile);
-        } catch (NoSuchMethodException | IllegalAccessException | java.lang.reflect.InvocationTargetException e) {
-            AELog.debug("Failed to invoke addTile: %s", e.getMessage());
+            if (addTileMethod != null) {
+                addTileMethod.invoke(cluster, this);
+            }
+        } catch (Exception e) {
+            AELog.error("Reflection Error in ME Server: " + e.getMessage());
         }
     }
 
     @Override
-    public void updateMeta(boolean updateFormed) {
-        if (worldObj == null || notLoaded()) return;
-
-        boolean power = getProxy().isActive();
-        int newMeta = (isFormed ? 8 : 0) | (power ? 4 : 0);
-
-        if (worldObj.getBlockMetadata(xCoord, yCoord, zCoord) != newMeta) {
-            worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, newMeta, 2);
-        }
-
-        if (updateFormed) {
-            getProxy().setValidSides(isFormed ? EnumSet.allOf(ForgeDirection.class) : EnumSet.noneOf(ForgeDirection.class));
-        }
+    public void updateMultiBlock() {
     }
 
     @Override
-    public boolean isFormed() {
-        return isFormed;
+    public void onReady() {
+        super.onReady();
+        this.initializeClusters();
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        this.disconnect(false);
+    }
+
+    @Override
+    public void disconnect(boolean update) {
+        for (CraftingCPUCluster cluster : virtualClusters) {
+            if (cluster != null) {
+                FMLCommonHandler.instance().bus().unregister(cluster);
+                cluster.destroy();
+            }
+        }
+        if (update) {
+            this.updateMeta(true);
+        }
     }
 
     @TileEvent(TileEventType.WORLD_NBT_WRITE)
-    public void writeToNBT_TileCraftingTile(NBTTagCompound data) {
+    public void writeToNBT_(NBTTagCompound data) {
         storage.writeToNBT(data, "storage");
         accelerators.writeToNBT(data, "accelerators");
-        data.setBoolean("core", true);
-        NBTTagCompound clusters = new NBTTagCompound();
-        for (int i = 0; i < virtualClusters.size(); i++) {
-            NBTTagCompound clusterData = new NBTTagCompound();
-            virtualClusters.get(i).writeToNBT(clusterData);
-            clusters.setTag("cluster_" + i, clusterData);
-        }
-        data.setTag("virtualClusters", clusters);
-    }
 
-    @Override
-    public World getWorldObj() {
-        return super.getWorldObj();
+        NBTTagCompound clustersTag = new NBTTagCompound();
+        for (int i = 0; i < virtualClusters.size(); i++) {
+            NBTTagCompound tag = new NBTTagCompound();
+            virtualClusters.get(i).writeToNBT(tag);
+            clustersTag.setTag("c" + i, tag);
+        }
+        data.setTag("virtualClusters", clustersTag);
+
+        data.setByte("f_fwd", (byte) getForward().ordinal());
+        data.setByte("f_up", (byte) getUp().ordinal());
     }
 
     @TileEvent(TileEventType.WORLD_NBT_READ)
-    public void readFromNBT_TileCraftingTile(NBTTagCompound data) {
+    public void readFromNBT_(NBTTagCompound data) {
         storage.readFromNBT(data, "storage");
         accelerators.readFromNBT(data, "accelerators");
-        setCoreBlock(data.getBoolean("core"));
-        NBTTagCompound clusters = data.getCompoundTag("virtualClusters");
-        for (int i = 0; i < storage.getSizeInventory(); i++) {
-            if (storage.getStackInSlot(i) != null) {
-                calculateCraftingStorage(i, storage.getStackInSlot(i));
+
+        NBTTagCompound clustersTag = data.getCompoundTag("virtualClusters");
+        for (int i = 0; i < CLUSTER_COUNT; i++) {
+            calculateCraftingStorage(i, storage.getStackInSlot(i));
+            calculateCraftingAccelerators(i, accelerators.getStackInSlot(i));
+            if (clustersTag.hasKey("c" + i)) {
+                previousStates[i] = clustersTag.getCompoundTag("c" + i);
             }
         }
-        for (int i = 0; i < accelerators.getSizeInventory(); i++) {
-            if (accelerators.getStackInSlot(i) != null) {
-                calculateCraftingAccelerators(i, accelerators.getStackInSlot(i));
-            }
-        }
-        initializeClusters();
-        try {
-            for (int i = 0; i < virtualClusters.size(); i++) {
-                setPreviousState(i, clusters.getCompoundTag("cluster_" + i));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        if (data.hasKey("f_fwd")) {
+            this.setOrientation(
+                ForgeDirection.getOrientation(data.getByte("f_fwd")),
+                ForgeDirection.getOrientation(data.getByte("f_up"))
+            );
         }
     }
 
@@ -263,15 +268,6 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
         return output;
     }
 
-    @Override
-    public void disconnect(boolean update) {
-        for (CraftingCPUCluster cluster : virtualClusters) {
-            if (cluster != null) cluster.destroy();
-        }
-        virtualClusters.clear();
-        if (update) updateMeta(true);
-    }
-
     private void notifyNetwork() {
         IGridNode node = getGridNode(ForgeDirection.UNKNOWN);
         if (node != null && node.getGrid() != null) {
@@ -280,59 +276,69 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
     }
 
     @Override
-    public void onReady() {
-        super.onReady();
-        initializeClusters();
-        virtualClusters.forEach(craftingCPUCluster -> {
-            ((ICraftingCPUClusterAccessor) (Object) craftingCPUCluster).doneMEServer();
-        });
+    public long getClusterStorageBytes(int idx) {
+        return (idx >= 0 && idx < CLUSTER_COUNT) ? storage_bytes[idx] : 0;
     }
 
+    @Override
+    public int getClusterAccelerator(int idx) {
+        return (idx >= 0 && idx < CLUSTER_COUNT) ? accelerators_count[idx] : 0;
+    }
+
+    @Override
+    public int getClusterIndex(CraftingCPUCluster c) {
+        return virtualClusters.indexOf(c);
+    }
+
+    @Override
     public List<CraftingCPUCluster> getVirtualClusters() {
         return virtualClusters;
     }
 
+    @Override
+    public boolean isFormed() {
+        return true;
+    }
+
+    @Override
+    protected AENetworkProxy createProxy() {
+        return new AENetworkProxyMultiblock(this, "proxy", getItemFromTile(this), true);
+    }
+
+    @Override
+    public ForgeDirection getForward() {
+        return FastOrientableManager.getForward(orientableId);
+    }
+
+    @Override
+    public ForgeDirection getUp() {
+        return FastOrientableManager.getUp(orientableId);
+    }
+
+    @Override
+    public void setOrientation(ForgeDirection f, ForgeDirection u) {
+        FastOrientableManager.set(orientableId, f, u);
+        this.markForUpdate();
+    }
+
     public AppEngInternalInventory getStorage() {
-        return storage;
+        return this.storage;
     }
 
     public AppEngInternalInventory getAccelerators() {
-        return accelerators;
+        return this.accelerators;
     }
 
     public NBTTagCompound getPreviousState(int index) {
-        return this.previousStates[index];
+        if (index >= 0 && index < CLUSTER_COUNT) {
+            return this.previousStates[index];
+        }
+        return null;
     }
 
-    public void setPreviousState(int index, NBTTagCompound previousState) {
-        this.previousStates[index] = previousState;
-    }
-
-    @Override
-    public void getDrops(World w, int x, int y, int z, List<ItemStack> drops) {
-        super.getDrops(w, x, y, z, drops);
-        storage.forEach(stack -> {
-            if (stack != null) {
-                drops.add(stack);
-            }
-        });
-        accelerators.forEach(stack -> {
-            if (stack != null) {
-                drops.add(stack);
-            }
-        });
-    }
-
-    @Override
-    public ForgeDirection getForward() { return FastOrientableManager.getForward(orientableId); }
-
-    @Override
-    public ForgeDirection getUp() { return FastOrientableManager.getUp(orientableId); }
-
-    @Override
-    public void setOrientation(ForgeDirection forward, ForgeDirection up) {
-        FastOrientableManager.set(orientableId, forward, up);
-        this.markForUpdate();
-        if (worldObj != null) worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
+    public void setPreviousState(int index, NBTTagCompound state) {
+        if (index >= 0 && index < CLUSTER_COUNT) {
+            this.previousStates[index] = state;
+        }
     }
 }

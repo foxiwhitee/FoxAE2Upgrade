@@ -4,7 +4,6 @@ import appeng.tile.inventory.AppEngInternalInventory;
 import foxiwhitee.FoxAE2Upgrade.ModBlocks;
 import foxiwhitee.FoxAE2Upgrade.config.FoxConfig;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 
 public class TileQuantumMolecularAssembler extends TileUltimateMolecularAssembler {
     protected AppEngInternalInventory patternInventory = new AppEngInternalInventory(this, 108, 1);
@@ -15,7 +14,7 @@ public class TileQuantumMolecularAssembler extends TileUltimateMolecularAssemble
 
     @Override
     protected ItemStack getItemFromTile(Object obj) {
-        return new ItemStack(ModBlocks.QUANTUM_MOLECULAR_ASSEMBLER);
+        return new ItemStack(ModBlocks.quantumMolecularAssembler);
     }
 
     @Override
@@ -29,17 +28,7 @@ public class TileQuantumMolecularAssembler extends TileUltimateMolecularAssemble
     }
 
     public String getName() {
-        return ModBlocks.QUANTUM_MOLECULAR_ASSEMBLER.getUnlocalizedName();
-    }
-
-    @Override
-    public TileEntity getTileEntity() {
-        return this;
-    }
-
-    @Override
-    public boolean acceptsPlans() {
-        return false;
+        return ModBlocks.quantumMolecularAssembler.getUnlocalizedName();
     }
 
     @Override

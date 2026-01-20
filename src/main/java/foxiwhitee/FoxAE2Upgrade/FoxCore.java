@@ -5,11 +5,8 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import foxiwhitee.FoxLib.FoxLib;
-import foxiwhitee.FoxLib.network.NetworkManager;
 import foxiwhitee.FoxAE2Upgrade.proxy.CommonProxy;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 
 import static foxiwhitee.FoxAE2Upgrade.FoxCore.*;
@@ -25,7 +22,7 @@ public class FoxCore {
     public static final CreativeTabs FOX_TAB = new CreativeTabs("FOX_AE2_UPGRADE_TAB") {
         @Override
         public Item getTabIconItem() {
-            return Item.getItemFromBlock(ModBlocks.QUANTUM_MOLECULAR_ASSEMBLER);
+            return Item.getItemFromBlock(ModBlocks.quantumMolecularAssembler);
         }
     };
 

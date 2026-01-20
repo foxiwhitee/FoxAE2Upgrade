@@ -25,26 +25,25 @@ import appeng.api.util.DimensionalCoord;
 import appeng.api.util.IInterfaceViewable;
 import appeng.container.ContainerNull;
 import appeng.crafting.MECraftingInventory;
+import appeng.items.misc.ItemEncodedPattern;
 import appeng.me.GridAccessException;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.tile.TileEvent;
 import appeng.tile.events.TileEventType;
-import appeng.tile.grid.AENetworkInvTile;
 import appeng.tile.inventory.AppEngInternalInventory;
 import appeng.tile.inventory.InvOperation;
 import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
-import foxiwhitee.FoxLib.api.orientable.FastOrientableManager;
-import foxiwhitee.FoxLib.api.orientable.IOrientable;
+import foxiwhitee.FoxAE2Upgrade.tile.TileAENetworkInvOrientable;
 import foxiwhitee.FoxLib.integration.applied.api.crafting.ICraftingCPUClusterAccessor;
 import foxiwhitee.FoxLib.integration.applied.api.crafting.IPreCraftingMedium;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
@@ -52,7 +51,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class TileCustomMolecularAssembler extends AENetworkInvTile implements IPowerChannelState, ICraftingMachine, ICraftingProvider, IGridTickable, IInterfaceViewable, IPreCraftingMedium, IOrientable {
+public abstract class TileCustomMolecularAssembler extends TileAENetworkInvOrientable implements IPowerChannelState, ICraftingMachine, ICraftingProvider, IGridTickable, IInterfaceViewable, IPreCraftingMedium {
     private static final int[] SIDES = {0};
     protected AppEngInternalInventory patternInventory = new AppEngInternalInventory(this, 36, 1);
     ICraftingPatternDetails activePattern;
@@ -60,8 +59,6 @@ public abstract class TileCustomMolecularAssembler extends AENetworkInvTile impl
     InventoryCrafting craftingGrid;
     List<ICraftingPatternDetails> patternList;
     private boolean isPowered;
-
-    private final int orientableId = FastOrientableManager.nextId();
 
     protected abstract ItemStack getItemFromTile(Object obj);
 
@@ -130,6 +127,7 @@ public abstract class TileCustomMolecularAssembler extends AENetworkInvTile impl
     public boolean pushPattern(ICraftingPatternDetails pattern, InventoryCrafting grid, CraftingCPUCluster cluster) {
         if (patternList == null || !patternList.contains(pattern) || !pattern.isCraftable()) return false;
         ICraftingCPUClusterAccessor accessor = (ICraftingCPUClusterAccessor) ((Object) cluster);
+        assert accessor != null;
         long required = accessor.getWaitingFor(pattern) - 1;
         long actualRequired = required + 1;
         required = Math.min(required, getMaxCount());
@@ -172,55 +170,67 @@ public abstract class TileCustomMolecularAssembler extends AENetworkInvTile impl
     }
 
     @TileEvent(TileEventType.WORLD_NBT_WRITE)
-    public void writeToNBT_MA(NBTTagCompound compound) {
+    public void writeToNBT_MA(NBTTagCompound data) {
         if (this.craftingGrid != null) {
-            compound.setInteger("invC_size", this.craftingGrid.getSizeInventory());
+            data.setInteger("invC_size", this.craftingGrid.getSizeInventory());
             for (int i = 0; i < this.craftingGrid.getSizeInventory(); i++) {
-                NBTTagCompound tag = new NBTTagCompound();
                 ItemStack is = this.craftingGrid.getStackInSlot(i);
-                if (is != null)
+                if (is != null) {
+                    NBTTagCompound tag = new NBTTagCompound();
                     is.writeToNBT(tag);
-                compound.setTag("invC_" + i, (NBTBase) tag);
+                    data.setTag("invC_" + i, tag);
+                }
             }
         }
+        if (this.activePattern != null) {
+            ItemStack pattern = this.activePattern.getPattern();
+            if (pattern != null) {
+                NBTTagCompound compound = new NBTTagCompound();
+                pattern.writeToNBT(compound);
+                data.setTag("activePattern", compound);
+            }
+        }
+        data.setLong("craftCount", craftCount);
     }
 
     @TileEvent(TileEventType.WORLD_NBT_READ)
-    public void readFromNBT_MA(NBTTagCompound compound) {
-        if (compound.hasKey("invC")) {
-            int size = compound.getInteger("invC_size");
-            this.craftingGrid = new InventoryCrafting((Container) new ContainerNull(), size, 1);
+    public void readFromNBT_MA(NBTTagCompound data) {
+        if (data.hasKey("invC_size")) {
+            int size = data.getInteger("invC_size");
+            this.craftingGrid = new InventoryCrafting(new ContainerNull(), size, 1);
             for (int i = 0; i < size; i++) {
-                NBTTagCompound tag = compound.getCompoundTag("invC_" + i);
-                if (!tag.hasNoTags())
-                    try {
-                        this.craftingGrid.setInventorySlotContents(i, ItemStack.loadItemStackFromNBT(tag));
-                    } catch (Exception exception) {
-                    }
+                if (data.hasKey("invC_" + i)) {
+                    NBTTagCompound tag = data.getCompoundTag("invC_" + i);
+                    this.craftingGrid.setInventorySlotContents(i, ItemStack.loadItemStackFromNBT(tag));
+                }
             }
         }
+        if (data.hasKey("activePattern")) {
+            ItemStack myPat = ItemStack.loadItemStackFromNBT(data.getCompoundTag("activePattern"));
+            if (myPat != null) {
+                Item var4 = myPat.getItem();
+                if (var4 instanceof ItemEncodedPattern iep) {
+                    World w = this.getWorldObj();
+                    ICraftingPatternDetails ph = iep.getPatternForItem(myPat, w);
+                    if (ph != null && ph.isCraftable()) {
+                        this.activePattern = ph;
+                    }
+                }
+            }
+        }
+        craftCount = data.getLong("craftCount");
     }
 
     @TileEvent(TileEventType.NETWORK_WRITE)
     public void writeToStream(ByteBuf data) {
-        if (this.canBeRotated()) {
-            data.writeByte((byte) getForward().ordinal());
-            data.writeByte((byte) getUp().ordinal());
-        }
+        data.writeBoolean(isPowered);
     }
 
     @TileEvent(TileEventType.NETWORK_READ)
     public boolean readFromStream(ByteBuf data) {
-        boolean output = false;
-        if (this.canBeRotated()) {
-            ForgeDirection oldForward = this.getForward(), oldUp = this.getUp();
-            byte orientationForward = data.readByte(), orientationUp = data.readByte();
-            ForgeDirection newForward = ForgeDirection.getOrientation(orientationForward & 7);
-            ForgeDirection newUp = ForgeDirection.getOrientation(orientationUp & 7);
-            this.setOrientation(newForward, newUp);
-            output = newForward != oldForward || newUp != oldUp;
-        }
-        return output;
+        boolean oldPowered = isPowered;
+        isPowered = data.readBoolean();
+        return isPowered != oldPowered;
     }
 
     private void addPattern(ItemStack stack) {
@@ -257,7 +267,6 @@ public abstract class TileCustomMolecularAssembler extends AENetworkInvTile impl
         try {
             getProxy().getGrid().postEvent(new MENetworkCraftingPatternChange(this, getProxy().getNode()));
         } catch (GridAccessException ignored) {
-            ignored.printStackTrace();
         }
     }
 
@@ -364,23 +373,5 @@ public abstract class TileCustomMolecularAssembler extends AENetworkInvTile impl
     @Override
     public ItemStack getDisplayRep() {
         return getItemFromTile(null);
-    }
-
-    @Override
-    public ForgeDirection getForward() { return FastOrientableManager.getForward(orientableId); }
-
-    @Override
-    public ForgeDirection getUp() { return FastOrientableManager.getUp(orientableId); }
-
-    @Override
-    public void setOrientation(ForgeDirection forward, ForgeDirection up) {
-        FastOrientableManager.set(orientableId, forward, up);
-        this.markForUpdate();
-        if (worldObj != null) worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
-    }
-
-    @Override
-    public boolean canBeRotated() {
-        return false;
     }
 }

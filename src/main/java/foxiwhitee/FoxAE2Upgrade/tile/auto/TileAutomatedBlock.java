@@ -1,273 +1,225 @@
 package foxiwhitee.FoxAE2Upgrade.tile.auto;
 
 import appeng.api.config.Actionable;
+import appeng.api.implementations.ICraftingPatternItem;
 import appeng.api.networking.GridFlags;
 import appeng.api.networking.IGridNode;
-import appeng.api.networking.crafting.ICraftingMedium;
-import appeng.api.networking.crafting.ICraftingPatternDetails;
-import appeng.api.networking.crafting.ICraftingProvider;
-import appeng.api.networking.crafting.ICraftingProviderHelper;
+import appeng.api.networking.crafting.*;
+import appeng.api.networking.security.BaseActionSource;
 import appeng.api.networking.security.MachineSource;
 import appeng.api.networking.ticking.IGridTickable;
 import appeng.api.networking.ticking.TickRateModulation;
 import appeng.api.networking.ticking.TickingRequest;
+import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IAEStack;
+import appeng.core.Api;
 import appeng.crafting.MECraftingInventory;
 import appeng.me.GridAccessException;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.tile.TileEvent;
 import appeng.tile.events.TileEventType;
-import appeng.tile.grid.AENetworkTile;
-import appeng.util.Platform;
-import appeng.util.item.AEItemStack;
 import foxiwhitee.FoxAE2Upgrade.recipes.BaseAutoBlockRecipe;
-import foxiwhitee.FoxLib.api.orientable.FastOrientableManager;
-import foxiwhitee.FoxLib.api.orientable.IOrientable;
+import foxiwhitee.FoxAE2Upgrade.tile.TileAENetworkOrientable;
 import foxiwhitee.FoxLib.integration.applied.api.crafting.ICraftingCPUClusterAccessor;
 import foxiwhitee.FoxLib.integration.applied.api.crafting.IPreCraftingMedium;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.nbt.NBTTagList;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public abstract class TileAutomatedBlock extends AENetworkTile implements IPreCraftingMedium, IGridTickable, ICraftingProvider, ICraftingMedium, IOrientable {
-    private List<ICraftingPatternDetails> patternList = new ArrayList<>();
+public abstract class TileAutomatedBlock extends TileAENetworkOrientable implements IPreCraftingMedium, IGridTickable, ICraftingProvider, ICraftingMedium {
+    private final List<ICraftingPatternDetails> patternList = new ArrayList<>();
     private ICraftingPatternDetails activePattern;
     private long craftCount;
-    private InventoryCrafting craftingGrid;
-    protected boolean isBusy = false;
-
-    private final int orientableId = FastOrientableManager.nextId();
-
-    public void provideCrafting(ICraftingProviderHelper iCraftingProviderHelper) {
-        if (getRecipes() != null) {
-            for (BaseAutoBlockRecipe recipe : getRecipes()) {
-                ICraftingPatternDetails details = new InternalPattern(recipe);
-                patternList.add(details);
-                iCraftingProviderHelper.addCraftingOption((ICraftingMedium) this, details);
-            }
-        }
-    }
 
     public TileAutomatedBlock() {
         getProxy().setFlags(GridFlags.REQUIRE_CHANNEL);
     }
 
-    protected abstract ItemStack getItemFromTile(Object obj);
-
-    protected abstract List<BaseAutoBlockRecipe> getRecipes();
-
-    protected abstract long getMaxCount();
-
-    public boolean pushPattern(ICraftingPatternDetails iCraftingPatternDetails, InventoryCrafting inventoryCrafting) {
-        return false;
+    @Override
+    public void validate() {
+        super.validate();
+        if (!getWorldObj().isRemote) {
+            initPatterns();
+        }
     }
 
-    public boolean pushPattern(ICraftingPatternDetails details, InventoryCrafting ic, CraftingCPUCluster cluster) {
-        if (isBusy) {
-            return false;
+    private void initPatterns() {
+        patternList.clear();
+        Item patternItem = Api.INSTANCE.definitions().items().encodedPattern().maybeItem().orNull();
+        if (patternItem == null) return;
+
+        for (BaseAutoBlockRecipe recipe : getRecipes()) {
+            ItemStack patternStack = new ItemStack(patternItem);
+
+            ItemStack[] inputs = recipe.getInputs().stream()
+                .filter(o -> o instanceof ItemStack)
+                .map(o -> (ItemStack) o)
+                .toArray(ItemStack[]::new);
+
+            encodePattern(patternStack, recipe.getOut(), inputs);
+
+            if (patternStack.getItem() instanceof ICraftingPatternItem iep) {
+                patternList.add(iep.getPatternForItem(patternStack, getWorldObj()));
+            }
         }
-        if (!(details instanceof InternalPattern))
-            return false;
-        if (patternList == null || !patternList.contains(details) || details.isCraftable()) {
+    }
+
+    private void encodePattern(ItemStack pattern, ItemStack output, ItemStack[] inputs) {
+        if (output == null || inputs == null) return;
+
+        NBTTagCompound encodedValue = new NBTTagCompound();
+        encodedValue.setTag("in", createTagList(inputs));
+        encodedValue.setTag("out", createTagList(output));
+        encodedValue.setBoolean("crafting", false);
+        encodedValue.setBoolean("substitute", false);
+
+        pattern.setTagCompound(encodedValue);
+    }
+
+    private NBTTagList createTagList(ItemStack... items) {
+        NBTTagList list = new NBTTagList();
+        for (ItemStack item : items) {
+            if (item != null) {
+                NBTTagCompound tag = new NBTTagCompound();
+                item.writeToNBT(tag);
+                list.appendTag(tag);
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public void provideCrafting(ICraftingProviderHelper helper) {
+        patternList.forEach(pattern -> helper.addCraftingOption(this, pattern));
+    }
+
+    @Override
+    public boolean pushPattern(ICraftingPatternDetails pattern, InventoryCrafting ic, CraftingCPUCluster cluster) {
+        if (patternList.isEmpty() || !patternList.contains(pattern)) {
             return false;
         }
         ICraftingCPUClusterAccessor accessor = (ICraftingCPUClusterAccessor) ((Object) cluster);
-        long required = accessor.getWaitingFor(details) - 1;
+        MECraftingInventory inventory = cluster.getInventory();
+        BaseActionSource source = cluster.getActionSource();
+        assert accessor != null;
+
+        long required = accessor.getWaitingFor(pattern) - 1;
         long actualRequired = required + 1;
         required = Math.min(required, getMaxCount());
-        MECraftingInventory inventory = cluster.getInventory();
-        for (IAEStack<?> input : details.getCondensedAEInputs()) {
-            IAEItemStack copy = (IAEItemStack) input.copy();
-            copy.setStackSize(copy.getStackSize() * required);
-            IAEItemStack extracted = (IAEItemStack) inventory.extractItems(copy, Actionable.SIMULATE, cluster.getActionSource());
+
+        for (IAEStack<?> input : pattern.getCondensedAEInputs()) {
+            IAEStack<?> copy = input.copy().setStackSize(input.getStackSize() * required);
+            IAEStack<?> extracted = inventory.extractItems(copy, Actionable.SIMULATE, source);
             long available = extracted == null ? 0 : extracted.getStackSize();
             if (copy.getStackSize() > available) {
                 required = available / input.getStackSize();
             }
         }
-        if (required < 0) return false;
+        if (required < 0) {
+            return false;
+        }
         if (required >= 1) {
-            for (IAEStack<?> input : details.getCondensedAEInputs()) {
+            for (IAEStack<?> input : pattern.getCondensedAEInputs()) {
                 IAEItemStack copy = (IAEItemStack) input.copy();
                 copy.setStackSize(copy.getStackSize() * required);
                 inventory.extractItems(copy, Actionable.MODULATE, cluster.getActionSource());
             }
-            for (IAEStack<?> output : details.getCondensedAEOutputs()) {
+            for (IAEStack<?> output : pattern.getCondensedAEOutputs()) {
                 IAEItemStack copy = (IAEItemStack) output.copy();
                 copy.setStackSize(copy.getStackSize() * required);
                 accessor.callPostChange(copy, cluster.getActionSource());
                 accessor.getWaitingFor().add(copy.copy());
                 accessor.callPostCraftingStatusChange(copy.copy());
             }
-            accessor.setWaitingFor(details, actualRequired - required);
+            accessor.setWaitingFor(pattern, actualRequired - required);
         }
-        activePattern = details;
+        activePattern = pattern;
         craftCount = required + 1;
-        craftingGrid = ic;
-        isBusy = true;
         return true;
     }
 
-    public TickingRequest getTickingRequest(IGridNode iGridNode) {
-        return new TickingRequest(1, 1, false, false);
-    }
-
+    @Override
     public TickRateModulation tickingRequest(IGridNode iGridNode, int ticksSinceLastCall) {
         if (activePattern == null) return TickRateModulation.IDLE;
-        List<IAEItemStack> outputs = new ArrayList<>();
-        Arrays.stream(activePattern.getCondensedAEOutputs())
-            .map(stack -> {
-                IAEItemStack copy = (IAEItemStack) stack.copy();
-                copy.setStackSize(copy.getStackSize() * craftCount);
-                return copy;
-            }).forEach(outputs::add);
-        for (int i = 0; i < craftingGrid.getSizeInventory(); i++) {
-            ItemStack item = Platform.getContainerItem(craftingGrid.getStackInSlot(i));
-            if (item != null) {
-                outputs.add(AEItemStack.create(item));
+
+        try {
+            List<IAEItemStack> toInject = calculateOutputs();
+            IMEMonitor<IAEItemStack> inv = getProxy().getStorage().getItemInventory();
+            MachineSource source = new MachineSource(this);
+
+            for (IAEItemStack stack : toInject) {
+                IAEItemStack left = inv.injectItems(stack.copy(), Actionable.SIMULATE, source);
+                if (left != null && left.getStackSize() > 0) return TickRateModulation.IDLE;
             }
-        }
-        boolean canCraft = true;
-        for (IAEItemStack output : outputs) {
-            try {
-                IAEItemStack remainder = getProxy().getStorage().getItemInventory()
-                    .injectItems(output.copy(), Actionable.SIMULATE, new MachineSource(this));
-                if (remainder != null && remainder.getStackSize() > 0) {
-                    canCraft = false;
-                    break;
-                }
-            } catch (GridAccessException e) {
-                canCraft = false;
-                break;
+
+            for (IAEItemStack stack : toInject) {
+                inv.injectItems(stack, Actionable.MODULATE, source);
             }
-        }
-        if (canCraft) {
-            for (IAEItemStack output : outputs) {
-                try {
-                    getProxy().getStorage().getItemInventory()
-                        .injectItems(output.copy(), Actionable.MODULATE, new MachineSource(this));
-                } catch (GridAccessException ignored) {
-                    ignored.printStackTrace();
-                }
-            }
-            activePattern = null;
-            craftCount = 0;
-            isBusy = false;
-        }
+
+            completeCrafting();
+        } catch (GridAccessException ignored) {}
+
         return TickRateModulation.IDLE;
     }
 
+    private List<IAEItemStack> calculateOutputs() {
+        List<IAEItemStack> outputs = new ArrayList<>();
+        for (IAEStack<?> s : activePattern.getCondensedAEOutputs()) {
+            outputs.add(((IAEItemStack) s).copy().setStackSize(s.getStackSize() * craftCount));
+        }
+        return outputs;
+    }
+
+    private void completeCrafting() {
+        this.activePattern = null;
+        this.craftCount = 0;
+    }
+
     @TileEvent(TileEventType.WORLD_NBT_WRITE)
-    public void write(NBTTagCompound compound) {
-        compound.setBoolean("isBusy", this.isBusy);
+    public void writeToNbt_(NBTTagCompound data) {
+        if (activePattern != null) {
+            NBTTagCompound patTag = new NBTTagCompound();
+            activePattern.getPattern().writeToNBT(patTag);
+            data.setTag("activePattern", patTag);
+            data.setLong("craftCount", craftCount);
+        }
     }
 
     @TileEvent(TileEventType.WORLD_NBT_READ)
-    public void read(NBTTagCompound compound) {
-        if (compound.hasKey("isBusy"))
-            this.isBusy = compound.getBoolean("isBusy");
-    }
-
-    @TileEvent(TileEventType.NETWORK_WRITE)
-    public void writeToStream(ByteBuf data) {
-        if (this.canBeRotated()) {
-            data.writeByte((byte) getForward().ordinal());
-            data.writeByte((byte) getUp().ordinal());
-        }
-    }
-
-    @TileEvent(TileEventType.NETWORK_READ)
-    public boolean readFromStream(ByteBuf data) {
-        boolean output = false;
-        if (this.canBeRotated()) {
-            ForgeDirection oldForward = this.getForward(), oldUp = this.getUp();
-            byte orientationForward = data.readByte(), orientationUp = data.readByte();
-            ForgeDirection newForward = ForgeDirection.getOrientation(orientationForward & 7);
-            ForgeDirection newUp = ForgeDirection.getOrientation(orientationUp & 7);
-            this.setOrientation(newForward, newUp);
-            output = newForward != oldForward || newUp != oldUp;
-        }
-        return output;
-    }
-
-    public boolean isBusy() {
-        return this.isBusy;
-    }
-
-    @Override
-    public ForgeDirection getForward() { return FastOrientableManager.getForward(orientableId); }
-
-    @Override
-    public ForgeDirection getUp() { return FastOrientableManager.getUp(orientableId); }
-
-    @Override
-    public void setOrientation(ForgeDirection forward, ForgeDirection up) {
-        FastOrientableManager.set(orientableId, forward, up);
-        this.markForUpdate();
-        if (worldObj != null) worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
-    }
-
-    public static class InternalPattern implements ICraftingPatternDetails {
-        private final AEItemStack output;
-        private final AEItemStack[] inputs;
-
-        public InternalPattern(BaseAutoBlockRecipe recipe) {
-            output = AEItemStack.create(recipe.getOut());
-            inputs = new AEItemStack[recipe.getInputs().size()];
-            for (int i = 0; i < inputs.length; i++) {
-                inputs[i] = AEItemStack.create((ItemStack) recipe.getInputs().get(i));
+    public void readFromNbt_(NBTTagCompound data) {
+        if (data.hasKey("activePattern")) {
+            ItemStack stack = ItemStack.loadItemStackFromNBT(data.getCompoundTag("activePattern"));
+            if (stack != null && stack.getItem() instanceof ICraftingPatternItem iep) {
+                this.activePattern = iep.getPatternForItem(stack, getWorldObj());
             }
         }
-
-        public ItemStack getPattern() {
-            return null;
-        }
-
-        public boolean isValidItemForSlot(int i, ItemStack itemStack, World world) {
-            return false;
-        }
-
-        public boolean isCraftable() {
-            return false;
-        }
-
-        public IAEItemStack[] getInputs() {
-            return inputs;
-        }
-
-        public IAEItemStack[] getCondensedInputs() {
-            return inputs;
-        }
-
-        public IAEItemStack[] getCondensedOutputs() {
-            return new IAEItemStack[]{this.output};
-        }
-
-        public IAEItemStack[] getOutputs() {
-            return new IAEItemStack[]{this.output};
-        }
-
-        public boolean canSubstitute() {
-            return false;
-        }
-
-        public ItemStack getOutput(InventoryCrafting inventoryCrafting, World world) {
-            return this.output.getItemStack();
-        }
-
-        public int getPriority() {
-            return 0;
-        }
-
-        public void setPriority(int i) {
-        }
+        this.craftCount = data.getLong("craftCount");
     }
+
+    @Override
+    public TickingRequest getTickingRequest(IGridNode node) {
+        return new TickingRequest(1, 1, false, false);
+    }
+
+    @Override
+    public boolean isBusy() {
+        return activePattern != null;
+    }
+
+    @Override
+    public boolean pushPattern(ICraftingPatternDetails p, InventoryCrafting ic) {
+        return false;
+    }
+
+    protected abstract List<BaseAutoBlockRecipe> getRecipes();
+
+    protected abstract long getMaxCount();
+
+    protected abstract ItemStack getItemFromTile(Object obj);
 }

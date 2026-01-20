@@ -42,7 +42,7 @@ public class PartCableEfrim extends PartBaseSmartCable {
 
     @Override
     public ItemStack getPartItemStack(AEColor paramAEColor) {
-        return ((ItemParts) ModItems.ITEM_PARTS).createPart(EnumParts.EFRIM_SMART_CABLE, paramAEColor).stack(1);
+        return ((ItemParts) ModItems.itemParts).createPart(EnumParts.EFRIM_SMART_CABLE, paramAEColor).stack(1);
     }
 
     @Override

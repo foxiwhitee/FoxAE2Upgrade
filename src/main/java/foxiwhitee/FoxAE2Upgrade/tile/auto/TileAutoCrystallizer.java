@@ -12,7 +12,7 @@ import java.util.List;
 public class TileAutoCrystallizer extends TileAutomatedBlock {
     @Override
     protected ItemStack getItemFromTile(Object obj) {
-        return new ItemStack(ModBlocks.AUTO_CRYSTALLIZER);
+        return new ItemStack(ModBlocks.autoCrystallizer);
     }
 
     @Override

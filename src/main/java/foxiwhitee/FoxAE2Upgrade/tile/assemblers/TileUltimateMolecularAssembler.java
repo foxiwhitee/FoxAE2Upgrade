@@ -28,7 +28,7 @@ import java.util.*;
 
 public class TileUltimateMolecularAssembler extends TileCustomMolecularAssembler {
     protected AppEngInternalInventory patternInventory = new AppEngInternalInventory(this, 72, 1);
-    private Map<ICraftingPatternDetails, Double> productivityHistory = new HashMap<>();
+    private final Map<ICraftingPatternDetails, Double> productivityHistory = new HashMap<>();
 
     @Override
     public void provideCrafting(ICraftingProviderHelper helper) {
@@ -135,7 +135,7 @@ public class TileUltimateMolecularAssembler extends TileCustomMolecularAssembler
 
     @Override
     protected ItemStack getItemFromTile(Object obj) {
-        return new ItemStack(ModBlocks.ULTIMATE_MOLECULAR_ASSEMBLER);
+        return new ItemStack(ModBlocks.ultimateMolecularAssembler);
     }
 
     @Override
@@ -149,7 +149,7 @@ public class TileUltimateMolecularAssembler extends TileCustomMolecularAssembler
     }
 
     public String getName() {
-        return ModBlocks.ULTIMATE_MOLECULAR_ASSEMBLER.getUnlocalizedName();
+        return ModBlocks.ultimateMolecularAssembler.getUnlocalizedName();
     }
 
     @Override
