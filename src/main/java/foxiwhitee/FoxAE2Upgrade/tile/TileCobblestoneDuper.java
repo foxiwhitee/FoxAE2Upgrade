@@ -142,7 +142,7 @@ public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements 
         return null;
     }
 
-    private <T extends IAEStack<T>> MEMonitorHandler<T> createMonitor(IMEInventoryHandler<T> handler) {
+    private <T extends IAEStack<T>> MEMonitorHandler<T> createMonitor(IMEInventoryHandler handler) {
         if (handler == null) return null;
         MEInventoryHandler<T> internal = new MEInventoryHandler<>(handler, handler.getChannel());
         internal.setPriority(priority);
@@ -327,10 +327,6 @@ public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements 
     @MENetworkEventSubscribe
     public void onChannelChange(MENetworkChannelsChanged event) {
         updateStatus();
-    }
-
-    public IMEMonitor<IAEFluidStack> getFluidInventory() {
-        return fluidMonitor;
     }
 
     public IInventory getInternalInventory() {

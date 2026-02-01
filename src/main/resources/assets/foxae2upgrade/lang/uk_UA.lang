@@ -6,8 +6,10 @@ tile.cobblestoneDuper.name=Дюпер кругляку
 tile.advancedMolecularAssembler.name=Розширений молекулярний асемблер
 tile.ultimateMolecularAssembler.name=Ультимативний молекулярний асемблер
 tile.quantumMolecularAssembler.name=Квантовий молекулярний асемблер
-tile.advancedDriver.name=Розширений ME-Привід
+tile.advancedDrive.name=Розширений ME-Привід
 tile.meServer.name=ME Сервер
+
+tile.levelMaintainer.name=Підтримувач рівень
 #Items
 item.alite_smart_cable.name=ME Alite Cable
 item.bimare_smart_cable.name=ME Bimare Cable
@@ -26,3 +28,8 @@ tooltip.meServer=§9Вміщує в собі до 12 кластерів зі с�
 tooltip.productivity.card=§9Додає %s%% продуктивності
 tooltip.productivity.base=§9Мають базову продуктивність: %s%%
 tooltip.productivity.warning=§4Додатковий вихід продукції з'являється разом з основною, а не по закінченю шкали продуктивності
+tooltip.enable=Увімкнути
+tooltip.disable=Вимкнути
+tooltip.levelMaintainer.desc.1=Підтримує певну кількість предметів у ME мережі
+tooltip.levelMaintainer.desc.2=Перше поле – необхідна кількість
+tooltip.levelMaintainer.desc.3=Друге поле – скільки разів створювати за раз

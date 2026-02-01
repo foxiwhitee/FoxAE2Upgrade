@@ -58,7 +58,7 @@ public class GuiAdvancedDrive extends AEBaseGui {
     }
 
     public void drawBG(int offsetX, int offsetY, int mouseX, int mouseY) {
-        bindTexture(FoxCore.MODID, "gui/guiAdvancedDriver.png");
+        bindTexture(FoxCore.MODID, "gui/guiAdvancedDrive.png");
         UtilGui.drawTexture(offsetX, offsetY, 0, 0, this.xSize, this.ySize, this.xSize, this.ySize);
     }
 }

@@ -66,6 +66,10 @@ public class ModItemBlock extends ItemBlock {
                 list.add(LocalizationUtils.localize("tooltip.productivity.warning"));
             } else if (this.blockType.equals(ModBlocks.meServer)) {
                 list.add(LocalizationUtils.localize("tooltip.meServer"));
+            } else if (this.blockType.equals(ModBlocks.levelMaintainer)) {
+                list.add(LocalizationUtils.localize("tooltip.levelMaintainer.desc.1"));
+                list.add(LocalizationUtils.localize("tooltip.levelMaintainer.desc.2"));
+                list.add(LocalizationUtils.localize("tooltip.levelMaintainer.desc.3"));
             }
         }
     }

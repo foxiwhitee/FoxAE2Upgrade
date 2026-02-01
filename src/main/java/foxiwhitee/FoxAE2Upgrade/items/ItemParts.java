@@ -71,12 +71,6 @@ public class ItemParts extends AEBaseItem implements IPartItem, IItemGroup {
     }
 
     @Nonnull
-    public ItemStackSrc createPart(EnumParts mat) {
-        Preconditions.checkNotNull(mat);
-        return createPart(mat, 0);
-    }
-
-    @Nonnull
     public ItemStackSrc createPart(EnumParts mat, AEColor color) {
         Preconditions.checkNotNull(mat);
         Preconditions.checkNotNull(color);
@@ -96,7 +90,7 @@ public class ItemParts extends AEBaseItem implements IPartItem, IItemGroup {
                 for (IntegrationType integrationType : mat.getIntegrations())
                     bool &= IntegrationRegistry.INSTANCE.isEnabled(integrationType);
                 int i = mat.getBaseDamage() + varID;
-                return new ItemStackSrc((Item) this, i, ActivityState.from(bool));
+                return new ItemStackSrc(this, i, ActivityState.from(bool));
             }
         }
         boolean enabled = true;
@@ -106,7 +100,7 @@ public class ItemParts extends AEBaseItem implements IPartItem, IItemGroup {
             enabled &= IntegrationRegistry.INSTANCE.isEnabled(integrationType);
         int partDamage = mat.getBaseDamage() + varID;
         ActivityState state = ActivityState.from(enabled);
-        ItemStackSrc output = new ItemStackSrc((Item) this, partDamage, state);
+        ItemStackSrc output = new ItemStackSrc(this, partDamage, state);
         EnumPartsWithVariant pti = new EnumPartsWithVariant(mat, varID);
         processMetaOverlap(enabled, partDamage, mat, pti);
         return output;
@@ -116,20 +110,11 @@ public class ItemParts extends AEBaseItem implements IPartItem, IItemGroup {
         assert partDamage >= 0;
         assert mat != null;
         assert pti != null;
-        EnumPartsWithVariant registeredEnumParts = this.registered.get(Integer.valueOf(partDamage));
+        EnumPartsWithVariant registeredEnumParts = this.registered.get(partDamage);
         if (registeredEnumParts != null)
             throw new IllegalStateException("Meta Overlap detected with type " + mat + " and damage " + partDamage + ". Found " + registeredEnumParts + " there already.");
         if (enabled)
-            this.registered.put(Integer.valueOf(partDamage), pti);
-    }
-
-    public int getDamageByType(EnumParts t) {
-        Preconditions.checkNotNull(t);
-        for (Map.Entry<Integer, EnumPartsWithVariant> pt : this.registered.entrySet()) {
-            if ((pt.getValue()).part == t)
-                return ((Integer) pt.getKey()).intValue();
-        }
-        return -1;
+            this.registered.put(partDamage, pti);
     }
 
     @SideOnly(Side.CLIENT)
@@ -138,9 +123,10 @@ public class ItemParts extends AEBaseItem implements IPartItem, IItemGroup {
     }
 
     public IIcon getIconFromDamage(int dmg) {
-        EnumPartsWithVariant registeredType = this.registered.get(Integer.valueOf(dmg));
-        if (registeredType != null)
+        EnumPartsWithVariant registeredType = this.registered.get(dmg);
+        if (registeredType != null) {
             return registeredType.ico;
+        }
         String formattedRegistered = Arrays.toString(this.registered.keySet().toArray());
         throw new MissingDefinition("Tried to get the icon from a non-existent part with damage value " + dmg + ". There were registered: " + formattedRegistered + '.');
     }
@@ -160,7 +146,7 @@ public class ItemParts extends AEBaseItem implements IPartItem, IItemGroup {
         if (pt.isCable()) {
             AEColor[] variants = AEColor.values();
             int itemDamage = is.getItemDamage();
-            EnumPartsWithVariant registeredEnumParts = this.registered.get(Integer.valueOf(itemDamage));
+            EnumPartsWithVariant registeredEnumParts = this.registered.get(itemDamage);
             if (registeredEnumParts != null)
                 return super.getItemStackDisplayName(is) + " - " + variants[registeredEnumParts.variant].toString();
         }
@@ -170,7 +156,7 @@ public class ItemParts extends AEBaseItem implements IPartItem, IItemGroup {
 
     public void registerIcons(IIconRegister iconRegister) {
         for (Map.Entry<Integer, EnumPartsWithVariant> part : this.registered.entrySet()) {
-            String tex = FoxCore.MODID.toLowerCase() + ":" + getName(new ItemStack((Item) this, 1, ((Integer) part.getKey()).intValue())).toLowerCase();
+            String tex = FoxCore.MODID.toLowerCase() + ":cables/" + getName(new ItemStack(this, 1, part.getKey())).toLowerCase();
             (part.getValue()).ico = iconRegister.registerIcon(tex);
         }
     }
@@ -179,14 +165,13 @@ public class ItemParts extends AEBaseItem implements IPartItem, IItemGroup {
         List<Map.Entry<Integer, EnumPartsWithVariant>> types = new ArrayList<>(this.registered.entrySet());
         types.sort(REGISTERED_COMPARATOR);
         for (Map.Entry<Integer, EnumPartsWithVariant> part : types)
-            itemStacks.add(new ItemStack((Item) this, 1, ((Integer) part.getKey()).intValue()));
+            itemStacks.add(new ItemStack((Item) this, 1, part.getKey()));
     }
 
     private String getName(ItemStack is) {
         Preconditions.checkNotNull(is);
         EnumParts stackType = getTypeByStack(is);
-        String typeName = stackType.name();
-        return typeName;
+        return stackType.name();
     }
 
     @Nonnull
@@ -206,8 +191,8 @@ public class ItemParts extends AEBaseItem implements IPartItem, IItemGroup {
             return null;
         try {
             if (type.getConstructor() == null)
-                type.setConstructor(part.getConstructor(new Class[]{ItemStack.class}));
-            return type.getConstructor().newInstance(new Object[]{is});
+                type.setConstructor(part.getConstructor(ItemStack.class));
+            return type.getConstructor().newInstance(is);
         } catch (InstantiationException | IllegalAccessException | java.lang.reflect.InvocationTargetException |
                  NoSuchMethodException e) {
             throw new IllegalStateException("Unable to construct IBusPart from IBusItem : " + part.getName() + " ; Possibly didn't have correct constructor( ItemStack )", e);
@@ -215,7 +200,7 @@ public class ItemParts extends AEBaseItem implements IPartItem, IItemGroup {
     }
 
     public int variantOf(int itemDamage) {
-        EnumPartsWithVariant registeredEnumParts = this.registered.get(Integer.valueOf(itemDamage));
+        EnumPartsWithVariant registeredEnumParts = this.registered.get(itemDamage);
         if (registeredEnumParts != null)
             return registeredEnumParts.variant;
         return 0;

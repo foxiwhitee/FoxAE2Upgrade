@@ -14,8 +14,8 @@ public class ContentConfig {
     @ConfigValue(category = "Content", desc = "Enable ME Server")
     public static boolean enableMEServer = true;
 
-    @ConfigValue(category = "Content", desc = "Enable Advanced Driver")
-    public static boolean enableAdvancedDriver = true;
+    @ConfigValue(category = "Content", desc = "Enable Advanced Drive")
+    public static boolean enableAdvancedDrive = true;
 
     @ConfigValue(category = "Content", desc = "Enable Cobblestone Duper")
     public static boolean enableCobblestoneDuper = true;
@@ -25,5 +25,8 @@ public class ContentConfig {
 
     @ConfigValue(category = "Content", desc = "Enable New Cables")
     public static boolean enableCables = true;
+
+    @ConfigValue(category = "Content", desc = "Enable Level Maintainer")
+    public static boolean enableLevelMaintainer = true;
 
 }

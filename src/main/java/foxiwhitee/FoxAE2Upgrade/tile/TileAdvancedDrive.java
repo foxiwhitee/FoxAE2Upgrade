@@ -3,11 +3,14 @@ package foxiwhitee.FoxAE2Upgrade.tile;
 import appeng.api.AEApi;
 import appeng.api.implementations.tiles.IChestOrDrive;
 import appeng.api.networking.GridFlags;
+import appeng.api.networking.IGridNode;
 import appeng.api.networking.events.*;
 import appeng.api.networking.security.BaseActionSource;
-import appeng.api.networking.security.IActionHost;
 import appeng.api.networking.security.MachineSource;
 import appeng.api.networking.storage.IStorageGrid;
+import appeng.api.networking.ticking.IGridTickable;
+import appeng.api.networking.ticking.TickRateModulation;
+import appeng.api.networking.ticking.TickingRequest;
 import appeng.api.storage.*;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.util.AECableType;
@@ -20,7 +23,6 @@ import appeng.tile.TileEvent;
 import appeng.tile.events.TileEventType;
 import appeng.tile.grid.AENetworkInvTile;
 import appeng.tile.inventory.AppEngInternalInventory;
-import appeng.tile.inventory.IAEAppEngInventory;
 import appeng.tile.inventory.InvOperation;
 import appeng.util.Platform;
 import io.netty.buffer.ByteBuf;
@@ -32,12 +34,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 import static appeng.tile.storage.TileDrive.*;
 
-public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive, IPriorityHost {
+public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive, IPriorityHost, IGridTickable {
     private final int[] sides = new int[0];
 
     private final AppEngInternalInventory inv = new AppEngInternalInventory(this, 30);
@@ -54,9 +57,8 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
 
     private List<MEInventoryHandler<?>> fluids = new LinkedList<>();
 
-    private long lastStateChange = 0L;
-
-    private final int[] state = new int[]{0, 0, 0};
+    private final int[] state = new int[30];
+    private final int[] cellType = new int[30];
 
     private int priority = 0;
 
@@ -64,31 +66,42 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
 
     public TileAdvancedDrive() {
         this.mySrc = new MachineSource(this);
-        getProxy().setFlags(new GridFlags[]{GridFlags.REQUIRE_CHANNEL});
+        getProxy().setFlags(GridFlags.REQUIRE_CHANNEL);
+        Arrays.fill(cellType, -1);
+    }
+
+    @Override
+    public TickingRequest getTickingRequest(IGridNode node) {
+        return new TickingRequest(15, 15, false, false);
+    }
+
+    @Override
+    public TickRateModulation tickingRequest(IGridNode node, int ticksSinceLastCall) {
+        this.recalculateDisplay();
+        return TickRateModulation.SAME;
     }
 
     @TileEvent(TileEventType.NETWORK_WRITE)
     public void writeToStream_TileDrive(ByteBuf data) {
-        if (Platform.isServer()) {
-            if (this.worldObj.getTotalWorldTime() - this.lastStateChange > 8L) {
-                for (int j = 0; j < 3; j++)
-                    this.state[j] = 0;
-            } else {
-                for (int j = 0; j < 3; j++)
-                    this.state[j] = this.state[j] & 0x24924924;
-            }
-            if (getProxy().isActive()) {
-                this.state[0] = this.state[0] | Integer.MIN_VALUE;
-            } else {
-                this.state[0] = this.state[0] & Integer.MAX_VALUE;
-            }
-            for (int x = 0; x < getCellCount(); x++) {
-                int j = x / 10;
-                this.state[j] = this.state[j] | getCellStatus(x) << (3 * (x % 10));
-            }
-            for (int i = 0; i < 3; i++)
-                data.writeInt(this.state[i]);
+        for (int i = 0; i < getCellCount(); i++) {
+            state[i] = getCellStatus(i);
+            cellType[i] = getCellType(i);
+            data.writeInt(state[i]);
+            data.writeInt(cellType[i]);
         }
+    }
+
+    @TileEvent(TileEventType.NETWORK_READ)
+    public boolean readFromStream_TileDrive(ByteBuf data) {
+        int[] oldState = Arrays.copyOf(state, state.length);
+        int[] oldCellType = Arrays.copyOf(cellType, state.length);
+        boolean changed = false;
+        for (int i = 0; i < getCellCount(); i++) {
+            state[i] = data.readInt();
+            cellType[i] = data.readInt();
+            changed |= state[i] != oldState[i] || cellType[i] != oldCellType[i];
+        }
+        return changed;
     }
 
     public int getCellCount() {
@@ -96,25 +109,42 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
     }
 
     public int getCellStatus(int slot) {
-        if (Platform.isClient())
-            return this.state[slot / 10] >> slot % 10 * 3 & 0x3;
-        ItemStack cell = this.inv.getStackInSlot(2);
+        if (Platform.isClient()) {
+            return this.state[slot];
+        }
+        ItemStack cell = this.inv.getStackInSlot(slot);
         ICellHandler ch = this.handlersBySlot[slot];
         MEInventoryHandler<IAEItemStack> handler = this.invBySlot[slot];
-        if (handler == null)
+        if (handler == null || !isPowered()) {
             return 0;
-        if (handler.getChannel() == StorageChannel.ITEMS &&
-            ch != null)
+        }
+        if ((handler.getChannel() == StorageChannel.ITEMS || handler.getChannel() == StorageChannel.FLUIDS) && ch != null) {
             return ch.getStatusForCell(cell, handler.getInternal());
-        if (handler.getChannel() == StorageChannel.FLUIDS &&
-            ch != null)
-            return ch.getStatusForCell(cell, handler.getInternal());
+        }
         return 0;
     }
 
+    @Override
+    public int getCellType(int slot) {
+        if (Platform.isClient()) {
+            return cellType[slot];
+        }
+
+        MEInventoryHandler<IAEItemStack> handler = this.invBySlot[slot];
+        if (handler == null) {
+            return -1;
+        }
+        if (handler.getInternal() instanceof ICellCacheRegistry iccr) {
+            return switch (iccr.getCellType()) {
+                case ITEM -> 0;
+                case FLUID -> 1;
+                case ESSENTIA -> 2;
+            };
+        }
+        return -1;
+    }
+
     public boolean isPowered() {
-        if (Platform.isClient())
-            return ((this.state[0] & Integer.MIN_VALUE) == Integer.MIN_VALUE);
         return getProxy().isActive();
     }
 
@@ -126,8 +156,7 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
             ItemStack cell = this.inv.getStackInSlot(i);
             if (!ItemBasicStorageCell.checkInvalidForLockingAndStickyCarding(cell, cellHandler)) {
                 IMEInventoryHandler<?> inv = cellHandler.getCellInventory(cell, this, StorageChannel.ITEMS);
-                if (inv instanceof ICellInventoryHandler) {
-                    ICellInventoryHandler handler = (ICellInventoryHandler) inv;
+                if (inv instanceof ICellInventoryHandler<?> handler) {
                     if (ItemBasicStorageCell.cellIsPartitioned(handler)) {
                         unpartitionStorageCell(handler);
                     } else {
@@ -146,7 +175,7 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
 
         try {
             this.getProxy().getGrid().postEvent(new MENetworkCellArrayUpdate());
-        } catch (GridAccessException var7) {
+        } catch (GridAccessException ignored) {
         }
 
         return res;
@@ -160,8 +189,7 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
             ItemStack cell = this.inv.getStackInSlot(i);
             if (!ItemBasicStorageCell.checkInvalidForLockingAndStickyCarding(cell, cellHandler)) {
                 Item var7 = cell.getItem();
-                if (var7 instanceof ICellWorkbenchItem) {
-                    ICellWorkbenchItem cellItem = (ICellWorkbenchItem) var7;
+                if (var7 instanceof ICellWorkbenchItem cellItem) {
                     if (res + 1 <= cards.stackSize && applyStickyCardToItemStorageCell(cellHandler, cell, this, cellItem)) {
                         ++res;
                     }
@@ -176,81 +204,39 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
 
         try {
             this.getProxy().getGrid().postEvent(new MENetworkCellArrayUpdate());
-        } catch (GridAccessException var8) {
+        } catch (GridAccessException ignored) {
         }
 
         return res;
     }
 
-    public boolean isCellBlinking(int slot) {
-        long now = this.worldObj.getTotalWorldTime();
-        if (now - this.lastStateChange > 8L)
-            return false;
-        int i = slot / 10;
-        return ((this.state[i] >> slot % 10 * 3 + 2 & 0x1) == 1);
-    }
-
-    @TileEvent(TileEventType.NETWORK_READ)
-    public boolean readFromStream_TileDrive(ByteBuf data) {
-        int[] oldState = new int[3];
-        System.arraycopy(this.state, 0, oldState, 0, 3);
-        int i;
-        for (i = 0; i < 3; i++)
-            this.state[i] = data.readInt();
-        this.lastStateChange = this.worldObj.getTotalWorldTime();
-        for (i = 0; i < 3; i++) {
-            if ((this.state[i] & 0xDB6DB6DB) != (oldState[i] & 0xDB6DB6DB))
-                return true;
-        }
-        return false;
+    @TileEvent(TileEventType.WORLD_NBT_WRITE)
+    public void writeToNBT_TileDrive(NBTTagCompound data) {
+        data.setInteger("priority", this.priority);
     }
 
     @TileEvent(TileEventType.WORLD_NBT_READ)
     public void readFromNBT_TileDrive(NBTTagCompound data) {
-        if (Platform.isServer()) {
-            this.isCached = false;
-            this.priority = data.getInteger("priority");
-        }
-    }
-
-    @TileEvent(TileEventType.WORLD_NBT_WRITE)
-    public void writeToNBT_TileDrive(NBTTagCompound data) {
-        if (Platform.isServer()) {
-            data.setInteger("priority", this.priority);
-        }
+        this.isCached = false;
+        this.priority = data.getInteger("priority");
     }
 
     @MENetworkEventSubscribe
     public void powerRender(MENetworkPowerStatusChange c) {
-        if (Platform.isServer()) {
-            recalculateDisplay();
-        }
+        recalculateDisplay();
     }
 
     private void recalculateDisplay() {
         if (Platform.isServer()) {
             boolean currentActive = getProxy().isActive();
-            if (currentActive) {
-                this.state[0] = this.state[0] | Integer.MIN_VALUE;
-            } else {
-                this.state[0] = this.state[0] & Integer.MAX_VALUE;
-            }
             if (this.wasActive != currentActive) {
                 this.wasActive = currentActive;
                 try {
-                    getProxy().getGrid().postEvent((MENetworkEvent) new MENetworkCellArrayUpdate());
-                } catch (GridAccessException gridAccessException) {
+                    getProxy().getGrid().postEvent(new MENetworkCellArrayUpdate());
+                } catch (GridAccessException ignored) {
                 }
             }
-            for (int x = 0; x < getCellCount(); x++)
-                this.state[x / 10] = this.state[x / 10] | getCellStatus(x) << 3 * x % 10;
-            int oldState = 0;
-            for (int i = 0; i < 3; i++) {
-                if (0 != this.state[i]) {
-                    markForUpdate();
-                    return;
-                }
-            }
+            markForUpdate();
         }
     }
 
@@ -266,11 +252,11 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
     }
 
     public DimensionalCoord getLocation() {
-        return new DimensionalCoord((TileEntity) this);
+        return new DimensionalCoord(this);
     }
 
     public IInventory getInternalInventory() {
-        return (IInventory) this.inv;
+        return this.inv;
     }
 
     public boolean isItemValidForSlot(int i, ItemStack itemstack) {
@@ -283,10 +269,10 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
             updateState();
         }
         try {
-            getProxy().getGrid().postEvent((MENetworkEvent) new MENetworkCellArrayUpdate());
+            getProxy().getGrid().postEvent(new MENetworkCellArrayUpdate());
             IStorageGrid gs = getProxy().getStorage();
             Platform.postChanges(gs, removed, added, this.mySrc);
-        } catch (GridAccessException gridAccessException) {
+        } catch (GridAccessException ignored) {
         }
         markForUpdate();
     }
@@ -299,7 +285,7 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
         if (!this.isCached) {
             this.items = new LinkedList<>();
             this.fluids = new LinkedList<>();
-            double power = 2.0D;
+            double power = 2;
             for (int x = 0; x < this.inv.getSizeInventory(); x++) {
                 ItemStack is = this.inv.getStackInSlot(x);
                 this.invBySlot[x] = null;
@@ -307,18 +293,18 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
                 if (is != null) {
                     this.handlersBySlot[x] = AEApi.instance().registries().cell().getHandler(is);
                     if (this.handlersBySlot[x] != null) {
-                        IMEInventoryHandler<?> cell = this.handlersBySlot[x].getCellInventory(is, (ISaveProvider) this, StorageChannel.ITEMS);
+                        IMEInventoryHandler<?> cell = this.handlersBySlot[x].getCellInventory(is, this, StorageChannel.ITEMS);
                         if (cell != null) {
-                            power += this.handlersBySlot[x].cellIdleDrain(is, (IMEInventory) cell);
-                            MEInventoryHandler<IAEItemStack> ih = new MEInventoryHandler(cell, cell.getChannel());
+                            power += this.handlersBySlot[x].cellIdleDrain(is, cell);
+                            MEInventoryHandler<IAEItemStack> ih = new MEInventoryHandler<>(cell, cell.getChannel());
                             ih.setPriority(this.priority);
                             this.invBySlot[x] = ih;
                             this.items.add(ih);
                         } else {
-                            cell = this.handlersBySlot[x].getCellInventory(is, (ISaveProvider) this, StorageChannel.FLUIDS);
+                            cell = this.handlersBySlot[x].getCellInventory(is, this, StorageChannel.FLUIDS);
                             if (cell != null) {
-                                power += this.handlersBySlot[x].cellIdleDrain(is, (IMEInventory) cell);
-                                MEInventoryHandler<IAEItemStack> ih = new MEInventoryHandler(cell, cell.getChannel());
+                                power += this.handlersBySlot[x].cellIdleDrain(is, cell);
+                                MEInventoryHandler<IAEItemStack> ih = new MEInventoryHandler<>(cell, cell.getChannel());
                                 ih.setPriority(this.priority);
                                 this.invBySlot[x] = ih;
                                 this.fluids.add(ih);
@@ -355,23 +341,12 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
         this.isCached = false;
         updateState();
         try {
-            getProxy().getGrid().postEvent((MENetworkEvent) new MENetworkCellArrayUpdate());
-        } catch (GridAccessException gridAccessException) {
+            getProxy().getGrid().postEvent(new MENetworkCellArrayUpdate());
+        } catch (GridAccessException ignored) {
         }
     }
 
-    public void blinkCell(int slot) {
-        long now = this.worldObj.getTotalWorldTime();
-        if (now - this.lastStateChange > 8L)
-            for (int i = 0; i < 3; i++)
-                this.state[i] = 0;
-        this.lastStateChange = now;
-        this.state[slot / 10] = this.state[slot / 10] | 1 << slot % 10 * 3 + 2;
-        if (!this.worldObj.isRemote)
-            recalculateDisplay();
-    }
-
     public void saveChanges(IMEInventory cellInventory) {
-        this.worldObj.markTileEntityChunkModified(this.xCoord, this.yCoord, this.zCoord, (TileEntity) this);
+        this.worldObj.markTileEntityChunkModified(this.xCoord, this.yCoord, this.zCoord, this);
     }
 }

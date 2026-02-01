@@ -8,8 +8,6 @@ import appeng.api.networking.events.MENetworkCraftingCpuChange;
 import appeng.api.util.WorldCoord;
 import appeng.core.AELog;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
-import appeng.me.helpers.AENetworkProxy;
-import appeng.me.helpers.AENetworkProxyMultiblock;
 import appeng.tile.TileEvent;
 import appeng.tile.crafting.TileCraftingTile;
 import appeng.tile.events.TileEventType;
@@ -23,16 +21,18 @@ import foxiwhitee.FoxLib.api.orientable.IOrientable;
 import foxiwhitee.FoxLib.integration.applied.api.ITileMEServer;
 import foxiwhitee.FoxLib.integration.applied.api.crafting.ICraftingCPUClusterAccessor;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory, ITileMEServer, IOrientable {
+public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory, ITileMEServer, IOrientable, IInventory {
     private static final int CLUSTER_COUNT = 12;
     private static Method addTileMethod;
 
@@ -301,11 +301,6 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
     }
 
     @Override
-    protected AENetworkProxy createProxy() {
-        return new AENetworkProxyMultiblock(this, "proxy", getItemFromTile(this), true);
-    }
-
-    @Override
     public ForgeDirection getForward() {
         return FastOrientableManager.getForward(orientableId);
     }
@@ -340,5 +335,76 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
         if (index >= 0 && index < CLUSTER_COUNT) {
             this.previousStates[index] = state;
         }
+    }
+
+    @Override
+    public void getDrops(World w, int x, int y, int z, List<ItemStack> drops) {
+        super.getDrops(w, x, y, z, drops);
+        for (int i = 0; i < accelerators.getSizeInventory(); i++) {
+            ItemStack stack = accelerators.getStackInSlot(i);
+            if (stack != null) {
+                drops.add(stack);
+            }
+        }
+    }
+
+    @Override
+    public int getSizeInventory() {
+        return storage.getSizeInventory();
+    }
+
+    @Override
+    public ItemStack getStackInSlot(int slotIn) {
+        return storage.getStackInSlot(slotIn);
+    }
+
+    @Override
+    public ItemStack decrStackSize(int index, int count) {
+        return storage.decrStackSize(index, count);
+    }
+
+    @Override
+    public ItemStack getStackInSlotOnClosing(int index) {
+        return storage.getStackInSlotOnClosing(index);
+    }
+
+    @Override
+    public void setInventorySlotContents(int index, ItemStack stack) {
+        storage.setInventorySlotContents(index, stack);
+    }
+
+    @Override
+    public String getInventoryName() {
+        return "meServer";
+    }
+
+    @Override
+    public boolean hasCustomInventoryName() {
+        return storage.hasCustomInventoryName();
+    }
+
+    @Override
+    public int getInventoryStackLimit() {
+        return storage.getInventoryStackLimit();
+    }
+
+    @Override
+    public boolean isUseableByPlayer(EntityPlayer player) {
+        return storage.isUseableByPlayer(player);
+    }
+
+    @Override
+    public void openInventory() {
+        storage.openInventory();
+    }
+
+    @Override
+    public void closeInventory() {
+        storage.closeInventory();
+    }
+
+    @Override
+    public boolean isItemValidForSlot(int index, ItemStack stack) {
+        return storage.isItemValidForSlot(index, stack);
     }
 }

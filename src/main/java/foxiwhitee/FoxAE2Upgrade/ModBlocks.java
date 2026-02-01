@@ -1,11 +1,7 @@
 package foxiwhitee.FoxAE2Upgrade;
 
-
 import appeng.block.AEBaseItemBlock;
-import foxiwhitee.FoxAE2Upgrade.block.BlockAENetwork;
-import foxiwhitee.FoxAE2Upgrade.block.BlockAdvancedDriver;
-import foxiwhitee.FoxAE2Upgrade.block.BlockCobblestoneDuper;
-import foxiwhitee.FoxAE2Upgrade.block.BlockMEServer;
+import foxiwhitee.FoxAE2Upgrade.block.*;
 import foxiwhitee.FoxAE2Upgrade.block.assemblers.BlockAdvancedMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.block.assemblers.BlockUltimateMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.block.assemblers.BlockQuantumMolecularAssembler;
@@ -13,6 +9,7 @@ import foxiwhitee.FoxAE2Upgrade.config.ContentConfig;
 import foxiwhitee.FoxAE2Upgrade.items.ModItemBlock;
 import foxiwhitee.FoxAE2Upgrade.tile.TileAdvancedDrive;
 import foxiwhitee.FoxAE2Upgrade.tile.TileCobblestoneDuper;
+import foxiwhitee.FoxAE2Upgrade.tile.TileLevelMaintainer;
 import foxiwhitee.FoxAE2Upgrade.tile.TileMEServer;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileAdvancedMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileQuantumMolecularAssembler;
@@ -24,12 +21,10 @@ import foxiwhitee.FoxLib.registries.RegisterUtils;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 
-
 public class ModBlocks {
-
     public static final Block cobblestoneDuper = new BlockCobblestoneDuper("cobblestoneDuper");
 
-    public static final Block advancedDriver = new BlockAdvancedDriver("advancedDriver");
+    public static final Block advancedDrive = new BlockAdvancedDrive("advancedDrive");
     public static final Block meServer = new BlockMEServer("meServer");
 
     public static final Block autoCrystallizer = new BlockAENetwork("autoCrystallizer", TileAutoCrystallizer.class);
@@ -47,13 +42,15 @@ public class ModBlocks {
         model = "models/molecularAssembler.obj", texture = "textures/blocks/assemblers/quantumMolecularAssembler.png")
     public static final Block quantumMolecularAssembler = new BlockQuantumMolecularAssembler("quantumMolecularAssembler");
 
+    public static final Block levelMaintainer = new BlockLevelMaintainer("levelMaintainer");
+
     public static void registerBlocks() {
         if (ContentConfig.enableCobblestoneDuper) {
             RegisterUtils.registerBlock(cobblestoneDuper, ModItemBlock.class);
             RegisterUtils.registerTile(TileCobblestoneDuper.class);
         }
-        if (ContentConfig.enableAdvancedDriver) {
-            RegisterUtils.registerBlock(advancedDriver, AEBaseItemBlock.class);
+        if (ContentConfig.enableAdvancedDrive) {
+            RegisterUtils.registerBlock(advancedDrive, AEBaseItemBlock.class);
             RegisterUtils.registerTile(TileAdvancedDrive.class);
         }
         if (ContentConfig.enableAutoCrystallizer) {
@@ -71,6 +68,10 @@ public class ModBlocks {
         if (ContentConfig.enableMEServer) {
             RegisterUtils.registerBlock(meServer, ModItemBlock.class);
             RegisterUtils.registerTile(TileMEServer.class);
+        }
+        if (ContentConfig.enableLevelMaintainer) {
+            RegisterUtils.registerBlock(levelMaintainer, ModItemBlock.class);
+            RegisterUtils.registerTile(TileLevelMaintainer.class);
         }
     }
 }

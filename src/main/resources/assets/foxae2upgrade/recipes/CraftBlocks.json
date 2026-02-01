@@ -9,7 +9,7 @@
     },
     {
       "type": "workbenchShaped",
-      "output": "<foxae2upgrade:advancedDriver>",
+      "output": "<foxae2upgrade:advancedDrive>",
       "inputs": ["<appliedenergistics2:item.ItemMultiMaterial.44>", "<appliedenergistics2:item.ItemMultiMaterial.59>", "<appliedenergistics2:item.ItemMultiMaterial.43>",
       			"<appliedenergistics2:tile.BlockDrive>", "<appliedenergistics2:tile.BlockPatternOptimizationMatrix>", "<appliedenergistics2:tile.BlockDrive>",
       			"<appliedenergistics2:item.ItemMultiMaterial.43>", "<appliedenergistics2:tile.BlockController>", "<appliedenergistics2:item.ItemMultiMaterial.44>"]
@@ -53,8 +53,15 @@
       "type": "workbenchShaped",
       "output": "<foxae2upgrade:meServer>",
       "inputs": ["<appliedenergistics2:tile.BlockController>", "<appliedenergistics2:tile.BlockAdvancedCraftingUnit.2>", "<appliedenergistics2:tile.BlockCraftingMonitor>",
-      			"<appliedenergistics2:tile.BlockAdvancedCraftingStorage.2>", "<foxae2upgrade:advancedDriver>", "<appliedenergistics2:tile.BlockAdvancedCraftingStorage.2>",
+      			"<appliedenergistics2:tile.BlockAdvancedCraftingStorage.2>", "<foxae2upgrade:advancedDrive>", "<appliedenergistics2:tile.BlockAdvancedCraftingStorage.2>",
       			"<appliedenergistics2:tile.BlockCraftingMonitor>", "<appliedenergistics2:tile.BlockAdvancedCraftingUnit.2>", "<appliedenergistics2:tile.BlockController>"]
+    },
+    {
+      "type": "workbenchShaped",
+      "output": "<foxae2upgrade:levelMaintainer>",
+      "inputs": ["<appliedenergistics2:item.ItemMultiMaterial.47>", "<appliedenergistics2:item.ItemMultiMaterial.57>", "<appliedenergistics2:item.ItemMultiMaterial.47>",
+      			"<appliedenergistics2:item.ItemMultiPart.400>", "<appliedenergistics2:tile.BlockController>", "<appliedenergistics2:tile.BlockCraftingMonitor>",
+      			"<appliedenergistics2:tile.BlockFluix>", "<appliedenergistics2:item.ItemMultiMaterial.53>", "<appliedenergistics2:tile.BlockFluix>"]
     }
   ]
 }

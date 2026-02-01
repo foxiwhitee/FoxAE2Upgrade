@@ -1,6 +1,7 @@
 package foxiwhitee.FoxAE2Upgrade.proxy;
 
 import appeng.core.Api;
+import appeng.items.misc.ItemEncodedPattern;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -8,9 +9,12 @@ import foxiwhitee.FoxAE2Upgrade.ModBlocks;
 import foxiwhitee.FoxAE2Upgrade.ModItems;
 import foxiwhitee.FoxAE2Upgrade.ModRecipes;
 import foxiwhitee.FoxAE2Upgrade.config.ContentConfig;
+import foxiwhitee.FoxAE2Upgrade.network.packets.C2SSetValuesInLevelMaintainer;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileAdvancedMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileUltimateMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileQuantumMolecularAssembler;
+import foxiwhitee.FoxLib.api.FoxLibApi;
+import foxiwhitee.FoxLib.container.slots.SlotFiltered;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -23,6 +27,10 @@ public class CommonProxy {
     }
 
     public void init(FMLInitializationEvent event) {
+        SlotFiltered.filters.put("encodedPattern", stack -> stack != null && stack.getItem() != null && stack.getItem() instanceof ItemEncodedPattern);
+        if (ContentConfig.enableLevelMaintainer) {
+            FoxLibApi.instance.registries().registerPacket().register(C2SSetValuesInLevelMaintainer.class);
+        }
         if (ContentConfig.enableMolecularAssemblers) {
             Api.INSTANCE.registries().interfaceTerminal().register(TileAdvancedMolecularAssembler.class);
             Api.INSTANCE.registries().interfaceTerminal().register(TileUltimateMolecularAssembler.class);
