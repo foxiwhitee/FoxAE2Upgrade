@@ -13,6 +13,7 @@ import appeng.api.networking.ticking.TickRateModulation;
 import appeng.api.networking.ticking.TickingRequest;
 import appeng.api.storage.*;
 import appeng.api.storage.data.IAEItemStack;
+import appeng.api.storage.data.IAEStackType;
 import appeng.api.util.AECableType;
 import appeng.api.util.DimensionalCoord;
 import appeng.helpers.IPriorityHost;
@@ -30,15 +31,17 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 import static appeng.tile.storage.TileDrive.*;
+import static appeng.util.item.AEFluidStackType.FLUID_STACK_TYPE;
+import static appeng.util.item.AEItemStackType.ITEM_STACK_TYPE;
 
 public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive, IPriorityHost, IGridTickable {
     private final int[] sides = new int[0];
@@ -47,6 +50,7 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
 
     private final ICellHandler[] handlersBySlot = new ICellHandler[30];
 
+    @SuppressWarnings({"unchecked"})
     private final MEInventoryHandler<IAEItemStack>[] invBySlot = new MEInventoryHandler[30];
 
     private final BaseActionSource mySrc;
@@ -155,7 +159,7 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
             ICellHandler cellHandler = this.handlersBySlot[i];
             ItemStack cell = this.inv.getStackInSlot(i);
             if (!ItemBasicStorageCell.checkInvalidForLockingAndStickyCarding(cell, cellHandler)) {
-                IMEInventoryHandler<?> inv = cellHandler.getCellInventory(cell, this, StorageChannel.ITEMS);
+                IMEInventoryHandler<?> inv = cellHandler.getCellInventory(cell, this, ITEM_STACK_TYPE);
                 if (inv instanceof ICellInventoryHandler<?> handler) {
                     if (ItemBasicStorageCell.cellIsPartitioned(handler)) {
                         unpartitionStorageCell(handler);
@@ -281,6 +285,7 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
         return this.sides;
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private void updateState() {
         if (!this.isCached) {
             this.items = new LinkedList<>();
@@ -293,18 +298,18 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
                 if (is != null) {
                     this.handlersBySlot[x] = AEApi.instance().registries().cell().getHandler(is);
                     if (this.handlersBySlot[x] != null) {
-                        IMEInventoryHandler<?> cell = this.handlersBySlot[x].getCellInventory(is, this, StorageChannel.ITEMS);
+                        IMEInventoryHandler cell = this.handlersBySlot[x].getCellInventory(is, this, ITEM_STACK_TYPE);
                         if (cell != null) {
                             power += this.handlersBySlot[x].cellIdleDrain(is, cell);
-                            MEInventoryHandler<IAEItemStack> ih = new MEInventoryHandler<>(cell, cell.getChannel());
+                            MEInventoryHandler<IAEItemStack> ih = new MEInventoryHandler<>(cell, cell.getStackType());
                             ih.setPriority(this.priority);
                             this.invBySlot[x] = ih;
                             this.items.add(ih);
                         } else {
-                            cell = this.handlersBySlot[x].getCellInventory(is, this, StorageChannel.FLUIDS);
+                            cell = this.handlersBySlot[x].getCellInventory(is, this, FLUID_STACK_TYPE);
                             if (cell != null) {
                                 power += this.handlersBySlot[x].cellIdleDrain(is, cell);
-                                MEInventoryHandler<IAEItemStack> ih = new MEInventoryHandler<>(cell, cell.getChannel());
+                                MEInventoryHandler<IAEItemStack> ih = new MEInventoryHandler<>(cell, cell.getStackType());
                                 ih.setPriority(this.priority);
                                 this.invBySlot[x] = ih;
                                 this.fluids.add(ih);
@@ -323,10 +328,12 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
         updateState();
     }
 
-    public List<IMEInventoryHandler> getCellArray(StorageChannel channel) {
+    @Nonnull
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public List<IMEInventoryHandler> getCellArray(IAEStackType<?> stackType) {
         if (getProxy().isActive()) {
             updateState();
-            return (channel == StorageChannel.ITEMS) ? (List) this.items : (List) this.fluids;
+            return (stackType == ITEM_STACK_TYPE) ? (List) this.items : (List) this.fluids;
         }
         return new ArrayList<>();
     }

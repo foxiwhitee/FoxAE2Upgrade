@@ -9,6 +9,7 @@ public abstract class BlockCustomMolecularAssembler extends BlockApplied {
     public BlockCustomMolecularAssembler(String name, Class<? extends TileEntity> tile) {
         super(name, tile);
         setBlockTextureName(FoxCore.MODID + ":drive/advancedDriveBottom");
+        renderId = -1;
     }
 
     public boolean renderAsNormalBlock() {
@@ -22,10 +23,5 @@ public abstract class BlockCustomMolecularAssembler extends BlockApplied {
 
     public boolean shouldSideBeRendered(IBlockAccess iblockaccess, int i, int j, int k, int l) {
         return false;
-    }
-
-    @Override
-    public int getRenderType() {
-        return -1;
     }
 }

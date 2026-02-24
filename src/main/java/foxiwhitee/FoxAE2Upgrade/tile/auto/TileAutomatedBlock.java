@@ -10,15 +10,14 @@ import appeng.api.networking.security.MachineSource;
 import appeng.api.networking.ticking.IGridTickable;
 import appeng.api.networking.ticking.TickRateModulation;
 import appeng.api.networking.ticking.TickingRequest;
-import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IAEStack;
 import appeng.core.Api;
 import appeng.crafting.MECraftingInventory;
-import appeng.me.GridAccessException;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.tile.TileEvent;
 import appeng.tile.events.TileEventType;
+import foxiwhitee.FoxAE2Upgrade.helpers.CrafterHelper;
 import foxiwhitee.FoxAE2Upgrade.recipes.BaseAutoBlockRecipe;
 import foxiwhitee.FoxAE2Upgrade.tile.TileAENetworkOrientable;
 import foxiwhitee.FoxLib.integration.applied.api.crafting.ICraftingCPUClusterAccessor;
@@ -32,10 +31,15 @@ import net.minecraft.nbt.NBTTagList;
 import java.util.ArrayList;
 import java.util.List;
 
+import static foxiwhitee.FoxAE2Upgrade.helpers.CrafterHelper.calculateOutputs;
+import static foxiwhitee.FoxAE2Upgrade.helpers.CrafterHelper.trySendItems;
+
 public abstract class TileAutomatedBlock extends TileAENetworkOrientable implements IPreCraftingMedium, IGridTickable, ICraftingProvider, ICraftingMedium {
     private final List<ICraftingPatternDetails> patternList = new ArrayList<>();
     private ICraftingPatternDetails activePattern;
     private long craftCount;
+    protected final List<IAEItemStack> needSend = new ArrayList<>();
+    protected final MachineSource source = new MachineSource(this);
 
     public TileAutomatedBlock() {
         getProxy().setFlags(GridFlags.REQUIRE_CHANNEL);
@@ -146,39 +150,16 @@ public abstract class TileAutomatedBlock extends TileAENetworkOrientable impleme
 
     @Override
     public TickRateModulation tickingRequest(IGridNode iGridNode, int ticksSinceLastCall) {
-        if (activePattern == null) return TickRateModulation.IDLE;
-
-        try {
-            List<IAEItemStack> toInject = calculateOutputs();
-            IMEMonitor<IAEItemStack> inv = getProxy().getStorage().getItemInventory();
-            MachineSource source = new MachineSource(this);
-
-            for (IAEItemStack stack : toInject) {
-                IAEItemStack left = inv.injectItems(stack.copy(), Actionable.SIMULATE, source);
-                if (left != null && left.getStackSize() > 0) return TickRateModulation.IDLE;
-            }
-
-            for (IAEItemStack stack : toInject) {
-                inv.injectItems(stack, Actionable.MODULATE, source);
-            }
-
-            completeCrafting();
-        } catch (GridAccessException ignored) {}
-
-        return TickRateModulation.IDLE;
-    }
-
-    private List<IAEItemStack> calculateOutputs() {
-        List<IAEItemStack> outputs = new ArrayList<>();
-        for (IAEStack<?> s : activePattern.getCondensedAEOutputs()) {
-            outputs.add(((IAEItemStack) s).copy().setStackSize(s.getStackSize() * craftCount));
+        if (activePattern != null && needSend.isEmpty()) {
+            List<IAEItemStack> outputs = calculateOutputs(activePattern, craftCount);
+            needSend.addAll(outputs);
         }
-        return outputs;
-    }
-
-    private void completeCrafting() {
-        this.activePattern = null;
-        this.craftCount = 0;
+        trySendItems(getProxy(), source, needSend);
+        if (needSend.isEmpty()) {
+            activePattern = null;
+            craftCount = 0;
+        }
+        return TickRateModulation.IDLE;
     }
 
     @TileEvent(TileEventType.WORLD_NBT_WRITE)
@@ -189,6 +170,7 @@ public abstract class TileAutomatedBlock extends TileAENetworkOrientable impleme
             data.setTag("activePattern", patTag);
             data.setLong("craftCount", craftCount);
         }
+        CrafterHelper.writeToNbtNeedItems(data, needSend);
     }
 
     @TileEvent(TileEventType.WORLD_NBT_READ)
@@ -198,8 +180,9 @@ public abstract class TileAutomatedBlock extends TileAENetworkOrientable impleme
             if (stack != null && stack.getItem() instanceof ICraftingPatternItem iep) {
                 this.activePattern = iep.getPatternForItem(stack, getWorldObj());
             }
+            this.craftCount = data.getLong("craftCount");
         }
-        this.craftCount = data.getLong("craftCount");
+        CrafterHelper.readFromNbtNeedItems(data, needSend);
     }
 
     @Override

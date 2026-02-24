@@ -98,28 +98,28 @@ public abstract class PartBaseDenseCable extends PartBaseCable {
         OffsetIcon main = new OffsetIcon(getTexture(getCableColor()), offU, offV);
         OffsetIcon ch1 = new OffsetIcon(getChannelTex(4, false).getIcon(), offU, offV);
         OffsetIcon ch2 = new OffsetIcon(getChannelTex(4, true).getIcon(), offU, offV);
-        for (ForgeDirection side : EnumSet.<ForgeDirection>of(ForgeDirection.UP, ForgeDirection.DOWN)) {
-            rh.renderInventoryFace((IIcon) main, side, renderer);
-            rh.renderInventoryFace((IIcon) ch1, side, renderer);
-            rh.renderInventoryFace((IIcon) ch2, side, renderer);
+        for (ForgeDirection side : EnumSet.of(ForgeDirection.UP, ForgeDirection.DOWN)) {
+            rh.renderInventoryFace(main, side, renderer);
+            rh.renderInventoryFace(ch1, side, renderer);
+            rh.renderInventoryFace(ch2, side, renderer);
         }
         offU = 9.0F;
         offV = 0.0F;
         main = new OffsetIcon(getTexture(getCableColor()), offU, offV);
         ch1 = new OffsetIcon(getChannelTex(4, false).getIcon(), offU, offV);
         ch2 = new OffsetIcon(getChannelTex(4, true).getIcon(), offU, offV);
-        for (ForgeDirection side : EnumSet.<ForgeDirection>of(ForgeDirection.EAST, ForgeDirection.WEST)) {
-            rh.renderInventoryFace((IIcon) main, side, renderer);
-            rh.renderInventoryFace((IIcon) ch1, side, renderer);
-            rh.renderInventoryFace((IIcon) ch2, side, renderer);
+        for (ForgeDirection side : EnumSet.of(ForgeDirection.EAST, ForgeDirection.WEST)) {
+            rh.renderInventoryFace(main, side, renderer);
+            rh.renderInventoryFace(ch1, side, renderer);
+            rh.renderInventoryFace(ch2, side, renderer);
         }
         main = new OffsetIcon(getTexture(getCableColor()), 0.0F, 0.0F);
         ch1 = new OffsetIcon(getChannelTex(4, false).getIcon(), 0.0F, 0.0F);
         ch2 = new OffsetIcon(getChannelTex(4, true).getIcon(), 0.0F, 0.0F);
-        for (ForgeDirection side : EnumSet.<ForgeDirection>of(ForgeDirection.SOUTH, ForgeDirection.NORTH)) {
-            rh.renderInventoryFace((IIcon) main, side, renderer);
-            rh.renderInventoryFace((IIcon) ch1, side, renderer);
-            rh.renderInventoryFace((IIcon) ch2, side, renderer);
+        for (ForgeDirection side : EnumSet.of(ForgeDirection.SOUTH, ForgeDirection.NORTH)) {
+            rh.renderInventoryFace(main, side, renderer);
+            rh.renderInventoryFace(ch1, side, renderer);
+            rh.renderInventoryFace(ch2, side, renderer);
         }
         rh.setTexture(null);
     }
@@ -139,10 +139,9 @@ public abstract class PartBaseDenseCable extends PartBaseCable {
 
         if (sides.size() == 2 && this.nonLinear(sides) && !hasBuses) {
             ForgeDirection selectedSide = ForgeDirection.UNKNOWN;
-            Iterator i$ = this.getConnections().iterator();
+            Iterator<ForgeDirection> i$ = this.getConnections().iterator();
             if (i$.hasNext()) {
-                ForgeDirection of = (ForgeDirection) i$.next();
-                selectedSide = of;
+                selectedSide = i$.next();
             }
 
             int channels = this.getChannelsOnSide()[selectedSide.ordinal()];
@@ -155,7 +154,7 @@ public abstract class PartBaseDenseCable extends PartBaseCable {
             switch (selectedSide) {
                 case DOWN:
                 case UP:
-                    renderer.setRenderBounds((double) 0.1875F, (double) 0.0F, (double) 0.1875F, (double) 0.8125F, (double) 1.0F, (double) 0.8125F);
+                    renderer.setRenderBounds(0.1875, 0, 0.1875, 0.8125, 1, 0.8125);
                     rh.setTexture(def, def, off, off, off, off);
                     rh.renderBlockCurrentBounds(x, y, z, renderer);
                     renderer.uvRotateTop = 0;
@@ -182,7 +181,7 @@ public abstract class PartBaseDenseCable extends PartBaseCable {
                     AEBaseBlock blk = (AEBaseBlock) rh.getBlock();
                     FlippableIcon ico = blk.getRendererInstance().getTexture(ForgeDirection.EAST);
                     ico.setFlip(false, true);
-                    renderer.setRenderBounds((double) 0.0F, (double) 0.1875F, (double) 0.1875F, (double) 1.0F, (double) 0.8125F, (double) 0.8125F);
+                    renderer.setRenderBounds(0, 0.1875, 0.1875, 1, 0.8125, 0.8125);
                     rh.renderBlockCurrentBounds(x, y, z, renderer);
                     Tessellator.instance.setBrightness(15728880);
                     FlippableIcon fpA = new FlippableIcon(firstIcon);
@@ -204,7 +203,7 @@ public abstract class PartBaseDenseCable extends PartBaseCable {
                     renderer.uvRotateNorth = 1;
                     renderer.uvRotateSouth = 2;
                     renderer.uvRotateWest = 1;
-                    renderer.setRenderBounds((double) 0.1875F, (double) 0.1875F, (double) 0.0F, (double) 0.8125F, (double) 0.8125F, (double) 1.0F);
+                    renderer.setRenderBounds(0.1875F, 0.1875F, 0, 0.8125F, 0.8125F, 1);
                     rh.renderBlockCurrentBounds(x, y, z, renderer);
                     Tessellator.instance.setBrightness(15728880);
                     Tessellator.instance.setColorOpaque_I(this.getCableColor().blackVariant);
@@ -221,7 +220,7 @@ public abstract class PartBaseDenseCable extends PartBaseCable {
                 } else if (this.isSmart(of)) {
                     this.renderSmartConnection(x, y, z, rh, renderer, this.getChannelsOnSide()[of.ordinal()], of);
                 } else {
-                    this.renderCoveredConnection(x, y, z, rh, renderer, this.getChannelsOnSide()[of.ordinal()], of);
+                    this.renderCoveredConnection(x, y, z, rh, renderer, of);
                 }
             }
 
@@ -231,6 +230,6 @@ public abstract class PartBaseDenseCable extends PartBaseCable {
         }
 
         renderer.uvRotateBottom = renderer.uvRotateEast = renderer.uvRotateNorth = renderer.uvRotateSouth = renderer.uvRotateTop = renderer.uvRotateWest = 0;
-        rh.setTexture((IIcon) null);
+        rh.setTexture(null);
     }
 }

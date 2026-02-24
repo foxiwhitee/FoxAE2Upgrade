@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @JsonRecipe(value = "autoPress", hasMineTweaker = true, hasOreDict = true)
 public class AutoPressCraft implements IJsonRecipe {
@@ -32,14 +33,16 @@ public class AutoPressCraft implements IJsonRecipe {
         if (this.output == null || this.inputs == null || inputs.isEmpty()) {
             return;
         }
-        ItemStack realInput = null;
-        if (inputs.get(0) instanceof ItemStack stack) {
-            realInput = stack;
-        } else if (inputs.get(0) instanceof StackOreDict ore) {
-            List<ItemStack> stacks = OreDictionary.getOres(ore.getOre());
-            realInput = stacks.get(0);
-        }
-        BaseAutoBlockRecipe recipe = new BaseAutoBlockRecipe(output, Collections.singletonList(realInput));
+        List<Object> objectList = inputs.stream()
+            .map(item -> {
+                if (item instanceof StackOreDict ore) {
+                    List<ItemStack> stacks = OreDictionary.getOres(ore.getOre());
+                    return stacks.get(0);
+                }
+                return item;
+            })
+            .collect(Collectors.toList());
+        BaseAutoBlockRecipe recipe = new BaseAutoBlockRecipe(output, objectList);
         ModRecipes.autoPressRecipes.add(recipe);
     }
 

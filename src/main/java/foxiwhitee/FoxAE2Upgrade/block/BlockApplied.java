@@ -4,7 +4,7 @@ import appeng.tile.AEBaseInvTile;
 import appeng.tile.grid.AENetworkInvTile;
 import foxiwhitee.FoxAE2Upgrade.FoxCore;
 import foxiwhitee.FoxLib.api.orientable.IOrientable;
-import foxiwhitee.FoxLib.block.FoxBaseBlock;
+import foxiwhitee.FoxLib.block.FoxTileBlock;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -15,10 +15,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
 
-public class BlockApplied extends FoxBaseBlock {
+public class BlockApplied extends FoxTileBlock {
     public BlockApplied(String name, Class<? extends TileEntity> tileEntityClass) {
-        super(FoxCore.MODID, name);
-        setTileEntityType(tileEntityClass);
+        super(FoxCore.MODID, name, tileEntityClass);
         setCreativeTab(FoxCore.FOX_TAB);
     }
 

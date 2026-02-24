@@ -1,9 +1,9 @@
 
 dependencies {
-    implementation ('com.github.GTNewHorizons:AE2FluidCraft-Rework:1.5.50-gtnh:dev') {transitive = false}
-    implementation ('com.github.GTNewHorizons:ae2stuff:0.10.6-GTNH-pre') {transitive = false}
+    implementation ('com.github.GTNewHorizons:AE2FluidCraft-Rework:1.5.61-gtnh:dev') {transitive = false}
+    implementation ('com.github.GTNewHorizons:ae2stuff:0.10.11-GTNH') {transitive = false}
     implementation ('com.github.GTNewHorizons:bdlib:1.11.0-GTNH') {transitive = false}
-    implementation ('com.github.GTNewHorizons:Applied-Energistics-2-Unofficial:rv3-beta-803-GTNH:dev') {transitive = false}
+    implementation ('com.github.GTNewHorizons:Applied-Energistics-2-Unofficial:rv3-beta-845-GTNH:dev') {transitive = false}
     implementation ('com.github.GTNewHorizons:Baubles:1.0.4:dev') {transitive = false}
     implementation ('com.github.GTNewHorizons:CodeChickenCore:1.4.10:dev') {transitive = false}
     implementation ('com.github.GTNewHorizons:CraftTweaker:3.4.2:dev') {transitive = false}

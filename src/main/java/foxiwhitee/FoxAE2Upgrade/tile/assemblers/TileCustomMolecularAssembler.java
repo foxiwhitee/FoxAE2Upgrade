@@ -32,8 +32,7 @@ import appeng.tile.TileEvent;
 import appeng.tile.events.TileEventType;
 import appeng.tile.inventory.AppEngInternalInventory;
 import appeng.tile.inventory.InvOperation;
-import appeng.util.Platform;
-import appeng.util.item.AEItemStack;
+import foxiwhitee.FoxAE2Upgrade.helpers.CrafterHelper;
 import foxiwhitee.FoxAE2Upgrade.tile.TileAENetworkInvOrientable;
 import foxiwhitee.FoxLib.integration.applied.api.crafting.ICraftingCPUClusterAccessor;
 import foxiwhitee.FoxLib.integration.applied.api.crafting.IPreCraftingMedium;
@@ -51,14 +50,19 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import static foxiwhitee.FoxAE2Upgrade.helpers.CrafterHelper.calculateOutputs;
+import static foxiwhitee.FoxAE2Upgrade.helpers.CrafterHelper.trySendItems;
+
 public abstract class TileCustomMolecularAssembler extends TileAENetworkInvOrientable implements IPowerChannelState, ICraftingMachine, ICraftingProvider, IGridTickable, IInterfaceViewable, IPreCraftingMedium {
     private static final int[] SIDES = {0};
     protected AppEngInternalInventory patternInventory = new AppEngInternalInventory(this, 36, 1);
-    ICraftingPatternDetails activePattern;
-    long craftCount;
-    InventoryCrafting craftingGrid;
-    List<ICraftingPatternDetails> patternList;
+    protected ICraftingPatternDetails activePattern;
+    protected long craftCount;
+    protected InventoryCrafting craftingGrid;
+    protected List<ICraftingPatternDetails> patternList;
     private boolean isPowered;
+    protected final List<IAEItemStack> needSend = new ArrayList<>();
+    protected final MachineSource source = new MachineSource(this);
 
     protected abstract ItemStack getItemFromTile(Object obj);
 
@@ -73,42 +77,12 @@ public abstract class TileCustomMolecularAssembler extends TileAENetworkInvOrien
 
     @Override
     public TickRateModulation tickingRequest(IGridNode node, int ticksSinceLastCall) {
-        if (activePattern == null) return TickRateModulation.IDLE;
-        List<IAEItemStack> outputs = new ArrayList<>();
-        Arrays.stream(activePattern.getCondensedAEOutputs())
-            .map(stack -> {
-                IAEItemStack copy = (IAEItemStack) stack.copy();
-                copy.setStackSize(copy.getStackSize() * craftCount);
-                return copy;
-            }).forEach(outputs::add);
-        for (int i = 0; i < craftingGrid.getSizeInventory(); i++) {
-            ItemStack item = Platform.getContainerItem(craftingGrid.getStackInSlot(i));
-            if (item != null) {
-                outputs.add(AEItemStack.create(item));
-            }
+        if (activePattern != null && needSend.isEmpty()) {
+            List<IAEItemStack> outputs = calculateOutputs(activePattern, craftCount, craftingGrid);
+            needSend.addAll(outputs);
         }
-        boolean canCraft = true;
-        for (IAEItemStack output : outputs) {
-            try {
-                IAEItemStack remainder = getProxy().getStorage().getItemInventory()
-                    .injectItems(output.copy(), Actionable.SIMULATE, new MachineSource(this));
-                if (remainder != null && remainder.getStackSize() > 0) {
-                    canCraft = false;
-                    break;
-                }
-            } catch (GridAccessException e) {
-                canCraft = false;
-                break;
-            }
-        }
-        if (canCraft) {
-            for (IAEItemStack output : outputs) {
-                try {
-                    getProxy().getStorage().getItemInventory()
-                        .injectItems(output.copy(), Actionable.MODULATE, new MachineSource(this));
-                } catch (GridAccessException ignored) {
-                }
-            }
+        trySendItems(getProxy(), source, needSend);
+        if (needSend.isEmpty()) {
             activePattern = null;
             craftCount = 0;
         }
@@ -182,6 +156,7 @@ public abstract class TileCustomMolecularAssembler extends TileAENetworkInvOrien
                 }
             }
         }
+        CrafterHelper.writeToNbtNeedItems(data, needSend);
         if (this.activePattern != null) {
             ItemStack pattern = this.activePattern.getPattern();
             if (pattern != null) {
@@ -205,6 +180,7 @@ public abstract class TileCustomMolecularAssembler extends TileAENetworkInvOrien
                 }
             }
         }
+        CrafterHelper.readFromNbtNeedItems(data, needSend);
         if (data.hasKey("activePattern")) {
             ItemStack myPat = ItemStack.loadItemStackFromNBT(data.getCompoundTag("activePattern"));
             if (myPat != null) {

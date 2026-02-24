@@ -8,8 +8,26 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import foxiwhitee.FoxAE2Upgrade.ModBlocks;
 import foxiwhitee.FoxAE2Upgrade.ModItems;
 import foxiwhitee.FoxAE2Upgrade.ModRecipes;
+import foxiwhitee.FoxAE2Upgrade.block.BlockAdvancedDrive;
+import foxiwhitee.FoxAE2Upgrade.block.BlockCobblestoneDuper;
+import foxiwhitee.FoxAE2Upgrade.block.BlockLevelMaintainer;
+import foxiwhitee.FoxAE2Upgrade.block.BlockMEServer;
+import foxiwhitee.FoxAE2Upgrade.block.assemblers.BlockAdvancedMolecularAssembler;
+import foxiwhitee.FoxAE2Upgrade.block.assemblers.BlockQuantumMolecularAssembler;
+import foxiwhitee.FoxAE2Upgrade.block.assemblers.BlockUltimateMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.config.ContentConfig;
+import foxiwhitee.FoxAE2Upgrade.container.ContainerAdvancedDrive;
+import foxiwhitee.FoxAE2Upgrade.container.ContainerCobblestoneDuper;
+import foxiwhitee.FoxAE2Upgrade.container.ContainerLevelMaintainer;
+import foxiwhitee.FoxAE2Upgrade.container.ContainerMEServer;
+import foxiwhitee.FoxAE2Upgrade.container.assemblers.ContainerAdvancedMolecularAssembler;
+import foxiwhitee.FoxAE2Upgrade.container.assemblers.ContainerQuantumMolecularAssembler;
+import foxiwhitee.FoxAE2Upgrade.container.assemblers.ContainerUltimateMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.network.packets.C2SSetValuesInLevelMaintainer;
+import foxiwhitee.FoxAE2Upgrade.tile.TileAdvancedDrive;
+import foxiwhitee.FoxAE2Upgrade.tile.TileCobblestoneDuper;
+import foxiwhitee.FoxAE2Upgrade.tile.TileLevelMaintainer;
+import foxiwhitee.FoxAE2Upgrade.tile.TileMEServer;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileAdvancedMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileUltimateMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileQuantumMolecularAssembler;
@@ -24,10 +42,20 @@ public class CommonProxy {
         ModBlocks.registerBlocks();
         ModItems.registerItems();
         ModRecipes.registerRecipes();
+
     }
 
     public void init(FMLInitializationEvent event) {
         SlotFiltered.filters.put("encodedPattern", stack -> stack != null && stack.getItem() != null && stack.getItem() instanceof ItemEncodedPattern);
+        FoxLibApi.instance.registries().registerGui()
+            .register(BlockAdvancedMolecularAssembler.class, TileAdvancedMolecularAssembler.class, ContainerAdvancedMolecularAssembler.class)
+            .register(BlockUltimateMolecularAssembler.class, TileUltimateMolecularAssembler.class, ContainerUltimateMolecularAssembler.class)
+            .register(BlockQuantumMolecularAssembler.class, TileQuantumMolecularAssembler.class, ContainerQuantumMolecularAssembler.class)
+            .register(BlockAdvancedDrive.class, TileAdvancedDrive.class, ContainerAdvancedDrive.class)
+            .register(BlockCobblestoneDuper.class, TileCobblestoneDuper.class, ContainerCobblestoneDuper.class)
+            .register(BlockLevelMaintainer.class, TileLevelMaintainer.class, ContainerLevelMaintainer.class)
+            .register(BlockMEServer.class, TileMEServer.class, ContainerMEServer.class);
+
         if (ContentConfig.enableLevelMaintainer) {
             FoxLibApi.instance.registries().registerPacket().register(C2SSetValuesInLevelMaintainer.class);
         }

@@ -1,21 +1,14 @@
 package foxiwhitee.FoxAE2Upgrade.tile.assemblers;
 
-import appeng.api.config.Actionable;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.crafting.ICraftingPatternDetails;
 import appeng.api.networking.crafting.ICraftingProviderHelper;
-import appeng.api.networking.security.MachineSource;
-import appeng.api.networking.storage.IStorageGrid;
 import appeng.api.networking.ticking.TickRateModulation;
-import appeng.api.storage.IMEInventory;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IAEStack;
 import appeng.items.misc.ItemEncodedPattern;
-import appeng.me.GridAccessException;
 import appeng.tile.inventory.AppEngInternalInventory;
 import appeng.tile.inventory.InvOperation;
-import appeng.util.Platform;
-import appeng.util.item.AEItemStack;
 import foxiwhitee.FoxAE2Upgrade.ModBlocks;
 import foxiwhitee.FoxAE2Upgrade.config.FoxConfig;
 import foxiwhitee.FoxLib.utils.ProductivityUtil;
@@ -25,6 +18,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
 import java.util.*;
+
+import static foxiwhitee.FoxAE2Upgrade.helpers.CrafterHelper.calculateOutputs;
+import static foxiwhitee.FoxAE2Upgrade.helpers.CrafterHelper.trySendItems;
 
 public class TileUltimateMolecularAssembler extends TileCustomMolecularAssembler {
     protected AppEngInternalInventory patternInventory = new AppEngInternalInventory(this, 72, 1);
@@ -48,9 +44,7 @@ public class TileUltimateMolecularAssembler extends TileCustomMolecularAssembler
     public void onChangeInventory(IInventory inv, int slot, InvOperation op, ItemStack removed, ItemStack added) {
         if (removed != null && removed.getItem() instanceof ItemEncodedPattern) {
             ICraftingPatternDetails details = ((ItemEncodedPattern) removed.getItem()).getPatternForItem(removed, this.worldObj);
-            if (productivityHistory.containsKey(details)) {
-                productivityHistory.remove(details);
-            }
+            productivityHistory.remove(details);
         }
         if (inv == getPatterns()) {
             updatePatternList();
@@ -63,74 +57,42 @@ public class TileUltimateMolecularAssembler extends TileCustomMolecularAssembler
 
     @Override
     public TickRateModulation tickingRequest(IGridNode node, int ticksSinceLastCall) {
-        if (activePattern == null) return TickRateModulation.IDLE;
+        if (activePattern != null && needSend.isEmpty()) {
+            List<IAEItemStack> outputs = calculateOutputs(activePattern, craftCount, craftingGrid);
+            needSend.addAll(outputs);
 
-        IStorageGrid storage;
-        try {
-            storage = getProxy().getStorage();
-        } catch (GridAccessException e) {
-            return TickRateModulation.IDLE;
-        }
-
-        IMEInventory<IAEItemStack> itemInv = storage.getItemInventory();
-        MachineSource src = new MachineSource(this);
-
-        List<IAEItemStack> outputs = new ArrayList<>();
-        for (IAEStack<?> stack : activePattern.getCondensedAEOutputs()) {
-            IAEItemStack copy = (IAEItemStack) stack.copy();
-            copy.setStackSize(copy.getStackSize() * craftCount);
-            outputs.add(copy);
-        }
-
-        for (int i = 0; i < craftingGrid.getSizeInventory(); i++) {
-            ItemStack container = Platform.getContainerItem(craftingGrid.getStackInSlot(i));
-            if (container != null) outputs.add(AEItemStack.create(container));
-        }
-        if (!canInjectAll(outputs, itemInv, src)) return TickRateModulation.IDLE;
-        injectAll(outputs, itemInv, src);
-        int bonusCount = 0;
-        if (hasProductivity()) {
-            boolean isBlackListed = false;
-            for (IAEItemStack stack : outputs) {
-                if (ProductivityBlackListHelper.isInBlackList(stack.getItemStack())) {
-                    isBlackListed = true;
-                    break;
+            int bonusCount = 0;
+            if (hasProductivity()) {
+                boolean isBlackListed = false;
+                for (IAEItemStack stack : outputs) {
+                    if (ProductivityBlackListHelper.isInBlackList(stack.getItemStack())) {
+                        isBlackListed = true;
+                        break;
+                    }
+                }
+                if (!isBlackListed) {
+                    productivityHistory.merge(activePattern, (double) craftCount, Double::sum);
+                    bonusCount = ProductivityUtil.check(productivityHistory, activePattern, getProductivity());
                 }
             }
-            if (!isBlackListed) {
-                productivityHistory.merge(activePattern, (double) craftCount, Double::sum);
-                bonusCount = ProductivityUtil.check(productivityHistory, activePattern, getProductivity());
+            if (bonusCount > 0) {
+                outputs.clear();
+                for (IAEStack<?> stack : activePattern.getCondensedAEOutputs()) {
+                    IAEItemStack copy = (IAEItemStack) stack.copy();
+                    copy.setStackSize(copy.getStackSize() * bonusCount);
+                    outputs.add(copy);
+                }
+                needSend.addAll(outputs);
             }
         }
-        craftCount = 0;
-        if (bonusCount > 0) {
-            outputs.clear();
-            for (IAEStack<?> stack : activePattern.getCondensedAEOutputs()) {
-                IAEItemStack copy = (IAEItemStack) stack.copy();
-                copy.setStackSize(copy.getStackSize() * bonusCount);
-                outputs.add(copy);
-            }
 
-            if (canInjectAll(outputs, itemInv, src)) {
-                injectAll(outputs, itemInv, src);
-            }
+        trySendItems(getProxy(), source, needSend);
+        if (needSend.isEmpty()) {
+            activePattern = null;
+            craftCount = 0;
         }
-        activePattern = null;
+
         return TickRateModulation.IDLE;
-    }
-
-    private boolean canInjectAll(List<IAEItemStack> stacks, IMEInventory<IAEItemStack> inv, MachineSource src) {
-        for (IAEItemStack stack : stacks) {
-            IAEItemStack remainder = inv.injectItems(stack.copy(), Actionable.SIMULATE, src);
-            if (remainder != null && remainder.getStackSize() > 0) return false;
-        }
-        return true;
-    }
-
-    private void injectAll(List<IAEItemStack> stacks, IMEInventory<IAEItemStack> inv, MachineSource src) {
-        for (IAEItemStack stack : stacks) {
-            inv.injectItems(stack.copy(), Actionable.MODULATE, src);
-        }
     }
 
     @Override
