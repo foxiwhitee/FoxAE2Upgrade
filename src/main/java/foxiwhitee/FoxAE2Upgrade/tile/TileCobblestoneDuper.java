@@ -60,6 +60,7 @@ import java.util.List;
 import static appeng.util.item.AEFluidStackType.FLUID_STACK_TYPE;
 import static appeng.util.item.AEItemStackType.ITEM_STACK_TYPE;
 
+@SuppressWarnings("unused")
 public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements IMEChest, IPriorityHost, IConfigManagerHost {
     private static final int[] SIDES = {0};
     private static final int[] FRONT = {1};
@@ -422,7 +423,11 @@ public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements 
     public List<IMEInventoryHandler> getCellArray(IAEStackType<?> stackType) {
         if (getProxy().isActive()) {
             try {
-                return Collections.singletonList(getInventoryHandler(stackType));
+                IMEInventoryHandler handler = getInventoryHandler(stackType);
+                if (handler == null) {
+                    return new ArrayList<>();
+                }
+                return Collections.singletonList(handler);
             } catch (NoHandlerException ignored) {
             }
         }
