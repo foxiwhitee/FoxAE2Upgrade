@@ -27,6 +27,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -163,6 +164,7 @@ public abstract class TileAutomatedBlock extends TileAENetworkOrientable impleme
     }
 
     @TileEvent(TileEventType.WORLD_NBT_WRITE)
+    @SuppressWarnings("unused")
     public void writeToNbt_(NBTTagCompound data) {
         if (activePattern != null) {
             NBTTagCompound patTag = new NBTTagCompound();
@@ -174,6 +176,7 @@ public abstract class TileAutomatedBlock extends TileAENetworkOrientable impleme
     }
 
     @TileEvent(TileEventType.WORLD_NBT_READ)
+    @SuppressWarnings("unused")
     public void readFromNbt_(NBTTagCompound data) {
         if (data.hasKey("activePattern")) {
             ItemStack stack = ItemStack.loadItemStackFromNBT(data.getCompoundTag("activePattern"));
@@ -183,6 +186,16 @@ public abstract class TileAutomatedBlock extends TileAENetworkOrientable impleme
             this.craftCount = data.getLong("craftCount");
         }
         CrafterHelper.readFromNbtNeedItems(data, needSend);
+    }
+
+    @Override
+    public void getDrops(World w, int x, int y, int z, List<ItemStack> drops) {
+        super.getDrops(w, x, y, z, drops);
+        for (IAEStack<?> stack : needSend) {
+            if (stack instanceof IAEItemStack iaeItemStack) {
+                drops.add(iaeItemStack.getItemStack());
+            }
+        }
     }
 
     @Override

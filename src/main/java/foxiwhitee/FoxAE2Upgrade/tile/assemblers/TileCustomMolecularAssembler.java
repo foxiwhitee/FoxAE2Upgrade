@@ -53,6 +53,7 @@ import java.util.List;
 import static foxiwhitee.FoxAE2Upgrade.helpers.CrafterHelper.calculateOutputs;
 import static foxiwhitee.FoxAE2Upgrade.helpers.CrafterHelper.trySendItems;
 
+@SuppressWarnings("unused")
 public abstract class TileCustomMolecularAssembler extends TileAENetworkInvOrientable implements IPowerChannelState, ICraftingMachine, ICraftingProvider, IGridTickable, IInterfaceViewable, IPreCraftingMedium {
     private static final int[] SIDES = {0};
     protected AppEngInternalInventory patternInventory = new AppEngInternalInventory(this, 36, 1);
@@ -349,5 +350,15 @@ public abstract class TileCustomMolecularAssembler extends TileAENetworkInvOrien
     @Override
     public ItemStack getDisplayRep() {
         return getItemFromTile(null);
+    }
+
+    @Override
+    public void getDrops(World w, int x, int y, int z, List<ItemStack> drops) {
+        super.getDrops(w, x, y, z, drops);
+        for (IAEStack<?> stack : needSend) {
+            if (stack instanceof IAEItemStack iaeItemStack) {
+                drops.add(iaeItemStack.getItemStack());
+            }
+        }
     }
 }
