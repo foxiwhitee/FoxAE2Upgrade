@@ -8,9 +8,9 @@ import net.minecraft.entity.player.EntityPlayer;
 
 public class ContainerCobblestoneDuper extends AEBaseContainer {
     public ContainerCobblestoneDuper(EntityPlayer ip, TileCobblestoneDuper chest) {
-        super(ip.inventory, chest, null);
-        addSlotToContainer(new SlotRestrictedInput(SlotRestrictedInput.PlacableItemType.STORAGE_CELLS, chest, 1, 61, 44, getInventoryPlayer()));
-        addSlotToContainer(new CustomSlotRestrictedInput("productivity", chest, 2, 133, 44, getInventoryPlayer()));
+        super(ip.inventory, chest);
+        addSlotToContainer(new SlotRestrictedInput(SlotRestrictedInput.PlacableItemType.STORAGE_CELLS, chest, 0, 61, 44, getInventoryPlayer()));
+        addSlotToContainer(new CustomSlotRestrictedInput("productivity", chest, 1, 133, 44, getInventoryPlayer()));
         bindPlayerInventory(ip.inventory, 17, 117);
     }
 }

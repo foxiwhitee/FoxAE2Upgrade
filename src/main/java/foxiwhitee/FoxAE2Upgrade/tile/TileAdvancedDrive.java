@@ -12,6 +12,7 @@ import appeng.api.networking.ticking.IGridTickable;
 import appeng.api.networking.ticking.TickRateModulation;
 import appeng.api.networking.ticking.TickingRequest;
 import appeng.api.storage.*;
+import appeng.api.storage.data.AEStackTypeRegistry;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IAEStackType;
 import appeng.api.util.AECableType;
@@ -34,15 +35,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static appeng.tile.storage.TileDrive.*;
-import static appeng.util.item.AEFluidStackType.FLUID_STACK_TYPE;
 import static appeng.util.item.AEItemStackType.ITEM_STACK_TYPE;
 
+@SuppressWarnings("unused")
 public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive, IPriorityHost, IGridTickable {
     private final int[] sides = new int[0];
 
@@ -57,9 +56,8 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
 
     private boolean isCached = false;
 
-    private List<MEInventoryHandler<?>> items = new LinkedList<>();
-
-    private List<MEInventoryHandler<?>> fluids = new LinkedList<>();
+    @SuppressWarnings("rawtypes")
+    private final Map<IAEStackType<?>, List<IMEInventoryHandler>> cellsMap = new IdentityHashMap<>();
 
     private final int[] state = new int[30];
     private final int[] cellType = new int[30];
@@ -116,15 +114,18 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
         if (Platform.isClient()) {
             return this.state[slot];
         }
-        ItemStack cell = this.inv.getStackInSlot(slot);
-        ICellHandler ch = this.handlersBySlot[slot];
-        MEInventoryHandler<IAEItemStack> handler = this.invBySlot[slot];
-        if (handler == null || !isPowered()) {
+        final ItemStack cell = this.inv.getStackInSlot(2);
+        final ICellHandler ch = this.handlersBySlot[slot];
+
+        final MEInventoryHandler<IAEItemStack> handler = this.invBySlot[slot];
+        if (handler == null) {
             return 0;
         }
-        if ((handler.getChannel() == StorageChannel.ITEMS || handler.getChannel() == StorageChannel.FLUIDS) && ch != null) {
+
+        if (ch != null) {
             return ch.getStatusForCell(cell, handler.getInternal());
         }
+
         return 0;
     }
 
@@ -288,37 +289,43 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
     @SuppressWarnings({"rawtypes", "unchecked"})
     private void updateState() {
         if (!this.isCached) {
-            this.items = new LinkedList<>();
-            this.fluids = new LinkedList<>();
-            double power = 2;
+            this.cellsMap.clear();
+            for (IAEStackType<?> type : AEStackTypeRegistry.getAllTypes()) {
+                this.cellsMap.put(type, new ArrayList<>());
+            }
+
+            double power = 2.0;
+
             for (int x = 0; x < this.inv.getSizeInventory(); x++) {
-                ItemStack is = this.inv.getStackInSlot(x);
+                final ItemStack is = this.inv.getStackInSlot(x);
                 this.invBySlot[x] = null;
                 this.handlersBySlot[x] = null;
+
                 if (is != null) {
                     this.handlersBySlot[x] = AEApi.instance().registries().cell().getHandler(is);
+
                     if (this.handlersBySlot[x] != null) {
-                        IMEInventoryHandler cell = this.handlersBySlot[x].getCellInventory(is, this, ITEM_STACK_TYPE);
-                        if (cell != null) {
-                            power += this.handlersBySlot[x].cellIdleDrain(is, cell);
-                            MEInventoryHandler<IAEItemStack> ih = new MEInventoryHandler<>(cell, cell.getStackType());
-                            ih.setPriority(this.priority);
-                            this.invBySlot[x] = ih;
-                            this.items.add(ih);
-                        } else {
-                            cell = this.handlersBySlot[x].getCellInventory(is, this, FLUID_STACK_TYPE);
+                        for (IAEStackType<?> type : AEStackTypeRegistry.getAllTypes()) {
+                            IMEInventoryHandler cell = this.handlersBySlot[x].getCellInventory(is, this, type);
                             if (cell != null) {
                                 power += this.handlersBySlot[x].cellIdleDrain(is, cell);
-                                MEInventoryHandler<IAEItemStack> ih = new MEInventoryHandler<>(cell, cell.getStackType());
+
+                                final MEInventoryHandler<IAEItemStack> ih = new MEInventoryHandler<IAEItemStack>(
+                                    cell,
+                                    cell.getStackType());
                                 ih.setPriority(this.priority);
                                 this.invBySlot[x] = ih;
-                                this.fluids.add(ih);
+                                this.cellsMap.get(type).add(ih);
+
+                                break;
                             }
                         }
                     }
                 }
             }
-            getProxy().setIdlePowerUsage(power);
+
+            this.getProxy().setIdlePowerUsage(power);
+
             this.isCached = true;
         }
     }
@@ -329,13 +336,18 @@ public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive
     }
 
     @Nonnull
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({"rawtypes"})
     public List<IMEInventoryHandler> getCellArray(IAEStackType<?> stackType) {
-        if (getProxy().isActive()) {
-            updateState();
-            return (stackType == ITEM_STACK_TYPE) ? (List) this.items : (List) this.fluids;
+        if (this.getProxy().isActive()) {
+            this.updateState();
+            List<IMEInventoryHandler> handlers = this.cellsMap.get(stackType);
+            if (handlers == null || handlers.isEmpty()) {
+                return Collections.emptyList();
+            }
+            handlers = handlers.stream().filter(h -> h.getStackType() == stackType).collect(Collectors.toList());
+            return handlers;
         }
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
     public int getPriority() {

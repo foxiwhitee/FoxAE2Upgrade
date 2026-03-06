@@ -17,10 +17,7 @@ import appeng.api.networking.security.PlayerSource;
 import appeng.api.networking.storage.IBaseMonitor;
 import appeng.api.networking.storage.IStorageGrid;
 import appeng.api.storage.*;
-import appeng.api.storage.data.IAEFluidStack;
-import appeng.api.storage.data.IAEItemStack;
-import appeng.api.storage.data.IAEStack;
-import appeng.api.storage.data.IAEStackType;
+import appeng.api.storage.data.*;
 import appeng.api.util.AECableType;
 import appeng.api.util.AEColor;
 import appeng.api.util.DimensionalCoord;
@@ -50,6 +47,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import javax.annotation.Nonnull;
@@ -57,7 +55,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static appeng.util.item.AEFluidStackType.FLUID_STACK_TYPE;
 import static appeng.util.item.AEItemStackType.ITEM_STACK_TYPE;
 
 @SuppressWarnings("unused")
@@ -66,7 +63,7 @@ public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements 
     private static final int[] FRONT = {1};
     private static final int[] NO_SLOTS = {};
 
-    private final AppEngInternalInventory inventory = new AppEngInternalInventory(this, 3);
+    private final AppEngInternalInventory inventory = new AppEngInternalInventory(this, 2);
     private final MachineSource source = new MachineSource(this);
     private final IConfigManager settings = new ConfigManager(this);
     private ItemStack cellType;
@@ -76,8 +73,7 @@ public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements 
     private AEColor color = AEColor.Transparent;
     private boolean isHandlerCached;
     private ICellHandler cellHandler;
-    private MEMonitorHandler<IAEItemStack> itemMonitor;
-    private MEMonitorHandler<IAEFluidStack> fluidMonitor;
+    private MEMonitorHandler<? extends IAEStack<?>> monitor;
     private int priority;
 
     private int productivity;
@@ -119,39 +115,24 @@ public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements 
     @SuppressWarnings("unchecked")
     private <T extends IAEStack<T>> IMEInventoryHandler<T> getInventoryHandler(IAEStackType<T> stackType) throws NoHandlerException {
         if (!isHandlerCached) {
-            itemMonitor = null;
-            fluidMonitor = null;
-            ItemStack cell = inventory.getStackInSlot(1);
+            monitor = null;
+            ItemStack cell = inventory.getStackInSlot(0);
             if (cell != null) {
                 isHandlerCached = true;
                 cellHandler = AEApi.instance().registries().cell().getHandler(cell);
                 if (cellHandler != null) {
                     double power = 1.0;
-                    IMEInventoryHandler<IAEItemStack> itemHandler = cellHandler.getCellInventory(cell, this, ITEM_STACK_TYPE);
-                    IMEInventoryHandler<IAEFluidStack> fluidHandler = cellHandler.getCellInventory(cell, this, FLUID_STACK_TYPE);
-                    if (fluidHandler != null) {
-                        power += cellHandler.cellIdleDrain(cell, fluidHandler);
-                    }
+                    IMEInventoryHandler<T> handler = cellHandler.getCellInventory(cell, this, stackType);
                     getProxy().setIdlePowerUsage(power);
-                    itemMonitor = createMonitor(itemHandler, ITEM_STACK_TYPE);
-                    fluidMonitor = createMonitor(fluidHandler, FLUID_STACK_TYPE);
+                    monitor = createMonitor(handler, stackType);
                 }
             }
         }
-        if (stackType == ITEM_STACK_TYPE) {
-            if (itemMonitor != null) {
-                return (IMEInventoryHandler<T>) itemMonitor;
-            } else {
-                throw new NoHandlerException();
-            }
-        } else if (stackType == FLUID_STACK_TYPE) {
-            if (fluidMonitor != null) {
-                return (IMEInventoryHandler<T>) fluidMonitor;
-            } else {
-                throw new NoHandlerException();
-            }
+        if (monitor != null) {
+            return (IMEInventoryHandler<T>) monitor;
+        } else {
+            throw new NoHandlerException();
         }
-        return null;
     }
 
     private <T extends IAEStack<T>> MEMonitorHandler<T> createMonitor(IMEInventoryHandler<T> handler, IAEStackType<T> stackType) {
@@ -163,26 +144,21 @@ public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements 
         return monitor;
     }
 
+    @SuppressWarnings("unchecked")
     public int getCellStatus(int slot) {
         if (Platform.isClient()) {
             return status >> (slot * 3) & 0x3;
         }
-        ItemStack cell = inventory.getStackInSlot(1);
+        ItemStack cell = inventory.getStackInSlot(0);
         ICellHandler handler = AEApi.instance().registries().cell().getHandler(cell);
         if (handler != null) {
-            try {
-                IMEInventoryHandler<?> inv = getInventoryHandler(ITEM_STACK_TYPE);
-                if (inv instanceof StorageMonitor) {
-                    return handler.getStatusForCell(cell, ((StorageMonitor<?>) inv).getInternal());
-                }
-            } catch (NoHandlerException ignored) {
-            }
-            try {
-                IMEInventoryHandler<?> inv = getInventoryHandler(FLUID_STACK_TYPE);
-                if (inv instanceof StorageMonitor) {
-                    return handler.getStatusForCell(cell, ((StorageMonitor<?>) inv).getInternal());
-                }
-            } catch (NoHandlerException ignored) {
+            for (IAEStackType<?> internalType : AEStackTypeRegistry.getAllTypes()) {
+                try {
+                    IMEInventoryHandler<?> inv = getInventoryHandler(internalType);
+                    if (inv instanceof StorageMonitor<?> storageMonitor) {
+                        return handler.getStatusForCell(cell, storageMonitor.getInternal());
+                    }
+                } catch (NoHandlerException ignored) {}
             }
         }
         return 0;
@@ -193,7 +169,7 @@ public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements 
     }
 
     public boolean toggleItemStorageCellLocking() {
-        ItemStack cell = this.inventory.getStackInSlot(1);
+        ItemStack cell = this.inventory.getStackInSlot(0);
         if (ItemBasicStorageCell.checkInvalidForLockingAndStickyCarding(cell, this.cellHandler)) {
             return false;
         } else {
@@ -216,7 +192,7 @@ public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements 
     }
 
     public int applyStickyToItemStorageCells(ItemStack cards) {
-        ItemStack cell = this.inventory.getStackInSlot(1);
+        ItemStack cell = this.inventory.getStackInSlot(0);
         if (ItemBasicStorageCell.checkInvalidForLockingAndStickyCarding(cell, this.cellHandler) && cards.stackSize != 0) {
             return 0;
         } else {
@@ -247,26 +223,17 @@ public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements 
                 double used = extractAEPower(idlePower, Actionable.MODULATE, PowerMultiplier.CONFIG);
                 if ((used + 0.1 >= idlePower) != ((status & 0x40) > 0)) updateStatus();
             }
-            if (inventory.getStackInSlot(0) != null) storeContents();
-            if (inventory.getStackInSlot(1) != null && tick++ >= 20 * FoxConfig.cobblestoneDuperSecondsNeed) {
-                tick = 0;
-                if (productivity > 0) {
-                    progressProductivity[0]++;
-                }
-                if (Platform.isServer()) {
-                    ItemStack cell = inventory.getStackInSlot(1);
-                    if (cell != null && cellHandler != null) {
-                        try {
-                            IMEInventoryHandler<IAEItemStack> handler = getInventoryHandler(ITEM_STACK_TYPE);
-                            if (handler != null) {
-                                AEItemStack cobble = AEItemStack.create(new ItemStack(Blocks.cobblestone));
-                                cobble.setStackSize(FoxConfig.cobblestoneDuperItemsGenerated + FoxConfig.cobblestoneDuperItemsGenerated * ProductivityUtil.check(progressProductivity, productivity));
-                                handler.injectItems(cobble, Actionable.MODULATE, source);
-                            }
-                        } catch (NoHandlerException ignored) {
+            if (inventory.getStackInSlot(0) != null) {
+                try {
+                    IMEInventoryHandler<IAEItemStack> handler = getInventoryHandler(ITEM_STACK_TYPE);
+                    if (handler != null && tick++ >= 20 * FoxConfig.cobblestoneDuperSecondsNeed) {
+                        tick = 0;
+                        if (productivity > 0) {
+                            progressProductivity[0]++;
                         }
+                        storeContents();
                     }
-                }
+                } catch (Exception ignored) {}
             }
             markForUpdate();
         }
@@ -282,7 +249,7 @@ public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements 
         status |= isPowered() ? 0x40 : 0;
         data.writeByte(status);
         data.writeByte(color.ordinal());
-        ItemStack cell = inventory.getStackInSlot(1);
+        ItemStack cell = inventory.getStackInSlot(0);
         data.writeInt(cell == null ? 0 : (cell.getItemDamage() << 16) | Item.getIdFromItem(cell.getItem()));
     }
 
@@ -350,8 +317,7 @@ public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements 
     public void onChangeInventory(IInventory inv, int slot, InvOperation op, ItemStack removed, ItemStack added) {
         if (slot == 1) {
             tick = 0;
-            itemMonitor = null;
-            fluidMonitor = null;
+            monitor = null;
             isHandlerCached = false;
             try {
                 if (getProxy().getGrid() != null) {
@@ -405,15 +371,14 @@ public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements 
         return NO_SLOTS;
     }
 
+
     private void storeContents() {
         try {
-            ItemStack stack = inventory.getStackInSlot(0);
-            if (stack != null) {
-                IMEInventoryHandler<IAEItemStack> handler = getInventoryHandler(ITEM_STACK_TYPE);
-                assert handler != null;
-                IAEItemStack result = Platform.poweredInsert(this, handler, AEApi.instance().storage().createItemStack(stack), source);
-                inventory.setInventorySlotContents(0, result == null ? null : result.getItemStack());
-            }
+            IMEInventoryHandler<IAEItemStack> handler = getInventoryHandler(ITEM_STACK_TYPE);
+            assert handler != null;
+            IAEItemStack cobble = AEItemStack.create(new ItemStack(Blocks.cobblestone));
+            cobble.setStackSize(FoxConfig.cobblestoneDuperItemsGenerated + FoxConfig.cobblestoneDuperItemsGenerated * ProductivityUtil.check(progressProductivity, productivity));
+            IAEItemStack result = Platform.poweredInsert(this, handler, cobble, source);
         } catch (NoHandlerException ignored) {
         }
     }
@@ -424,7 +389,7 @@ public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements 
         if (getProxy().isActive()) {
             try {
                 IMEInventoryHandler handler = getInventoryHandler(stackType);
-                if (handler == null) {
+                if (handler == null || handler.getStackType() != stackType) {
                     return new ArrayList<>();
                 }
                 return Collections.singletonList(handler);
@@ -440,8 +405,7 @@ public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements 
 
     public void setPriority(int value) {
         priority = value;
-        itemMonitor = null;
-        fluidMonitor = null;
+        monitor = null;
         isHandlerCached = false;
         try {
             getProxy().getGrid().postEvent(new MENetworkCellArrayUpdate());
@@ -472,6 +436,16 @@ public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements 
         return AECableType.SMART;
     }
 
+    @Override
+    public void getDrops(World w, int x, int y, int z, List<ItemStack> drops) {
+        for (int i = 0; i < inventory.getSizeInventory(); i++) {
+            ItemStack stack = inventory.getStackInSlot(i);
+            if (stack != null) {
+                drops.add(stack);
+            }
+        }
+    }
+
     private static class NoHandlerException extends Exception {
     }
 
@@ -483,7 +457,7 @@ public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements 
         }
 
         public boolean isValid(Object token) {
-            return stackType == ITEM_STACK_TYPE ? token == itemMonitor : token == fluidMonitor;
+            return token == monitor;
         }
 
         public void postChange(IBaseMonitor<T> monitor, Iterable<T> changes, BaseActionSource src) {
