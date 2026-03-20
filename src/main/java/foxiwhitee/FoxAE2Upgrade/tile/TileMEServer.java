@@ -138,6 +138,7 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
         accelerators_count[id] = unit * stack.stackSize;
     }
 
+    @SuppressWarnings("all")
     public void initializeClusters() {
         if (Platform.isClient() || worldObj == null) {
             return;
@@ -155,10 +156,6 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
 
             FMLCommonHandler.instance().bus().register(newCluster);
             this.bindTileToCluster(newCluster);
-
-            if (previousStates[i] != null) {
-                newCluster.readFromNBT(previousStates[i]);
-            }
 
             newCluster.updateStatus(true);
             ((ICraftingCPUClusterAccessor) (Object) newCluster).doneMEServer();
@@ -208,6 +205,7 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
     }
 
     @TileEvent(TileEventType.WORLD_NBT_WRITE)
+    @SuppressWarnings("unused")
     public void writeToNBT_(NBTTagCompound data) {
         storage.writeToNBT(data, "storage");
         accelerators.writeToNBT(data, "accelerators");
@@ -225,6 +223,7 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
     }
 
     @TileEvent(TileEventType.WORLD_NBT_READ)
+    @SuppressWarnings("unused")
     public void readFromNBT_(NBTTagCompound data) {
         storage.readFromNBT(data, "storage");
         accelerators.readFromNBT(data, "accelerators");
@@ -247,6 +246,7 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
     }
 
     @TileEvent(TileEventType.NETWORK_WRITE)
+    @SuppressWarnings("unused")
     public void writeToStream(ByteBuf data) {
         if (this.canBeRotated()) {
             data.writeByte((byte) getForward().ordinal());
@@ -255,6 +255,7 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
     }
 
     @TileEvent(TileEventType.NETWORK_READ)
+    @SuppressWarnings("unused")
     public boolean readFromStream(ByteBuf data) {
         boolean output = false;
         if (this.canBeRotated()) {

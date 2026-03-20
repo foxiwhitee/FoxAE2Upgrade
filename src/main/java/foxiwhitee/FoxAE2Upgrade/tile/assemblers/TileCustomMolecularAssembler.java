@@ -55,7 +55,7 @@ import static foxiwhitee.FoxAE2Upgrade.helpers.CrafterHelper.trySendItems;
 
 @SuppressWarnings("unused")
 public abstract class TileCustomMolecularAssembler extends TileAENetworkInvOrientable implements IPowerChannelState, ICraftingMachine, ICraftingProvider, IGridTickable, IInterfaceViewable, IPreCraftingMedium {
-    private static final int[] SIDES = {0};
+    private static final int[] SIDES = {};
     protected AppEngInternalInventory patternInventory = new AppEngInternalInventory(this, 36, 1);
     protected ICraftingPatternDetails activePattern;
     protected long craftCount;

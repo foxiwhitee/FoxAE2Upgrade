@@ -59,7 +59,7 @@ import static appeng.util.item.AEItemStackType.ITEM_STACK_TYPE;
 
 @SuppressWarnings("unused")
 public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements IMEChest, IPriorityHost, IConfigManagerHost {
-    private static final int[] SIDES = {0};
+    private static final int[] SIDES = {};
     private static final int[] FRONT = {1};
     private static final int[] NO_SLOTS = {};
 
