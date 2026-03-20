@@ -17,11 +17,11 @@ import appeng.crafting.MECraftingInventory;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.tile.TileEvent;
 import appeng.tile.events.TileEventType;
-import foxiwhitee.FoxAE2Upgrade.helpers.CrafterHelper;
 import foxiwhitee.FoxAE2Upgrade.recipes.BaseAutoBlockRecipe;
 import foxiwhitee.FoxAE2Upgrade.tile.TileAENetworkOrientable;
 import foxiwhitee.FoxLib.integration.applied.api.crafting.ICraftingCPUClusterAccessor;
 import foxiwhitee.FoxLib.integration.applied.api.crafting.IPreCraftingMedium;
+import foxiwhitee.FoxLib.integration.applied.helpers.AECrafterHelper;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -32,14 +32,11 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
-import static foxiwhitee.FoxAE2Upgrade.helpers.CrafterHelper.calculateOutputs;
-import static foxiwhitee.FoxAE2Upgrade.helpers.CrafterHelper.trySendItems;
-
 public abstract class TileAutomatedBlock extends TileAENetworkOrientable implements IPreCraftingMedium, IGridTickable, ICraftingProvider, ICraftingMedium {
     private final List<ICraftingPatternDetails> patternList = new ArrayList<>();
     private ICraftingPatternDetails activePattern;
     private long craftCount;
-    protected final List<IAEItemStack> needSend = new ArrayList<>();
+    protected final List<IAEStack<?>> needSend = new ArrayList<>();
     protected final MachineSource source = new MachineSource(this);
 
     public TileAutomatedBlock() {
@@ -152,10 +149,10 @@ public abstract class TileAutomatedBlock extends TileAENetworkOrientable impleme
     @Override
     public TickRateModulation tickingRequest(IGridNode iGridNode, int ticksSinceLastCall) {
         if (activePattern != null && needSend.isEmpty()) {
-            List<IAEItemStack> outputs = calculateOutputs(activePattern, craftCount);
+            List<IAEStack<?>> outputs = AECrafterHelper.calculateOutputs(activePattern, craftCount);
             needSend.addAll(outputs);
         }
-        trySendItems(getProxy(), source, needSend);
+        AECrafterHelper.trySendItems(getProxy(), source, needSend);
         if (needSend.isEmpty()) {
             activePattern = null;
             craftCount = 0;
@@ -172,7 +169,7 @@ public abstract class TileAutomatedBlock extends TileAENetworkOrientable impleme
             data.setTag("activePattern", patTag);
             data.setLong("craftCount", craftCount);
         }
-        CrafterHelper.writeToNbtNeedItems(data, needSend);
+        AECrafterHelper.writeToNbtNeedItems(data, needSend);
     }
 
     @TileEvent(TileEventType.WORLD_NBT_READ)
@@ -185,7 +182,7 @@ public abstract class TileAutomatedBlock extends TileAENetworkOrientable impleme
             }
             this.craftCount = data.getLong("craftCount");
         }
-        CrafterHelper.readFromNbtNeedItems(data, needSend);
+        AECrafterHelper.readFromNbtNeedItems(data, needSend);
     }
 
     @Override
