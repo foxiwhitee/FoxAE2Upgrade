@@ -11,6 +11,7 @@ import appeng.tile.inventory.AppEngInternalInventory;
 import appeng.tile.inventory.InvOperation;
 import foxiwhitee.FoxAE2Upgrade.ModBlocks;
 import foxiwhitee.FoxAE2Upgrade.config.FoxConfig;
+import foxiwhitee.FoxLib.integration.applied.helpers.AECrafterHelper;
 import foxiwhitee.FoxLib.utils.ProductivityUtil;
 import foxiwhitee.FoxLib.utils.helpers.ProductivityBlackListHelper;
 import net.minecraft.inventory.IInventory;
@@ -18,9 +19,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
 import java.util.*;
-
-import static foxiwhitee.FoxAE2Upgrade.helpers.CrafterHelper.calculateOutputs;
-import static foxiwhitee.FoxAE2Upgrade.helpers.CrafterHelper.trySendItems;
 
 public class TileUltimateMolecularAssembler extends TileCustomMolecularAssembler {
     protected AppEngInternalInventory patternInventory = new AppEngInternalInventory(this, 72, 1);
@@ -58,14 +56,14 @@ public class TileUltimateMolecularAssembler extends TileCustomMolecularAssembler
     @Override
     public TickRateModulation tickingRequest(IGridNode node, int ticksSinceLastCall) {
         if (activePattern != null && needSend.isEmpty()) {
-            List<IAEItemStack> outputs = calculateOutputs(activePattern, craftCount, craftingGrid);
+            List<IAEStack<?>> outputs = AECrafterHelper.calculateOutputs(activePattern, craftCount, craftingGrid);
             needSend.addAll(outputs);
 
             int bonusCount = 0;
             if (hasProductivity()) {
                 boolean isBlackListed = false;
-                for (IAEItemStack stack : outputs) {
-                    if (ProductivityBlackListHelper.isInBlackList(stack.getItemStack())) {
+                for (IAEStack<?> st : outputs) {
+                    if (st instanceof IAEItemStack stack && ProductivityBlackListHelper.isInBlackList(stack.getItemStack())) {
                         isBlackListed = true;
                         break;
                     }
@@ -86,7 +84,7 @@ public class TileUltimateMolecularAssembler extends TileCustomMolecularAssembler
             }
         }
 
-        trySendItems(getProxy(), source, needSend);
+        AECrafterHelper.trySendItems(getProxy(), source, needSend);
         if (needSend.isEmpty()) {
             activePattern = null;
             craftCount = 0;
