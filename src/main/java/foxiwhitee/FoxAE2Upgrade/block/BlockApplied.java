@@ -1,7 +1,6 @@
 package foxiwhitee.FoxAE2Upgrade.block;
 
-import appeng.tile.AEBaseInvTile;
-import appeng.tile.grid.AENetworkInvTile;
+import appeng.tile.AEBaseTile;
 import foxiwhitee.FoxAE2Upgrade.FoxCore;
 import foxiwhitee.FoxLib.api.orientable.IOrientable;
 import foxiwhitee.FoxLib.block.FoxTileBlock;
@@ -47,11 +46,7 @@ public class BlockApplied extends FoxTileBlock {
 
     public void breakBlock(World world, int x, int y, int z, Block block, int b) {
         TileEntity te = world.getTileEntity(x, y, z);
-        if (te instanceof AEBaseInvTile invTile) {
-            ArrayList<ItemStack> drops = new ArrayList<>();
-            invTile.getDrops(world, x, y, z, drops);
-            spawnDrops(world, x, y, z, drops);
-        } else if (te instanceof AENetworkInvTile invTile) {
+        if (te instanceof AEBaseTile invTile) {
             ArrayList<ItemStack> drops = new ArrayList<>();
             invTile.getDrops(world, x, y, z, drops);
             spawnDrops(world, x, y, z, drops);
