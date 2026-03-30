@@ -5,12 +5,10 @@ import foxiwhitee.FoxAE2Upgrade.ModBlocks;
 import foxiwhitee.FoxAE2Upgrade.config.FoxConfig;
 import net.minecraft.item.ItemStack;
 
-public class TileQuantumMolecularAssembler extends TileUltimateMolecularAssembler {
+public class TileQuantumMolecularAssembler extends TileCustomMolecularAssembler {
     protected AppEngInternalInventory patternInventory = new AppEngInternalInventory(this, 108, 1);
 
-    public TileQuantumMolecularAssembler() {
-        getProxy().setIdlePowerUsage(FoxConfig.quantumMolecularAssemblerPower);
-    }
+    public TileQuantumMolecularAssembler() {}
 
     @Override
     protected ItemStack getItemFromTile(Object obj) {
@@ -27,27 +25,9 @@ public class TileQuantumMolecularAssembler extends TileUltimateMolecularAssemble
         return FoxConfig.quantumMolecularAssemblerPower;
     }
 
-    public String getName() {
-        return ModBlocks.quantumMolecularAssembler.getUnlocalizedName();
-    }
-
     @Override
     public AppEngInternalInventory getPatterns() {
         return patternInventory;
     }
 
-    @Override
-    public int rows() {
-        return 12;
-    }
-
-    @Override
-    protected int getProductivity() {
-        return FoxConfig.quantumMolecularAssemblerProductivity;
-    }
-
-    @Override
-    protected boolean hasProductivity() {
-        return FoxConfig.hasQuantumMolecularAssemblerProductivity;
-    }
 }

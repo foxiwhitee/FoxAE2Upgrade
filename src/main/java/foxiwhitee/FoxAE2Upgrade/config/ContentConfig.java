@@ -26,7 +26,4 @@ public class ContentConfig {
     @ConfigValue(category = "Content", desc = "Enable New Cables")
     public static boolean enableCables = true;
 
-    @ConfigValue(category = "Content", desc = "Enable Level Maintainer")
-    public static boolean enableLevelMaintainer = true;
-
 }

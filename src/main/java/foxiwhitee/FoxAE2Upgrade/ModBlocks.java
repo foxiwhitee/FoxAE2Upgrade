@@ -9,7 +9,6 @@ import foxiwhitee.FoxAE2Upgrade.config.ContentConfig;
 import foxiwhitee.FoxAE2Upgrade.items.AllItemBlock;
 import foxiwhitee.FoxAE2Upgrade.tile.TileAdvancedDrive;
 import foxiwhitee.FoxAE2Upgrade.tile.TileCobblestoneDuper;
-import foxiwhitee.FoxAE2Upgrade.tile.TileLevelMaintainer;
 import foxiwhitee.FoxAE2Upgrade.tile.TileMEServer;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileAdvancedMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileQuantumMolecularAssembler;
@@ -27,8 +26,8 @@ public class ModBlocks {
     public static final Block advancedDrive = new BlockAdvancedDrive("advancedDrive");
     public static final Block meServer = new BlockMEServer("meServer");
 
-    public static final Block autoCrystallizer = new BlockAENetwork("autoCrystallizer", TileAutoCrystallizer.class);
-    public static final Block autoPress = new BlockAENetwork("autoPress", TileAutoPress.class);
+    public static final Block autoCrystallizer = new BlockAutoCrystallizer("autoCrystallizer");
+    public static final Block autoPress = new BlockAutoPress("autoPress");
 
     @StaticRender(modID = "foxae2upgrade", tile = TileAdvancedMolecularAssembler.class,
         model = "models/molecularAssembler.obj", texture = "textures/blocks/assemblers/advancedMolecularAssembler.png")
@@ -41,8 +40,6 @@ public class ModBlocks {
     @StaticRender(modID = "foxae2upgrade", tile = TileQuantumMolecularAssembler.class,
         model = "models/molecularAssembler.obj", texture = "textures/blocks/assemblers/quantumMolecularAssembler.png")
     public static final Block quantumMolecularAssembler = new BlockQuantumMolecularAssembler("quantumMolecularAssembler");
-
-    public static final Block levelMaintainer = new BlockLevelMaintainer("levelMaintainer");
 
     public static void registerBlocks() {
         if (ContentConfig.enableCobblestoneDuper) {
@@ -68,10 +65,6 @@ public class ModBlocks {
         if (ContentConfig.enableMEServer) {
             RegisterUtils.registerBlock(meServer, AllItemBlock.class);
             RegisterUtils.registerTile(TileMEServer.class);
-        }
-        if (ContentConfig.enableLevelMaintainer) {
-            RegisterUtils.registerBlock(levelMaintainer, AllItemBlock.class);
-            RegisterUtils.registerTile(TileLevelMaintainer.class);
         }
     }
 }

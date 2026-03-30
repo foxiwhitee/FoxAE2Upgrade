@@ -1,5 +1,7 @@
 package foxiwhitee.FoxAE2Upgrade.proxy;
 
+import appeng.block.crafting.BlockCraftingStorage;
+import appeng.block.crafting.BlockCraftingUnit;
 import appeng.core.Api;
 import appeng.items.misc.ItemEncodedPattern;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -10,7 +12,6 @@ import foxiwhitee.FoxAE2Upgrade.ModItems;
 import foxiwhitee.FoxAE2Upgrade.ModRecipes;
 import foxiwhitee.FoxAE2Upgrade.block.BlockAdvancedDrive;
 import foxiwhitee.FoxAE2Upgrade.block.BlockCobblestoneDuper;
-import foxiwhitee.FoxAE2Upgrade.block.BlockLevelMaintainer;
 import foxiwhitee.FoxAE2Upgrade.block.BlockMEServer;
 import foxiwhitee.FoxAE2Upgrade.block.assemblers.BlockAdvancedMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.block.assemblers.BlockQuantumMolecularAssembler;
@@ -18,21 +19,19 @@ import foxiwhitee.FoxAE2Upgrade.block.assemblers.BlockUltimateMolecularAssembler
 import foxiwhitee.FoxAE2Upgrade.config.ContentConfig;
 import foxiwhitee.FoxAE2Upgrade.container.ContainerAdvancedDrive;
 import foxiwhitee.FoxAE2Upgrade.container.ContainerCobblestoneDuper;
-import foxiwhitee.FoxAE2Upgrade.container.ContainerLevelMaintainer;
 import foxiwhitee.FoxAE2Upgrade.container.ContainerMEServer;
 import foxiwhitee.FoxAE2Upgrade.container.assemblers.ContainerAdvancedMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.container.assemblers.ContainerQuantumMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.container.assemblers.ContainerUltimateMolecularAssembler;
-import foxiwhitee.FoxAE2Upgrade.network.packets.C2SSetValuesInLevelMaintainer;
 import foxiwhitee.FoxAE2Upgrade.tile.TileAdvancedDrive;
 import foxiwhitee.FoxAE2Upgrade.tile.TileCobblestoneDuper;
-import foxiwhitee.FoxAE2Upgrade.tile.TileLevelMaintainer;
 import foxiwhitee.FoxAE2Upgrade.tile.TileMEServer;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileAdvancedMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileUltimateMolecularAssembler;
 import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileQuantumMolecularAssembler;
 import foxiwhitee.FoxLib.api.FoxLibApi;
 import foxiwhitee.FoxLib.container.slots.SlotFiltered;
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -53,12 +52,8 @@ public class CommonProxy {
             .register(BlockQuantumMolecularAssembler.class, TileQuantumMolecularAssembler.class, ContainerQuantumMolecularAssembler.class)
             .register(BlockAdvancedDrive.class, TileAdvancedDrive.class, ContainerAdvancedDrive.class)
             .register(BlockCobblestoneDuper.class, TileCobblestoneDuper.class, ContainerCobblestoneDuper.class)
-            .register(BlockLevelMaintainer.class, TileLevelMaintainer.class, ContainerLevelMaintainer.class)
             .register(BlockMEServer.class, TileMEServer.class, ContainerMEServer.class);
 
-        if (ContentConfig.enableLevelMaintainer) {
-            FoxLibApi.instance.registries().registerPacket().register(C2SSetValuesInLevelMaintainer.class);
-        }
         if (ContentConfig.enableMolecularAssemblers) {
             Api.INSTANCE.registries().interfaceTerminal().register(TileAdvancedMolecularAssembler.class);
             Api.INSTANCE.registries().interfaceTerminal().register(TileUltimateMolecularAssembler.class);
@@ -87,5 +82,7 @@ public class CommonProxy {
     }
 
     public void postInit(FMLPostInitializationEvent event) {
+        SlotFiltered.filters.put("storage", stack -> Block.getBlockFromItem(stack.getItem()) instanceof BlockCraftingStorage);
+        SlotFiltered.filters.put("accelerator", stack -> (Block.getBlockFromItem(stack.getItem()) instanceof BlockCraftingUnit && !(Block.getBlockFromItem(stack.getItem()) instanceof BlockCraftingStorage)));
     }
 }

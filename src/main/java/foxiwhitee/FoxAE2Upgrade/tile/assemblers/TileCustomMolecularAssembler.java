@@ -42,13 +42,11 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public abstract class TileCustomMolecularAssembler extends TileAENetworkInvOrientable implements IPowerChannelState, ICraftingMachine, ICraftingProvider, IGridTickable, IInterfaceViewable, IPreCraftingMedium {
@@ -66,6 +64,7 @@ public abstract class TileCustomMolecularAssembler extends TileAENetworkInvOrien
 
     public TileCustomMolecularAssembler() {
         getProxy().setFlags(GridFlags.REQUIRE_CHANNEL);
+        getProxy().setIdlePowerUsage(getPower());
     }
 
     @Override
@@ -328,7 +327,7 @@ public abstract class TileCustomMolecularAssembler extends TileAENetworkInvOrien
     }
 
     public int rows() {
-        return 4;
+        return getPatterns().getSizeInventory() / rowSize();
     }
 
     public int rowSize() {
@@ -357,5 +356,19 @@ public abstract class TileCustomMolecularAssembler extends TileAENetworkInvOrien
                 drops.add(iaeItemStack.getItemStack());
             }
         }
+    }
+
+    public String getName() {
+        return Objects.requireNonNull(getItemFromTile(this)).getUnlocalizedName();
+    }
+
+    @Override
+    public TileEntity getTileEntity() {
+        return this;
+    }
+
+    @Override
+    public boolean acceptsPlans() {
+        return false;
     }
 }

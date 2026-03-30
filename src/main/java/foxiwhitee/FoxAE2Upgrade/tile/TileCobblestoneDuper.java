@@ -19,7 +19,6 @@ import appeng.api.networking.storage.IStorageGrid;
 import appeng.api.storage.*;
 import appeng.api.storage.data.*;
 import appeng.api.util.AECableType;
-import appeng.api.util.AEColor;
 import appeng.api.util.DimensionalCoord;
 import appeng.api.util.IConfigManager;
 import appeng.helpers.IPriorityHost;
@@ -37,9 +36,6 @@ import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
 import foxiwhitee.FoxAE2Upgrade.ModBlocks;
 import foxiwhitee.FoxAE2Upgrade.config.FoxConfig;
-import foxiwhitee.FoxLib.config.FoxLibConfig;
-import foxiwhitee.FoxLib.items.ItemProductivityCard;
-import foxiwhitee.FoxLib.utils.ProductivityUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -59,26 +55,20 @@ import static appeng.util.item.AEItemStackType.ITEM_STACK_TYPE;
 
 @SuppressWarnings("unused")
 public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements IMEChest, IPriorityHost, IConfigManagerHost {
-    private static final int[] SIDES = {};
-    private static final int[] FRONT = {1};
     private static final int[] NO_SLOTS = {};
 
-    private final AppEngInternalInventory inventory = new AppEngInternalInventory(this, 2);
+    private final AppEngInternalInventory inventory = new AppEngInternalInventory(this, 1);
     private final MachineSource source = new MachineSource(this);
     private final IConfigManager settings = new ConfigManager(this);
     private ItemStack cellType;
     private long lastBlinkTime;
     private int status;
     private boolean isActive;
-    private AEColor color = AEColor.Transparent;
     private boolean isHandlerCached;
     private ICellHandler cellHandler;
     private MEMonitorHandler<? extends IAEStack<?>> monitor;
     private int priority;
-
-    private int productivity;
     private int tick;
-    private final double[] progressProductivity = {0};
 
     public TileCobblestoneDuper() {
         getProxy().setFlags(GridFlags.REQUIRE_CHANNEL);
@@ -228,9 +218,6 @@ public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements 
                     IMEInventoryHandler<IAEItemStack> handler = getInventoryHandler(ITEM_STACK_TYPE);
                     if (handler != null && tick++ >= 20 * FoxConfig.cobblestoneDuperSecondsNeed) {
                         tick = 0;
-                        if (productivity > 0) {
-                            progressProductivity[0]++;
-                        }
                         storeContents();
                     }
                 } catch (Exception ignored) {}
@@ -241,58 +228,41 @@ public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements 
 
     @TileEvent(TileEventType.NETWORK_WRITE)
     public void writeToStream(ByteBuf data) {
-        data.writeInt(productivity);
         data.writeInt(tick);
-        data.writeDouble(progressProductivity[0]);
         status = worldObj.getTotalWorldTime() - lastBlinkTime > 8 ? 0 : status & 0x24924924;
         status |= getCellStatus(0);
         status |= isPowered() ? 0x40 : 0;
         data.writeByte(status);
-        data.writeByte(color.ordinal());
         ItemStack cell = inventory.getStackInSlot(0);
         data.writeInt(cell == null ? 0 : (cell.getItemDamage() << 16) | Item.getIdFromItem(cell.getItem()));
     }
 
     @TileEvent(TileEventType.NETWORK_READ)
     public boolean readFromStream(ByteBuf data) {
-        productivity = data.readInt();
         tick = data.readInt();
-        progressProductivity[0] = data.readDouble();
         int prevStatus = status;
         ItemStack prevCell = cellType;
         status = data.readByte();
-        AEColor prevColor = color;
-        color = AEColor.values()[data.readByte()];
         int item = data.readInt();
         cellType = item == 0 ? null : new ItemStack(Item.getItemById(item & 0xFFFF), 1, item >> 16);
         lastBlinkTime = worldObj.getTotalWorldTime();
-        return prevColor != color || (status & 0xDB6DB6DB) != (prevStatus & 0xDB6DB6DB) || !Platform.isSameItemPrecise(prevCell, cellType);
+        return (status & 0xDB6DB6DB) != (prevStatus & 0xDB6DB6DB) || !Platform.isSameItemPrecise(prevCell, cellType);
     }
 
     @TileEvent(TileEventType.WORLD_NBT_READ)
     public void readFromNBTC(NBTTagCompound data) {
         settings.readFromNBT(data);
         inventory.readFromNBT(data, "inv");
-        productivity = data.getInteger("productivity");
         priority = data.getInteger("priority");
-        if (data.hasKey("paintedColor")) {
-            color = AEColor.values()[data.getByte("paintedColor")];
-        }
-
         tick = data.getInteger("tick");
-        progressProductivity[0] = data.getDouble("progressProductivity");
     }
 
     @TileEvent(TileEventType.WORLD_NBT_WRITE)
     public void writeToNBTC(NBTTagCompound data) {
         settings.writeToNBT(data);
         inventory.writeToNBT(data, "inv");
-        data.setInteger("productivity", productivity);
         data.setInteger("priority", priority);
-        data.setByte("paintedColor", (byte) color.ordinal());
-
         data.setInteger("tick", tick);
-        data.setDouble("progressProductivity", progressProductivity[0]);
     }
 
     @MENetworkEventSubscribe
@@ -315,7 +285,7 @@ public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements 
     }
 
     public void onChangeInventory(IInventory inv, int slot, InvOperation op, ItemStack removed, ItemStack added) {
-        if (slot == 1) {
+        if (slot == 0) {
             tick = 0;
             monitor = null;
             isHandlerCached = false;
@@ -327,27 +297,6 @@ public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements 
                 Platform.postChanges(storage, removed, added, source);
             } catch (GridAccessException ignored) {
             }
-            markForUpdate();
-        } else if (slot == 2) {
-            if (added == null) {
-                productivity = 0;
-            } else if (added.getItem() instanceof ItemProductivityCard) {
-                productivity = switch (added.getItemDamage()) {
-                    case 0 -> FoxLibConfig.productivityLvl1;
-                    case 1 -> FoxLibConfig.productivityLvl2;
-                    case 2 -> FoxLibConfig.productivityLvl3;
-                    case 3 -> FoxLibConfig.productivityLvl4;
-                    case 4 -> FoxLibConfig.productivityLvl5;
-                    case 5 -> FoxLibConfig.productivityLvl6;
-                    case 6 -> FoxLibConfig.productivityLvl7;
-                    case 7 -> FoxLibConfig.productivityLvl8;
-                    case 8 -> FoxLibConfig.productivityLvl9;
-                    case 9 -> FoxLibConfig.productivityLvl10;
-                    case 10 -> FoxLibConfig.productivityLvl11;
-                    default -> 0;
-                };
-            }
-            progressProductivity[0] = 0;
             markForUpdate();
         }
     }
@@ -361,23 +310,15 @@ public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements 
     }
 
     public int[] getAccessibleSlotsBySide(ForgeDirection side) {
-        if (side == ForgeDirection.SOUTH) return FRONT;
-        if (isPowered()) {
-            try {
-                if (getInventoryHandler(ITEM_STACK_TYPE) != null) return SIDES;
-            } catch (NoHandlerException ignored) {
-            }
-        }
         return NO_SLOTS;
     }
-
 
     private void storeContents() {
         try {
             IMEInventoryHandler<IAEItemStack> handler = getInventoryHandler(ITEM_STACK_TYPE);
             assert handler != null;
             IAEItemStack cobble = AEItemStack.create(new ItemStack(Blocks.cobblestone));
-            cobble.setStackSize(FoxConfig.cobblestoneDuperItemsGenerated + FoxConfig.cobblestoneDuperItemsGenerated * ProductivityUtil.check(progressProductivity, productivity));
+            cobble.setStackSize(FoxConfig.cobblestoneDuperItemsGenerated);
             IAEItemStack result = Platform.poweredInsert(this, handler, cobble, source);
         } catch (NoHandlerException ignored) {
         }
@@ -414,7 +355,7 @@ public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements 
     }
 
     public IStorageMonitorable getMonitorable(ForgeDirection side, BaseActionSource src) {
-        return Platform.canAccess(getProxy(), src) && side != getForward() ? (IStorageMonitorable) this : null;
+        return null;
     }
 
     public void updateSetting(IConfigManager manager, Enum setting, Enum value) {
@@ -509,11 +450,4 @@ public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements 
         return tick;
     }
 
-    public int getProductivity() {
-        return productivity;
-    }
-
-    public double[] getProgressProductivity() {
-        return progressProductivity;
-    }
 }
