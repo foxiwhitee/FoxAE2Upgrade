@@ -35,12 +35,18 @@ public class FoxConfig {
     @ConfigValue(category = "MolecularAssemblers.Ultimate", name = "power", desc = "Amount of energy AE2 per tick (ae/t) consumed by the Ultimate Molecular Assembler")
     public static int ultimateMolecularAssemblerPower = 50;
 
+    @ConfigValue(category = "MolecularAssemblers.Ultimate", name = "threads", max = "72", desc = "Number of crafts that the assembler can process simultaneously")
+    public static int ultimateMolecularAssemblerThreads = 2;
+
 
     @ConfigValue(category = "MolecularAssemblers.Quantum", name = "speed", desc = "Number of items that the Quantum Molecular Assembler crafting per tick")
     public static long quantumMolecularAssemblerSpeed = 25_000_000;
 
     @ConfigValue(category = "MolecularAssemblers.Quantum", name = "power", desc = "Amount of energy AE2 per tick (ae/t) consumed by the Quantum Molecular Assembler")
     public static int quantumMolecularAssemblerPower = 100;
+
+    @ConfigValue(category = "MolecularAssemblers.Quantum", name = "threads", max = "108", desc = "Number of crafts that the assembler can process simultaneously")
+    public static int quantumMolecularAssemblerThreads = 6;
 
 
     @ConfigValue(category = "AutomatedBlocks", desc = "Number of items that the block crafting per tick")

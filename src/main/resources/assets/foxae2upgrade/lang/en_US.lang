@@ -10,7 +10,6 @@ tile.advancedMolecularAssembler.name=Advanced Molecular Assembler
 tile.ultimateMolecularAssembler.name=Ultimate Molecular Assembler
 tile.quantumMolecularAssembler.name=Quantum Molecular Assembler
 
-tile.levelMaintainer.name=Level Maintainer
 #Items
 item.alite_smart_cable.name=ME Alite Cable
 item.bimare_smart_cable.name=ME Bimare Cable
@@ -20,17 +19,12 @@ item.nur_dense_cable.name=ME Nur Cable
 item.xaur_dense_cable.name=ME Xaur Cable
 
 #Tooltips
-tooltip.assembler.speed=§9Produces %s items per second
-tooltip.autoCrystallizer=§9Automates crystal charging, crystal growing, and crystal fluix creation
-tooltip.autoPress=§9Automates crafting of all processors
-tooltip.cobblestoneDuper=§9Fills any storage cell with a cobblestone
-tooltip.cables.channels=§9Cable with maximum number of channels: %s
-tooltip.meServer=§9Holds up to 12 clusters from crafting storages
-tooltip.productivity.card=§9Adds %s%% productivity
-tooltip.productivity.base=§9Have a base productivity of: %s%%
-tooltip.productivity.warning=§4Additional output appears along with the main one, not at the end of the productivity scale
+tooltip.assembler.speed=§7Produces §3%s §7items per second
+tooltip.assembler.threads=§7Has §3%s §7threads
+tooltip.autoCrystallizer=§7Automates crystal charging, crystal growing, and crystal fluix creation
+tooltip.autoPress=§7Automates crafting of all processors
+tooltip.cobblestoneDuper=§7Fills any storage cell with a cobblestone
+tooltip.cables.channels=§7Cable with maximum number of channels: §3%s
+tooltip.meServer=§7Holds up to §312 §7clusters from crafting storages
 tooltip.enable=Enable
 tooltip.disable=Disable
-tooltip.levelMaintainer.desc.1=Supports a certain number of items in the ME network
-tooltip.levelMaintainer.desc.2=The first field is the required quantity
-tooltip.levelMaintainer.desc.3=The second field how many times to craft at a time

@@ -27,8 +27,6 @@ import appeng.me.GridAccessException;
 import appeng.me.storage.MEInventoryHandler;
 import appeng.tile.TileEvent;
 import appeng.tile.events.TileEventType;
-import appeng.tile.inventory.AppEngInternalInventory;
-import appeng.tile.inventory.InvOperation;
 import appeng.tile.storage.TileDrive;
 import appeng.util.ConfigManager;
 import appeng.util.IConfigManagerHost;
@@ -36,6 +34,9 @@ import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
 import foxiwhitee.FoxAE2Upgrade.ModBlocks;
 import foxiwhitee.FoxAE2Upgrade.config.FoxConfig;
+import foxiwhitee.FoxLib.integration.applied.tile.TileNetworkInv;
+import foxiwhitee.FoxLib.tile.inventory.FoxInternalInventory;
+import foxiwhitee.FoxLib.tile.inventory.InvOperation;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -54,10 +55,10 @@ import java.util.List;
 import static appeng.util.item.AEItemStackType.ITEM_STACK_TYPE;
 
 @SuppressWarnings("unused")
-public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements IMEChest, IPriorityHost, IConfigManagerHost {
+public class TileCobblestoneDuper extends TileNetworkInv implements IMEChest, IPriorityHost, IConfigManagerHost {
     private static final int[] NO_SLOTS = {};
 
-    private final AppEngInternalInventory inventory = new AppEngInternalInventory(this, 1);
+    private final FoxInternalInventory inventory = new FoxInternalInventory(this, 1);
     private final MachineSource source = new MachineSource(this);
     private final IConfigManager settings = new ConfigManager(this);
     private ItemStack cellType;
@@ -275,7 +276,7 @@ public class TileCobblestoneDuper extends TileAENetworkInvOrientable implements 
         updateStatus();
     }
 
-    public IInventory getInternalInventory() {
+    public FoxInternalInventory getInternalInventory() {
         return inventory;
     }
 

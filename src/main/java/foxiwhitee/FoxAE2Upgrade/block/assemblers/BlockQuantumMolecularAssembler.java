@@ -5,6 +5,6 @@ import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileQuantumMolecularAssembler;
 
 public class BlockQuantumMolecularAssembler extends BlockCustomMolecularAssembler{
     public BlockQuantumMolecularAssembler(String name) {
-        super(name, TileQuantumMolecularAssembler.class, FoxConfig.quantumMolecularAssemblerSpeed);
+        super(name, TileQuantumMolecularAssembler.class, FoxConfig.quantumMolecularAssemblerSpeed, FoxConfig.quantumMolecularAssemblerThreads);
     }
 }

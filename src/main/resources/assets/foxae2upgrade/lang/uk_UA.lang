@@ -9,7 +9,6 @@ tile.quantumMolecularAssembler.name=Квантовий молекулярний 
 tile.advancedDrive.name=Розширений ME-Привід
 tile.meServer.name=ME Сервер
 
-tile.levelMaintainer.name=Підтримувач рівень
 #Items
 item.alite_smart_cable.name=ME Alite Cable
 item.bimare_smart_cable.name=ME Bimare Cable
@@ -19,17 +18,12 @@ item.nur_dense_cable.name=ME Nur Cable
 item.xaur_dense_cable.name=ME Xaur Cable
 
 #Tooltips
-tooltip.assembler.speed=§9Виробляє %s елементів за секунду
-tooltip.autoCrystallizer=§9Автоматизує заряджання кристалів, вирощування кристалів та створення зміних кристалів
-tooltip.autoPress=§9Автоматизує створення всіх процесорів
-tooltip.cobblestoneDuper=§9Заповнює будь-яку комірку зберігання кругляком
-tooltip.cables.channels=§9Кабель з максимальною кількістю каналів: %s
-tooltip.meServer=§9Вміщує в собі до 12 кластерів зі сховищ крафту
-tooltip.productivity.card=§9Додає %s%% продуктивності
-tooltip.productivity.base=§9Мають базову продуктивність: %s%%
-tooltip.productivity.warning=§4Додатковий вихід продукції з'являється разом з основною, а не по закінченю шкали продуктивності
+tooltip.assembler.speed=§7Виробляє §3%s §7елементів за секунду
+tooltip.assembler.threads=§7Має §3%s §7потоків
+tooltip.autoCrystallizer=§7Автоматизує заряджання кристалів, вирощування кристалів та створення зміних кристалів
+tooltip.autoPress=§7Автоматизує створення всіх процесорів
+tooltip.cobblestoneDuper=§7Заповнює будь-яку комірку зберігання кругляком
+tooltip.cables.channels=§7Кабель з максимальною кількістю каналів: §3%s
+tooltip.meServer=§7Вміщує в собі до §312 §7кластерів зі сховищ крафту
 tooltip.enable=Увімкнути
 tooltip.disable=Вимкнути
-tooltip.levelMaintainer.desc.1=Підтримує певну кількість предметів у ME мережі
-tooltip.levelMaintainer.desc.2=Перше поле – необхідна кількість
-tooltip.levelMaintainer.desc.3=Друге поле – скільки разів створювати за раз

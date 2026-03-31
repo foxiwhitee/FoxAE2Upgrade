@@ -5,6 +5,6 @@ import foxiwhitee.FoxAE2Upgrade.tile.assemblers.TileAdvancedMolecularAssembler;
 
 public class BlockAdvancedMolecularAssembler extends BlockCustomMolecularAssembler{
     public BlockAdvancedMolecularAssembler(String name) {
-        super(name, TileAdvancedMolecularAssembler.class, FoxConfig.advancedMolecularAssemblerSpeed);
+        super(name, TileAdvancedMolecularAssembler.class, FoxConfig.advancedMolecularAssemblerSpeed, 1);
     }
 }

@@ -12,10 +12,12 @@ import java.util.List;
 
 public abstract class BlockCustomMolecularAssembler extends BlockApplied {
     private final double speed;
+    private final int threads;
 
-    public BlockCustomMolecularAssembler(String name, Class<? extends TileEntity> tile, double speed) {
+    public BlockCustomMolecularAssembler(String name, Class<? extends TileEntity> tile, double speed, int threads) {
         super(name, tile);
         this.speed = speed;
+        this.threads = threads;
         setBlockTextureName(FoxCore.MODID + ":drive/advancedDriveBottom");
         renderId = -1;
     }
@@ -23,6 +25,9 @@ public abstract class BlockCustomMolecularAssembler extends BlockApplied {
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean b) {
         list.add(LocalizationUtils.localizeF("tooltip.assembler.speed", speed));
+        if (threads > 1) {
+            list.add(LocalizationUtils.localize("tooltip.assembler.threads", threads));
+        }
     }
 
     public boolean renderAsNormalBlock() {
