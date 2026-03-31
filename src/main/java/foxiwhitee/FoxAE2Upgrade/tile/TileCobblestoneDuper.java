@@ -226,8 +226,10 @@ public class TileCobblestoneDuper extends TileNetworkInv implements IMEChest, IP
         }
     }
 
+    @Override
     @TileEvent(TileEventType.NETWORK_WRITE)
     public void writeToStream(ByteBuf data) {
+        super.writeToStream(data);
         data.writeInt(tick);
         status = worldObj.getTotalWorldTime() - lastBlinkTime > 8 ? 0 : status & 0x24924924;
         status |= getCellStatus(0);
@@ -237,8 +239,10 @@ public class TileCobblestoneDuper extends TileNetworkInv implements IMEChest, IP
         data.writeInt(cell == null ? 0 : (cell.getItemDamage() << 16) | Item.getIdFromItem(cell.getItem()));
     }
 
+    @Override
     @TileEvent(TileEventType.NETWORK_READ)
     public boolean readFromStream(ByteBuf data) {
+        boolean result = super.readFromStream(data);
         tick = data.readInt();
         int prevStatus = status;
         ItemStack prevCell = cellType;
@@ -246,7 +250,7 @@ public class TileCobblestoneDuper extends TileNetworkInv implements IMEChest, IP
         int item = data.readInt();
         cellType = item == 0 ? null : new ItemStack(Item.getItemById(item & 0xFFFF), 1, item >> 16);
         lastBlinkTime = worldObj.getTotalWorldTime();
-        return (status & 0xDB6DB6DB) != (prevStatus & 0xDB6DB6DB) || !Platform.isSameItemPrecise(prevCell, cellType);
+        return result || (status & 0xDB6DB6DB) != (prevStatus & 0xDB6DB6DB) || !Platform.isSameItemPrecise(prevCell, cellType);
     }
 
     @TileEvent(TileEventType.WORLD_NBT_READ)
