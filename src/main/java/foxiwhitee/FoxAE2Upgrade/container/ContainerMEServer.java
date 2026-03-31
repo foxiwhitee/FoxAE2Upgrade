@@ -1,15 +1,14 @@
 package foxiwhitee.FoxAE2Upgrade.container;
 
-import appeng.container.AEBaseContainer;
 import foxiwhitee.FoxAE2Upgrade.tile.TileMEServer;
+import foxiwhitee.FoxLib.container.FoxBaseContainer;
 import foxiwhitee.FoxLib.container.slots.SlotFiltered;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Slot;
 
-public class ContainerMEServer extends AEBaseContainer {
+public class ContainerMEServer extends FoxBaseContainer {
     public ContainerMEServer(EntityPlayer ip, TileMEServer myTile) {
-        super(ip.inventory, myTile);
-        bindPlayerInventory(ip.inventory, 70, 184);
+        super(ip, myTile);
+        bindPlayerInventory(70, 184);
 
         this.addSlotToContainer(new SlotFiltered("storage", myTile.getStorage(), 0, 60, 37));
         this.addSlotToContainer(new SlotFiltered("storage", myTile.getStorage(), 1, 141, 37));
@@ -24,25 +23,18 @@ public class ContainerMEServer extends AEBaseContainer {
         this.addSlotToContainer(new SlotFiltered("storage", myTile.getStorage(), 10, 141, 139));
         this.addSlotToContainer(new SlotFiltered("storage", myTile.getStorage(), 11, 222, 139));
 
-        this.addSlotToContainer(new SlotFiltered("accelerator", myTile.getAccelerators(), 0, 60 + 18, 37));
-        this.addSlotToContainer(new SlotFiltered("accelerator", myTile.getAccelerators(), 1, 141 + 18, 37));
-        this.addSlotToContainer(new SlotFiltered("accelerator", myTile.getAccelerators(), 2, 222 + 18, 37));
-        this.addSlotToContainer(new SlotFiltered("accelerator", myTile.getAccelerators(), 3, 60 + 18, 71));
-        this.addSlotToContainer(new SlotFiltered("accelerator", myTile.getAccelerators(), 4, 141 + 18, 71));
-        this.addSlotToContainer(new SlotFiltered("accelerator", myTile.getAccelerators(), 5, 222 + 18, 71));
-        this.addSlotToContainer(new SlotFiltered("accelerator", myTile.getAccelerators(), 6, 60 + 18, 105));
-        this.addSlotToContainer(new SlotFiltered("accelerator", myTile.getAccelerators(), 7, 141 + 18, 105));
-        this.addSlotToContainer(new SlotFiltered("accelerator", myTile.getAccelerators(), 8, 222 + 18, 105));
-        this.addSlotToContainer(new SlotFiltered("accelerator", myTile.getAccelerators(), 9, 60 + 18, 139));
-        this.addSlotToContainer(new SlotFiltered("accelerator", myTile.getAccelerators(), 10, 141 + 18, 139));
-        this.addSlotToContainer(new SlotFiltered("accelerator", myTile.getAccelerators(), 11, 222 + 18, 139));
+        this.addSlotToContainer(new SlotFiltered("accelerator", myTile.getAccelerators(), 0, 78, 37));
+        this.addSlotToContainer(new SlotFiltered("accelerator", myTile.getAccelerators(), 1, 159, 37));
+        this.addSlotToContainer(new SlotFiltered("accelerator", myTile.getAccelerators(), 2, 240, 37));
+        this.addSlotToContainer(new SlotFiltered("accelerator", myTile.getAccelerators(), 3, 78, 71));
+        this.addSlotToContainer(new SlotFiltered("accelerator", myTile.getAccelerators(), 4, 159, 71));
+        this.addSlotToContainer(new SlotFiltered("accelerator", myTile.getAccelerators(), 5, 240, 71));
+        this.addSlotToContainer(new SlotFiltered("accelerator", myTile.getAccelerators(), 6, 78, 105));
+        this.addSlotToContainer(new SlotFiltered("accelerator", myTile.getAccelerators(), 7, 159, 105));
+        this.addSlotToContainer(new SlotFiltered("accelerator", myTile.getAccelerators(), 8, 240, 105));
+        this.addSlotToContainer(new SlotFiltered("accelerator", myTile.getAccelerators(), 9, 78, 139));
+        this.addSlotToContainer(new SlotFiltered("accelerator", myTile.getAccelerators(), 10, 159, 139));
+        this.addSlotToContainer(new SlotFiltered("accelerator", myTile.getAccelerators(), 11, 240, 139));
     }
 
-    @Override
-    protected Slot addSlotToContainer(Slot newSlot) {
-        newSlot.slotNumber = this.inventorySlots.size();
-        this.inventorySlots.add(newSlot);
-        this.inventoryItemStacks.add(null);
-        return newSlot;
-    }
 }

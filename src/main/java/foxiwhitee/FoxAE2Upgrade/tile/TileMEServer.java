@@ -75,7 +75,10 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
         }
 
         if (this.getProxy().isReady()) {
-            this.initializeClusters();
+            if (this.initializeCluster(slot)) {
+                this.updateMeta(true);
+                this.notifyNetwork();
+            }
         }
     }
 
@@ -107,7 +110,7 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
         } else if (blocks.craftingStorageSingularity().isSameAs(stack)) {
             unit = Long.MAX_VALUE;
         }
-        storage_bytes[id] = (long) Math.min(Long.MAX_VALUE - 1000000, ((double) unit * stack.stackSize));
+        storage_bytes[id] = unit == Long.MAX_VALUE ? Long.MAX_VALUE : unit * stack.stackSize;
     }
 
     private void calculateCraftingAccelerators(int id, ItemStack stack) {
@@ -138,31 +141,46 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
         accelerators_count[id] = unit * stack.stackSize;
     }
 
-    @SuppressWarnings("all")
-    public void initializeClusters() {
-        if (Platform.isClient() || worldObj == null) {
-            return;
+    public boolean initializeCluster(int idx) {
+        if (worldObj == null) {
+            return false;
         }
-
         WorldCoord loc = new WorldCoord(this);
-        for (int i = 0; i < CLUSTER_COUNT; i++) {
-            CraftingCPUCluster oldCluster = virtualClusters.get(i);
+
+        if (storage_bytes[idx] != 0) {
+            CraftingCPUCluster oldCluster = virtualClusters.get(idx);
 
             FMLCommonHandler.instance().bus().unregister(oldCluster);
             oldCluster.cancel();
 
             CraftingCPUCluster newCluster = new CraftingCPUCluster(loc, loc);
-            virtualClusters.set(i, newCluster);
+            virtualClusters.set(idx, newCluster);
 
             FMLCommonHandler.instance().bus().register(newCluster);
             this.bindTileToCluster(newCluster);
 
             newCluster.updateStatus(true);
             ((ICraftingCPUClusterAccessor) (Object) newCluster).doneMEServer();
+            return true;
+        }
+        return false;
+    }
+
+    @SuppressWarnings("all")
+    public void initializeClusters() {
+        if (Platform.isClient() || worldObj == null) {
+            return;
         }
 
-        this.updateMeta(true);
-        this.notifyNetwork();
+        boolean someoneChanged = false;
+        for (int i = 0; i < CLUSTER_COUNT; i++) {
+            someoneChanged |= initializeCluster(i);
+        }
+
+        if (someoneChanged) {
+            this.updateMeta(true);
+            this.notifyNetwork();
+        }
     }
 
     private void bindTileToCluster(CraftingCPUCluster cluster) {
@@ -176,8 +194,7 @@ public class TileMEServer extends TileCraftingTile implements IAEAppEngInventory
     }
 
     @Override
-    public void updateMultiBlock() {
-    }
+    public void updateMultiBlock() {}
 
     @Override
     public void onReady() {

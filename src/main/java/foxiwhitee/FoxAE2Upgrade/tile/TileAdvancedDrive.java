@@ -44,26 +44,17 @@ import static appeng.util.item.AEItemStackType.ITEM_STACK_TYPE;
 @SuppressWarnings("unused")
 public class TileAdvancedDrive extends AENetworkInvTile implements IChestOrDrive, IPriorityHost, IGridTickable {
     private final int[] sides = new int[0];
-
     private final AppEngInternalInventory inv = new AppEngInternalInventory(this, 30);
-
     private final ICellHandler[] handlersBySlot = new ICellHandler[30];
-
     @SuppressWarnings({"unchecked"})
     private final MEInventoryHandler<IAEItemStack>[] invBySlot = new MEInventoryHandler[30];
-
     private final BaseActionSource mySrc;
-
     private boolean isCached = false;
-
     @SuppressWarnings("rawtypes")
     private final Map<IAEStackType<?>, List<IMEInventoryHandler>> cellsMap = new IdentityHashMap<>();
-
     private final int[] state = new int[30];
     private final int[] cellType = new int[30];
-
     private int priority = 0;
-
     private boolean wasActive = false;
 
     public TileAdvancedDrive() {

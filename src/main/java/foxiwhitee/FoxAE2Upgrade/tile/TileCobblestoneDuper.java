@@ -57,7 +57,6 @@ import static appeng.util.item.AEItemStackType.ITEM_STACK_TYPE;
 @SuppressWarnings("unused")
 public class TileCobblestoneDuper extends TileNetworkInv implements IMEChest, IPriorityHost, IConfigManagerHost {
     private static final int[] NO_SLOTS = {};
-
     private final FoxInternalInventory inventory = new FoxInternalInventory(this, 1);
     private final MachineSource source = new MachineSource(this);
     private final IConfigManager settings = new ConfigManager(this);
